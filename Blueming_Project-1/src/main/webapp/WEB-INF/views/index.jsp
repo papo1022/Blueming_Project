@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>테스트테스트</h1>
+	<h1>여기는 로그인 화면입니다.</h1>
 </body>
 </html>
