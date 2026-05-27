@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.kh.blueming.notice.model.dao.NoticeDao;
 import com.kh.blueming.notice.model.vo.Notice;
 
 public class NoticeService {
