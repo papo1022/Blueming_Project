@@ -100,24 +100,24 @@
 
             <tr>
                 <th>번호</th>
-                <td>15</td>
+                <td>${n.noticeId}</td>
 
                 <th>조회수</th>
-                <td>128</td>
+                <td>${n.count}</td>
             </tr>
 
             <tr>
                 <th>작성자</th>
-                <td>관리자</td>
+                <td>${n.name}</td>
 
                 <th>작성일</th>
-                <td>2026-05-27</td>
+                <td>${n.createdDate}</td>
             </tr>
 
             <tr>
                 <th>제목</th>
                 <td colspan="3">
-                    시스템 점검 안내
+                    ${n.noticeTitle}
                 </td>
             </tr>
 
@@ -126,18 +126,7 @@
                 <td colspan="3">
 
                     <div class="content-box">
-
-                        안녕하세요.
-
-                        2026년 5월 30일 새벽 2시부터 4시까지
-                        서버 안정화 작업 및 시스템 점검이 진행될 예정입니다.
-
-                        점검 시간 동안 일부 서비스 이용이 제한될 수 있습니다.
-
-                        이용에 불편을 드려 죄송합니다.
-
-                        감사합니다.
-
+                        ${n.content}
                     </div>
 
                 </td>
