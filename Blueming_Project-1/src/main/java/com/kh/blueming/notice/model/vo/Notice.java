@@ -19,7 +19,7 @@ public class Notice {
 	private String content;
 	private int memberId;
 	private int count;
-	private Date createDate;
+	private Date createdDate;
 	private Date updatedDate;
 	private int fileId;
 	private String status;

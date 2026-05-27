@@ -20,7 +20,7 @@
 	<select id="selectNoticeList" resultMap="noticeResultSet">
 		SELECT NOTICE_ID,
 			   NOTICE_TITLE,
-			   MEMBER.NAME AS NAME,
+			   MEMBER.NAME,
 			   COUNT,
 			   CREATED_DATE
 		FROM NOTICE
