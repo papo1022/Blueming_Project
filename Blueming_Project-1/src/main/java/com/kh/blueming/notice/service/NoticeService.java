@@ -15,8 +15,8 @@ public class NoticeService {
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 	
-	@Autowired
-	private NoticeDao noticeDao;
+//	@Autowired
+//	private NoticeDao noticeDao;
 
 	public ArrayList<Notice> selectNoticeList() {
 		return NoticeDao.selectNoticeList(sqlSession);

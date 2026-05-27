@@ -9,7 +9,7 @@
 	</settings>
 	
 	<typeAliases>
-		<typeAlias type="com.kh.myweb.notice.model.vo.Notice" alias="notice" />	
+		<typeAlias type="com.kh.blueming.notice.model.vo.Notice" alias="notice" />	
 	</typeAliases>
 	
 </configuration>
