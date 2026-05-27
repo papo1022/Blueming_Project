@@ -4,4 +4,81 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="memberlistMapper">
 
+  <resultMap id="memberlistResultSet" type="memberlist">
+    <id column="MEMBER_ID" property="memberId"/>
+    <result column="DEPARTMENT_ID" property="deptId"/>
+    <result column="POSITION_ID" property="positionId"/>
+    <result column="NAME" property="name"/>
+    <result column="HIRE_DATE" property="hireDate"/>
+  </resultMap>
+
+  <!-- 검색 결과 개수 -->
+  <select id="selectSearchCount" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM MEMBER
+    WHERE STATUS = 'Y'
+    <if test="condition != null and condition != '' and keyword != null and keyword != ''">
+      AND
+      <choose>
+        <when test="condition == 'memberId'">MEMBER_ID</when>
+        <when test="condition == 'deptId'">DEPARTMENT_ID</when>
+        <when test="condition == 'positionId'">POSITION_ID</when>
+        <when test="condition == 'name'">NAME</when>
+      </choose>
+      LIKE '%' || #{keyword} || '%'
+    </if>
+  </select>
+
+  <!-- 사원 목록 검색 -->
+  <select id="searchMemberList" parameterType="hashmap" resultMap="memberlistResultSet">
+    SELECT MEMBER_ID
+         , DEPARTMENT_ID
+         , POSITION_ID
+         , NAME
+         , HIRE_DATE
+      FROM MEMBER
+     WHERE STATUS = 'Y'
+    <if test="condition != null and condition != '' and keyword != null and keyword != ''">
+      AND
+      <choose>
+        <when test="condition == 'memberId'">MEMBER_ID</when>
+        <when test="condition == 'deptId'">DEPARTMENT_ID</when>
+        <when test="condition == 'positionId'">POSITION_ID</when>
+        <when test="condition == 'name'">NAME</when>
+      </choose>
+     	 LIKE '%' || #{keyword} || '%'
+    </if>
+     ORDER BY MEMBER_ID
+  </select>
+
+  <!-- 전체 사원 개수 -->
+  <select id="selectListCount" resultType="int">
+    SELECT COUNT(*)
+      FROM MEMBER
+     WHERE STATUS = 'Y'
+  </select>
+
+  <!-- 전체 사원 목록 (페이징) -->
+  <select id="selectMemberList" parameterType="hashmap" resultMap="memberlistResultSet">
+    SELECT MEMBER_ID
+         , DEPARTMENT_ID
+         , POSITION_ID
+         , NAME
+         , HIRE_DATE
+      FROM MEMBER
+     WHERE STATUS = 'Y'
+     ORDER BY MEMBER_ID
+  </select>
+
+
+<!-- 사원 상세조회 -->
+<select id="selectMemberDetail" parameterType="int" resultMap="memberlistResultSet">
+	SELECT MEMBER_ID, LOGIN_ID, LOGIN_PWD, NAME, EMAIL, PHONE, ADDRESS, 
+	       HIRE_DATE, RETIRE_DATE, STATUS, DEPARTMENT_ID, POSITION_ID, ROLE, PWD_RESET_DATE
+	  FROM MEMBER
+	 WHERE MEMBER_ID = #{memberId}
+	   AND STATUS = 'Y'
+</select>
+
+
 </mapper>

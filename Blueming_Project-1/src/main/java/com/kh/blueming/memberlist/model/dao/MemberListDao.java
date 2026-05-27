@@ -2,8 +2,8 @@ package com.kh.blueming.memberlist.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,38 +13,40 @@ import com.kh.blueming.model.vo.PageInfo;
 @Repository
 public class MemberListDao {
 	
+	// 전체 사원 개수 조회
 	public int selectListCount(SqlSessionTemplate sqlSession) {
-		
-		sqlSession.selectOne("boardMapper.selectListCount");
-		
-		
+		return sqlSession.selectOne("memberlistMapper.selectListCount");
 	}
 	
-	public ArrayList<MemberList> selectMemberList(SqlSessionTemplate sqlSession,PageInfo pi){
-		
+	// 전체 사원 목록 조회 (페이징)
+	public ArrayList<MemberList> selectMemberList(SqlSessionTemplate sqlSession, PageInfo pi) {
 		int limit = pi.getBoardLimit();
-		int offset = (pi.getCurrentPage()-1)*limit;
+		int offset = (pi.getCurrentPage() - 1) * limit;
 		
-		int startRow = offset + 1;
-	    int endRow = pi.getCurrentPage() * limit;
-	    
-	 // 파라미터를 담을 Map 생성
-	    Map<String, Integer> pageMap = new HashMap<>();
-	    pageMap.put("startRow", startRow);
-	    pageMap.put("endRow", endRow);
-	    
-	 // sqlSession에 pageMap을 파라미터로 전달
-	    return (ArrayList) sqlSession.selectList("memberMapper.selectMemberList", pageMap);
+		RowBounds rowBounds = new RowBounds(offset, limit);
 		
+		return (ArrayList) sqlSession.selectList("memberlistMapper.selectMemberList", null, rowBounds);
 	}
 
+	// 검색 결과 개수 조회
 	public int selectSearchCount(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
+		return sqlSession.selectOne("memberlistMapper.selectSearchCount", map);
+	}
+
+	// 사원 목록 검색 (페이징)
+	public ArrayList<MemberList> searchMemberList(SqlSessionTemplate sqlSession, 
+											     HashMap<String, String> map, PageInfo pi) {
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage() - 1) * limit;
 		
-		return sqlSession.selectOne("memberlistMapper.selectSearchCount",map);
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		
+		// map 전달 필수!
+		return (ArrayList) sqlSession.selectList("memberlistMapper.searchMemberList", map, rowBounds);
 	}
 	
 	
-	
-	
-
+	public MemberList selectMemberDetail(SqlSessionTemplate sqlSession, int memberId) {
+		return sqlSession.selectOne("memberlistMapper.selectMemberDetail", memberId);
+	}
 }

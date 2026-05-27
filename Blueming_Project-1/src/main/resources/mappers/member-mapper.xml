@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+<resultMap id="memberResultSet" type="member">
+		<id column="MEMBER_ID" property="memberId" />
+		<result column="LOGIN_ID" property="loginId" />
+		<result column="LOGIN_PWD" property="loginPwd" />
+		<result column="NAME" property="name" />
+		<result column="PHONE" property="phone" />
+		<result column="EMAIL" property="email" />
+		<result column="ADDRESS" property="address" />
+		<result column="HIRE_DATE" property="hireDate" />
+		<result column="RETIRE_DATE" property="retireDate" />
+		<result column="DEPARTMENT_ID" property="departmentId" />
+		<result column="POSITION_ID" property="postionId" />
+		<result column="ROLE" property="role" />
+		<result column="PWD_RESET_DATE" property="passwordResetDate" />
+	</resultMap>
+	
+	<select id="loginMember" parameterType="member" 
+							 resultMap="memberResultSet">
+		SELECT *
+		  FROM MEMBER
+		 WHERE LOGIN_ID = #{loginId}
+		   AND STATUS = 'Y'
+		 
+	
+	</select>
+
+
+
+
+</mapper>
