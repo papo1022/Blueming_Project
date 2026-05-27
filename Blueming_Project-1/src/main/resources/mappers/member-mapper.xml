@@ -18,7 +18,15 @@
 		<result column="ROLE" property="role" />
 		<result column="PWD_RESET_DATE" property="passwordResetDate" />
 	</resultMap>
-
+	
+	<select id="loginMember" parameterType="member" 
+							 resultMap="memberResultSet">
+		SELECT *
+		  FROM MEMBER
+		 WHERE LOGIN_ID = #{loginId}
+		   AND STATUS = 'Y'
+	
+	</select>
 
 
 

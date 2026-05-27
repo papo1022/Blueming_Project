@@ -3,13 +3,13 @@ package com.kh.blueming.member.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kh.blueming.member.model.service.MemberService;
 import com.kh.blueming.member.model.vo.Member;
 
-import ch.qos.logback.core.model.Model;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -24,9 +24,8 @@ public class MemberController {
 	private MemberService memberService;
 	
 	@PostMapping("login")
-	public void loginMember {Member m, String saveId, Model model, 
-		  					HttpSession session, HttpServletResponse response) {
-		
+	public String loginMember(Member m, String saveId, Model model, 
+			  HttpSession session, HttpServletResponse response) {
 		  						
 		  						
 		  	if((saveId != null) && (saveId.equals("y"))) {
@@ -49,12 +48,12 @@ public class MemberController {
 			response.addCookie(cookie);
 		}
 		  					
-		  	Member loginUser = memberService.loginMember(m);
+		  	Member loginId = memberService.loginMember(m);
 			
-			if((loginUser != null) && 
-			   (bCryptPasswordEncoder.matches(m.getLoginPwd(), loginUser.getLoginPwd()))) {
+			if((loginId != null) && 
+			   (bCryptPasswordEncoder.matches(m.getLoginPwd(), loginId.getLoginPwd()))) {
 				
-				session.setAttribute("loginUser", loginUser);
+				session.setAttribute("loginId", loginId);
 				
 				
 				session.setAttribute("alertMsg", "성공적으로 로그인이 되었습니다.");
