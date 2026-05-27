@@ -6,3 +6,4 @@
 
 
 	<select id="selectSearchCount"></select>
+</mapper>
