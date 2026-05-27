@@ -35,14 +35,14 @@
 							<tr>
 								<th>아이디</th>
 								<td>
-									<input type="text" name="userId" required value="${ cookie.saveId.value }">
+									<input type="text" name="loginId" required value="${ cookie.saveId.value }">
 									
 								</td>
 							</tr>
 							<tr>
 								<th>비밀번호</th>
 								<td>
-									<input type="password" name="userPwd" required>
+									<input type="password" name="loginPwd" required>
 								</td>
 							</tr>
 							<!-- 아이디 저장 -->
