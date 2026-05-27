@@ -144,19 +144,20 @@
 		</c:if>
 		
 		<div class="btn-group">
-			<button class="btn btn-primary" onclick="goEdit()">수정</button>
-			<button class="btn btn-secondary" onclick="goList()">목록</button>
-		</div>
+		<button class="btn btn-primary" onclick="goEdit()">수정</button>
+		<button class="btn btn-secondary" onclick="goList()">목록</button>
 	</div>
+</div>
 
-	<script>
-		function goEdit() {
-			location.href = "/blueming/memberlist/update?memberId=${requestScope.member.memberId}";
-		}
-		
-		function goList() {
-			location.href = "/blueming/memberlist";
-		}
-	</script>
+<script>
+	function goEdit() {
+		location.href = "/blueming/memberlist/update?memberId=${requestScope.member.memberId}";
+	}
+	
+	function goList() {
+		// 메인 리스트 컨트롤러 진입 (GET 요청으로 초기 전체목록 로드)
+		location.href = "/blueming/memberlist";
+	}
+</script>
 </body>
 </html>
