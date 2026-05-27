@@ -99,7 +99,7 @@
                                 <td width="45%">${n.noticeTitle}</td>
                                 <td width="15%">${n.memberId}</td>
                                 <td width="10%">${n.count}</td>
-                                <td width="20%">${n.createDate}</td>
+                                <td width="20%">${n.createdDate}</td>
                             </tr>
                         </c:forEach>
                     </c:otherwise>

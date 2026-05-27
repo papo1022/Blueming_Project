@@ -23,4 +23,6 @@ public class Notice {
 	private Date updatedDate;
 	private int fileId;
 	private String status;
+	
+	private String name;
 }
