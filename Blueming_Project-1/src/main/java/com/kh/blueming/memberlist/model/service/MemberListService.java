@@ -20,7 +20,7 @@ public class MemberListService {
 	@Autowired
 	private MemberListDao memlistDao;
 	
-	public int selectListCOunt() {
+	public int selectListCount() {
 		return memlistDao.selectListCount(sqlSession);
 	}
 	
@@ -32,9 +32,16 @@ public class MemberListService {
 		
 		return memlistDao.selectSearchCount(sqlSession,map);
 	}
+
+	public ArrayList<MemberList> searchMemberList(HashMap<String, String> map, PageInfo pi) {
+		
+		return memlistDao.searchMemberList(sqlSession,map,pi);
+	}
 	
 	
-	
+	public MemberList selectMemberDetail(int memberId) {
+		return memlistDao.selectMemberDetail(sqlSession, memberId);
+	}
 	
 	
 	
