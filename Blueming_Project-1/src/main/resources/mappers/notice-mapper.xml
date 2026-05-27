@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="noticeMapper">
+<resultMap id="memberResultSet" type="notice">
+		<id column="NOTICE_ID" property="noticeId" />
+		<result column="NOTICE_TITLE" property="noticeTitle" />
+		<result column="CONTENT" property="content" />
+		<result column="MEMBER_ID" property="memberId" />
+		<result column="COUNT" property="count" />
+		<result column="CREATED_DATE" property="createDate" />
+		<result column="UPDATED_DATE" property="updateDate" />
+		<result column="FILE_ID" property="fileId" />
+		<result column="STATUS" property="status" />
+	</resultMap>
+	
+	<select id="selectNoticeList" parameterType="notice" 
+								 resultMap="noticeResultSet">
+			SELECT NOTICE_ID
+		     , NOTICE_TITLE
+		     , MEMBER_ID
+		     , COUNT
+		     , CREATE_DATE
+		  FROM NOTICE N
+		  JOIN MEMBER ON (MEMBER_ID = USER_NO)
+		 WHERE N.STATUS = 'Y'
+		 ORDER BY NOTICE_ID DESC
+	
+	
+	</select>
+
+
+
+
+</mapper>

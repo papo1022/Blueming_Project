@@ -25,6 +25,7 @@
 		  FROM MEMBER
 		 WHERE LOGIN_ID = #{loginId}
 		   AND STATUS = 'Y'
+		 
 	
 	</select>
 
