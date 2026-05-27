@@ -2,8 +2,13 @@ package com.kh.blueming.template;
 
 //XSS 공격을 방지하기 위한 규칙
 public class XssDefencePolicy {
-	public String defence(String originText) {
+	public static String defence(String originText) {
 		String changeText = originText;
+		
+		if(changeText == null) {
+	        return "";
+	    }
+		
 		changeText = changeText.replace("<", "&lt;");
 		changeText = changeText.replace(">", "&gt;");
 		changeText = changeText.replace("\"", "&quot;");

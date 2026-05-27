@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,9 +62,18 @@
         <div class="notice-title">
             공지사항
         </div>
+        
+        <form action="enrollForm" method="get">
+            <c:choose>
+                <c:when test="${not empty sessionScope.loginMember 
+                    and sessionScope.loginMember.role eq 'S'}">
+                    <button>글쓰기</button>
+                </c:when>
+            </c:choose>
+            
+        </form>
 
         <table>
-
             <thead>
                 <tr>
                     <th width="10%">번호</th>
@@ -73,54 +83,29 @@
                     <th width="20%">작성일</th>
                 </tr>
             </thead>
-
             <tbody>
-
-                <tr>
-                    <td>5</td>
-                    <td>5월 시스템 점검 안내</td>
-                    <td>관리자</td>
-                    <td>152</td>
-                    <td>2026-05-26</td>
-                </tr>
-
-                <tr>
-                    <td>4</td>
-                    <td>사내 교육 프로그램 신청 공지</td>
-                    <td>관리자</td>
-                    <td>98</td>
-                    <td>2026-05-24</td>
-                </tr>
-
-                <tr>
-                    <td>3</td>
-                    <td>강의 업로드 일정 변경 안내</td>
-                    <td>운영팀</td>
-                    <td>67</td>
-                    <td>2026-05-22</td>
-                </tr>
-
-                <tr>
-                    <td>2</td>
-                    <td>ERP 접속 오류 관련 공지</td>
-                    <td>관리자</td>
-                    <td>210</td>
-                    <td>2026-05-20</td>
-                </tr>
-
-                <tr>
-                    <td>1</td>
-                    <td>신규 교육 콘텐츠 추가 안내</td>
-                    <td>교육팀</td>
-                    <td>134</td>
-                    <td>2026-05-18</td>
-                </tr>
-
+                <c:choose>
+                    <c:when test="${empty requestScope.list}">
+                        <tr>
+                            <td colspan=5>
+                                조회된 게시글이 없습니다.
+                            </td>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="n" items="${requestScope.list}">
+                           <tr>
+                                <td width="10%">${n.noticeId}</td>
+                                <td width="45%">${n.noticeTitle}</td>
+                                <td width="15%">${n.memberId}</td>
+                                <td width="10%">${n.count}</td>
+                                <td width="20%">${n.createDate}</td>
+                            </tr>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
             </tbody>
-
         </table>
-
     </div>
-
 </body>
 </html>
