@@ -8,7 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.blueming.memberlist.model.vo.MemberList;
-import com.kh.blueming.model.vo.PageInfo;
+import com.kh.blueming.common.model.vo.PageInfo;
 
 @Repository
 public class MemberListDao {
