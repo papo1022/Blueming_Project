@@ -1,4 +1,4 @@
-package com.kh.blueming.model.vo;
+package com.kh.blueming.common.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
