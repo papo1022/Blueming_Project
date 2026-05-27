@@ -107,7 +107,7 @@
 
         <form action="${pageContext.request.contextPath}/notice/insert" method="post">
 
-            <input type="hidden" name="noticeWirter" value="${sessionScope.loginMember.memberId}">
+            <input type="hidden" name="memberId" value="${sessionScope.loginMember.memberId}">
             <table>
 
                 <tr>

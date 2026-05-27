@@ -40,10 +40,10 @@
 					, #{memberId})
 	</insert>
 	
-	<update id="increseCount" parameterType="_int">
+	<update id="increaseCount" parameterType="_int">
 		UPDATE NOTICE
 		SET COUNT = COUNT + 1
-		WHERE NOTICE_NO = #{noticeNo}
+		WHERE NOTICE_ID = #{noticeNo}
 		AND STATUS = 'Y'
 	</update>
 	

@@ -19,7 +19,7 @@ public class NoticeDao {
 	}
 
 	public int increaseCount(SqlSessionTemplate sqlSession, int noticeNo) {
-		return sqlSession.insert("noticeMapper.increaseCount", noticeNo);
+		return sqlSession.update("noticeMapper.increaseCount", noticeNo);
 	}
 
 	public Notice selectNotice(SqlSessionTemplate sqlSession, int noticeNo) {

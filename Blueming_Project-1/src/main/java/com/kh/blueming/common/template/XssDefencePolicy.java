@@ -1,4 +1,4 @@
-package com.kh.blueming.template;
+package com.kh.blueming.common.template;
 
 //XSS 공격을 방지하기 위한 규칙
 public class XssDefencePolicy {
