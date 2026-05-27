@@ -1,0 +1,15 @@
+package com.kh.blueming.member.model.dao;
+
+import org.springframework.stereotype.Repository;
+
+import com.kh.blueming.member.model.vo.Member;
+
+@Repository
+public class MemberDao {
+	
+public Member loginMember(SqlSessionTemplate sqlSession, Member m) {
+		
+		return sqlSession.selectOne("memberMapper.loginMember", m);
+	}
+
+}
