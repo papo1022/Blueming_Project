@@ -18,7 +18,7 @@
 		- VO 클래스가 만들어지기 전에 미리 적어두면 ClassNotFoundException 발생!!
 	-->
 	<typeAliases>
-		<typeAlias type="com.kh." alias="" />	
+		<typeAlias type="com.kh.blueming.course.model.vo.Course" alias="course" />	
 		<typeAlias type="com.kh." alias="" />
 		<typeAlias type="com.kh." alias="" />
 		<typeAlias type="com.kh." alias="" />

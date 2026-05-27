@@ -1,4 +1,4 @@
-package com.kh.blueming;
+package com.kh.blueming.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
