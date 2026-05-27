@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kh</groupId>
-	<artifactId>myweb</artifactId>
+	<artifactId>blueming</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>MyWeb_Project</name>
+	<name>Blueming_Project-1</name>
 	<description/>
 	<url/>
 	<licenses>
@@ -30,19 +30,6 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-		<!--
-			* 프로젝트 최초 생성 시 추가한 라이브러리들
-			- Spring Boot DevTools
-			- Spring Web
-			- Oracle Driver
-			- MyBatis Framework
-			+ 
-			- JSP 라이브러리
-			- JSTL 라이브러리
-			
-			* 더 필요한 것이 있다면 구현 중에
-			Add Spring Boot Starters 또는 Maven Repository 에서 더 추가해서 쓰면 됨!!
-		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
@@ -59,8 +46,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- Oracle JDBC Driver -->
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc11</artifactId>
@@ -77,24 +62,13 @@
 			<version>4.0.1</version>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- jsp 를 사용하기 위한 라이브러리 추가 -->
+		
+		<!-- JSP 를 사용하기 위한 라이브러리 -->
 		<dependency>
 		    <groupId>org.apache.tomcat.embed</groupId>
 		    <artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-
+		
 		<!-- 
 			JSTL 을 사용하기 위한 라이브러리들 추가 
 			- jakarta.servlet.jsp.jstl-api
@@ -108,14 +82,8 @@
 		    <groupId>org.glassfish.web</groupId>
 		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
 		</dependency>
-
-		<!--
-			비밀번호 암호화를 위한 라이브러리 추가
-			- Spring Security
-			
-			단, Spring Security 모듈을 추가하면 기본적으로 
-			까다롭게 웹 보안 설정이 막히면서 메인페이지 진입이 불가해진다!! (설정을 풀어줘야함 - main 메소드를 포함한 클래스)
-		-->
+		
+		<!-- 비밀번호 암호화를 위한 라이브러리-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -125,15 +93,12 @@
 			<artifactId>spring-boot-starter-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- 
-			코드 자동완성을 위한 라이브러리 추가 
-			- Lombok	
-		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		
+		<!-- lombok 라이브러리-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -151,50 +116,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
