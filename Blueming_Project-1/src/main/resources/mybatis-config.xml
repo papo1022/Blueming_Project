@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+.<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
@@ -20,7 +20,6 @@
 	<typeAliases>
 		<typeAlias type="com.kh.blueming.course.model.vo.Course" alias="course" />	
 		<typeAlias type="com.kh.blueming.memberlist.model.vo.MemberList" alias="memberlist" />
-		
 	</typeAliases>
 	
 	<!-- 
