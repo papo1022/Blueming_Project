@@ -7,6 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>여기는 로그인 화면입니다.</h1>
+	<br><br>
+	
+	<h1 align="center" style="color : red;">
+		${ requestScope.errorMsg }
+	</h1>
+
 </body>
 </html>
