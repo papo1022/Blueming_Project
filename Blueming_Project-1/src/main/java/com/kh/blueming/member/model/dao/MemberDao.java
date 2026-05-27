@@ -1,5 +1,6 @@
 package com.kh.blueming.member.model.dao;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.blueming.member.model.vo.Member;
