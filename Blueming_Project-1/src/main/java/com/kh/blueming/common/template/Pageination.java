@@ -1,6 +1,6 @@
-package com.kh.blueming.template;
+package com.kh.blueming.common.template;
 
-import com.kh.blueming.model.vo.PageInfo;
+import com.kh.blueming.common.model.vo.PageInfo;
 
 //페이징 수를 계산하는 파일입니다.
 public class Pageination {

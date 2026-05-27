@@ -19,11 +19,7 @@
 	-->
 	<typeAliases>
 		<typeAlias type="com.kh.blueming.course.model.vo.Course" alias="course" />	
-		<typeAlias type="com.kh." alias="" />
-		<typeAlias type="com.kh." alias="" />
-		<typeAlias type="com.kh." alias="" />
-		<typeAlias type="com.kh." alias="" />
-		<typeAlias type="com.kh." alias="" />
+		<typeAlias type="com.kh.blueming.memberlist.model.vo.MemberList" alias="memberlist" />
 	</typeAliases>
 	
 	<!-- 
