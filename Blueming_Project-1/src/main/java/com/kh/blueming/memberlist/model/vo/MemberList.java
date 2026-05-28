@@ -15,21 +15,24 @@ import lombok.ToString;
 @ToString
 public class MemberList {
 
-	
-		private int memberId;		//	MEMBER_ID
-		private int deptId;			//	DEPARTMENT_ID
-		private int positionId;		//	POSITION_ID
-		private String name;		//	NAME
-		private Date hireDate;		//	HIRE_DATE
-							
-		private String loginId;		//	LOGIN_ID
-		private String email;		//	EMAIL
-		private String phone;		//	PHONE
-		private String address;		//	ADDRESS
-		private Date retireDate;	//	RETIRE_DATE
-		private String status;		//	STATUS
-		private String role;		//	ROLE
-		
-		
-		
+    private int memberId;        // MEMBER_ID (숫자 PK형식 유지)
+    
+
+    private String deptId;       // DEPARTMENT_ID
+    private String positionId;   // POSITION_ID
+    
+    private String name;         // NAME
+    private Date hireDate;       // HIRE_DATE
+                        
+    private String loginId;      // LOGIN_ID
+    private String email;        // EMAIL
+    private String phone;        // PHONE
+    private String address;      // ADDRESS
+    private Date retireDate;     // RETIRE_DATE
+    private String status;       // STATUS
+    private String role;         // ROLE
+    
+    private String deptName;	// DEPARTMENT_NAME
+    private String positionName; // POSITION_NAME
+    
 }

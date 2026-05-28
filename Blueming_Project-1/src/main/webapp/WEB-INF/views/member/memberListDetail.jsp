@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
@@ -8,69 +7,17 @@
 <meta charset="UTF-8">
 <title>사원 상세정보</title>
 <style>
-	.detail-container {
-		width: 600px;
-		margin: 40px auto;
-		border: 1px solid #ddd;
-		padding: 30px;
-		border-radius: 8px;
-	}
-	
-	.detail-container h2 {
-		text-align: center;
-		margin-bottom: 30px;
-	}
-	
-	.detail-row {
-		display: flex;
-		margin-bottom: 15px;
-		border-bottom: 1px solid #eee;
-		padding-bottom: 10px;
-	}
-	
-	.detail-label {
-		width: 30%;
-		font-weight: bold;
-		background-color: #f8f9fa;
-		padding: 10px;
-	}
-	
-	.detail-value {
-		width: 70%;
-		padding: 10px;
-	}
-	
-	.btn-group {
-		text-align: center;
-		margin-top: 30px;
-	}
-	
-	.btn {
-		padding: 10px 20px;
-		margin: 0 5px;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 14px;
-	}
-	
-	.btn-primary {
-		background-color: #007bff;
-		color: white;
-	}
-	
-	.btn-primary:hover {
-		background-color: #0056b3;
-	}
-	
-	.btn-secondary {
-		background-color: #6c757d;
-		color: white;
-	}
-	
-	.btn-secondary:hover {
-		background-color: #545b62;
-	}
+	.detail-container { width: 600px; margin: 40px auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; }
+	.detail-container h2 { text-align: center; margin-bottom: 30px; }
+	.detail-row { display: flex; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+	.detail-label { width: 30%; font-weight: bold; background-color: #f8f9fa; padding: 10px; }
+	.detail-value { width: 70%; padding: 10px; }
+	.btn-group { text-align: center; margin-top: 30px; }
+	.btn { padding: 10px 20px; margin: 0 5px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+	.btn-primary { background-color: #007bff; color: white; }
+	.btn-primary:hover { background-color: #0056b3; }
+	.btn-secondary { background-color: #6c757d; color: white; }
+	.btn-secondary:hover { background-color: #545b62; }
 </style>
 </head>
 <body>
@@ -115,13 +62,13 @@
 			</div>
 			
 			<div class="detail-row">
-				<div class="detail-label">부서</div>
-				<div class="detail-value">${requestScope.member.deptId}</div>
+			   	 <div class="detail-label">부서</div>
+			  	 <div class="detail-value">${requestScope.member.deptName}</div>
 			</div>
-			
+				
 			<div class="detail-row">
-				<div class="detail-label">직급</div>
-				<div class="detail-value">${requestScope.member.positionId}</div>
+				   <div class="detail-label">직급</div>
+				   <div class="detail-value">${requestScope.member.positionName}</div>
 			</div>
 			
 			<div class="detail-row">
@@ -144,20 +91,23 @@
 		</c:if>
 		
 		<div class="btn-group">
-		<button class="btn btn-primary" onclick="goEdit()">수정</button>
-		<button class="btn btn-secondary" onclick="goList()">목록</button>
-	</div>
-</div>
+		    <button class="btn btn-primary" onclick="goEdit()">수정</button>
+		    <button class="btn btn-secondary" onclick="goList()">목록</button>
+		</div>
 
-<script>
-	function goEdit() {
-		location.href = "/blueming/memberlist/update?memberId=${requestScope.member.memberId}";
-	}
-	
-	function goList() {
-		// 메인 리스트 컨트롤러 진입 (GET 요청으로 초기 전체목록 로드)
-		location.href = "/blueming/memberlist";
-	}
-</script>
+		<form id="editForm" action="/blueming/memberlist/updateForm" method="post">
+		    <input type="hidden" name="memberId" value="${requestScope.member.memberId}">
+		</form>
+	</div> <script>
+	    function goEdit() {
+	        // 정상적으로 hidden 폼을 POST 방식으로 제출하여 405 에러를 방지합니다.
+	        document.getElementById("editForm").submit();
+	    }
+	    
+	    function goList() {
+	        // 기존 검색/페이징 유지를 위해 브라우저 가상 히스토리 백 처리
+	        history.back(); 
+	    }
+	</script>
 </body>
 </html>

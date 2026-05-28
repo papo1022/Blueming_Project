@@ -90,4 +90,35 @@ public class MemberListController {
 			
 			return mv;
 	}
+		
+		// 💡 [추가] 사원 수정 화면 진입 (POST 방식으로 memberId를 받음)
+		@PostMapping("/updateForm")
+		public ModelAndView memberUpdateForm(@RequestParam("memberId") int memberId,
+		                                      ModelAndView mv) {
+		    // 기존에 만들어둔 상세조회 서비스 재활용
+		    MemberList member = memlistService.selectMemberDetail(memberId);
+		    
+		    mv.addObject("member", member)
+		      .setViewName("member/memberListUpdateForm"); // 수정 폼 JSP로 이동
+		    
+		    return mv;
+		}
+
+		// 💡 [추가] 사원 수정 실행 (POST)
+		@PostMapping("/update")
+		public String updateMemberList(MemberList member, 
+		                               org.springframework.web.servlet.mvc.support.RedirectAttributes rttr) {
+		    
+		    int result = memlistService.updateMember(member);
+		    
+		    if(result > 0) {
+		        rttr.addFlashAttribute("alertMsg", "사원 정보가 성공적으로 수정되었습니다.");
+		    } else {
+		        rttr.addFlashAttribute("alertMsg", "사원 정보 수정에 실패했습니다.");
+		    }
+		    
+		    // 수정 완료 후 보안을 유지하며 리스트 뷰를 부르기 위해 redirect 처리
+		    // (만약 기존 가상조회 방식을 쓴다면 상세창으로 튕겨도 좋습니다. 여기선 안전하게 리스트로 리다이렉트합니다.)
+		    return "redirect:/memberlist";
+		}
 }

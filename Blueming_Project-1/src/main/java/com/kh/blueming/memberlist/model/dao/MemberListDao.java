@@ -49,4 +49,10 @@ public class MemberListDao {
 	public MemberList selectMemberDetail(SqlSessionTemplate sqlSession, int memberId) {
 		return sqlSession.selectOne("memberlistMapper.selectMemberDetail", memberId);
 	}
+	
+	public int updateMember(SqlSessionTemplate sqlSession, MemberList member) {
+	    return sqlSession.update("memberlistMapper.updateMember", member);
+	}
+	
+	
 }

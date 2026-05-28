@@ -43,7 +43,9 @@ public class MemberListService {
 		return memlistDao.selectMemberDetail(sqlSession, memberId);
 	}
 	
-	
+	public int updateMember(MemberList member) {
+	    return memlistDao.updateMember(sqlSession, member);
+	}
 	
 
 }
