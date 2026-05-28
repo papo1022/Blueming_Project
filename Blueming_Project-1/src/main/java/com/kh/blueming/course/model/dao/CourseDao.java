@@ -13,10 +13,6 @@ import com.kh.blueming.course.model.vo.Course;
 @Repository
 public class CourseDao {
 
-    public int selectListCount(SqlSessionTemplate sqlSession) {
-        return sqlSession.selectOne("courseMapper.selectListCount");
-    }
-
     public ArrayList<Course> selectCourseList(SqlSessionTemplate sqlSession,
                                               int currentPage,
                                               int courseLimit,
