@@ -25,21 +25,58 @@
 			CREATE_DATE AS createDate,
 			UPDATED_DATE AS updatedDate
 		FROM COURSE
-		WHERE STATUS = 'Y'
 		<if test="keyword != null and keyword != ''">
-			AND (
+		WHERE (
 				COURSE_TITLE LIKE '%' || #{keyword} || '%'
 				OR DESCRIPTION LIKE '%' || #{keyword} || '%'
 			)
 		</if>
 		<choose>
 			<when test="sort == 'oldest'">
-				ORDER BY CREATE_DATE ASC
+				ORDER BY STATUS DESC, CREATE_DATE ASC
 			</when>
 			<otherwise>
-				ORDER BY CREATE_DATE DESC
+				ORDER BY STATUS DESC, CREATE_DATE DESC
 			</otherwise>
 		</choose>
+	</select>
+	
+	<insert id="addCourse" >
+		INSERT INTO COURSE(COURSE_ID,
+							COURSE_TITLE,
+							DESCRIPTION,
+							MEMBER_ID,
+							STATUS,
+							START_DATE,
+							END_DATE,
+							TOTAL_HOURS,
+							CREATE_DATE,
+							UPDATED_DATE)
+					VALUES (SEQ_CNO.NEXTVAL + 80,
+							#{courseTitle},
+							#{description},
+							#{memberId},
+							'W',
+							#{startDate},
+							#{endDate},
+							(#{endDate} - #{startDate}) * 24,
+							SYSDATE,
+							NULL)
+	</insert>
+	
+	<select id="selectCourse" resultType="course" parameterType="map">
+		SELECT COURSE_ID AS courseId,
+				COURSE_TITLE AS courseTitle,
+				DESCRIPTION AS description,
+				MEMBER_ID AS memberId,
+				STATUS AS status,
+				START_DATE AS startDate,
+				END_DATE AS endDate,
+				TOTAL_HOURS AS totalHours,
+				CREATE_DATE AS createDate,
+				UPDATED_DATE AS updatedDate
+		FROM COURSE
+		WHERE COURSE_ID = #{courseId}
 	</select>
 	
 </mapper>

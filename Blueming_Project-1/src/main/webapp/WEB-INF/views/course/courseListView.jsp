@@ -126,6 +126,15 @@
 
         <br><br>
 
+
+        <!-- 관리자만 누를 수 있는 강의 추가 -->
+        <div id="admin-only" align="right">
+            <button name="classAdd" class="btn btn-secondary" onclick="courseAdd();">
+                강의 추가
+            </button>
+        </div>
+
+
         <c:if test="${sessionScope.loginUser.role eq 'S' }">
             <div align="left" style="width:90%">
                 <a href="/blueming/course/enrollForm" class="btn btn-primary">강의 등록</a>
@@ -296,6 +305,10 @@
                 }
             });
         });
+
+        function courseAdd(){
+            location.href = "addCourseView";
+        }
     </script>
 </body>
 </html>

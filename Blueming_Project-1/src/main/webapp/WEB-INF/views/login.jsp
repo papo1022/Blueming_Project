@@ -20,15 +20,9 @@
 
 </head>
 <body>
-
-		
-	
-	
 		<!-- 로그인 관련 영역 -->
 		<div class="login-area" align="center">
 	
-				
-					
 					<form id="login-form" action="/blueming/member/login" method="post"> 
 			
 						<table>
