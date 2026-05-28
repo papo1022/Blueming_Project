@@ -88,6 +88,38 @@
 					</c:choose>
 				</div>
 			</div>
+			
+			<c:if test="${requestScope.member.status == 'R' or requestScope.member.status == 'N'}">
+				<div class="detail-row">
+					<div class="detail-label">
+						<c:choose>
+							<c:when test="${requestScope.member.status == 'R'}">휴직기간</c:when>
+							<c:when test="${requestScope.member.status == 'N'}">퇴사일</c:when>
+						</c:choose>
+					</div>
+					<div class="detail-value">
+						<c:choose>
+							<%-- 휴직자인 경우: 기존 로직 --%>
+							<c:when test="${requestScope.member.status == 'R'}">
+								<script>
+									function formatDate(num) {
+										if(!num) return '-';
+										let str = num.toString();
+										return str.length === 8 ? str.substring(0,4) + '-' + str.substring(4,6) + '-' + str.substring(6,8) : str;
+									}
+									document.write(formatDate(${requestScope.member.leaveStartDate}) + " ~ " + formatDate(${requestScope.member.leaveEndDate}));
+								</script>
+							</c:when>
+							
+							<%-- 퇴사자인 경우: 퇴사일 출력 --%>
+							<c:when test="${requestScope.member.status == 'N'}">
+								<fmt:formatDate value="${requestScope.member.retireDate}" pattern="yyyy-MM-dd"/>
+							</c:when>
+						</c:choose>
+					</div>
+				</div>
+			</c:if>
+			<br><br>
 		</c:if>
 		
 		<div class="btn-group">
@@ -98,14 +130,13 @@
 		<form id="editForm" action="/blueming/memberlist/updateForm" method="post">
 		    <input type="hidden" name="memberId" value="${requestScope.member.memberId}">
 		</form>
-	</div> <script>
+	</div> 
+	
+	<script>
 	    function goEdit() {
-	        // 정상적으로 hidden 폼을 POST 방식으로 제출하여 405 에러를 방지합니다.
 	        document.getElementById("editForm").submit();
 	    }
-	    
 	    function goList() {
-	        // 기존 검색/페이징 유지를 위해 브라우저 가상 히스토리 백 처리
 	        history.back(); 
 	    }
 	</script>

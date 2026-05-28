@@ -67,6 +67,14 @@
         cursor: not-allowed;
         pointer-events: none; /* 클릭 방지 */
     }
+    
+    .btn-add-member {
+        position: fixed; bottom: 30px; right: 30px;
+        background-color: #007bff; color: white; padding: 15px 25px;
+        border-radius: 50px; border: none; cursor: pointer;
+        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
 </style>
 </head>
 <body>
@@ -147,6 +155,15 @@
         </table>
 
         <br><br>
+        
+        
+        <form id="goInsertForm" action="/blueming/memberlist/insertForm" method="post" style="display:none;"><form></form>
+	
+
+			<button type="button" class="btn-add-member" onclick="document.getElementById('goInsertForm').submit();">
+			    + 사원 추가
+			</button>
+        
         
         <div class="pagination-wrapper">
             <c:if test="${not empty requestScope.pi}">

@@ -1,20 +1,27 @@
 package com.kh.blueming.memberlist.controller;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping; // 💡 추가
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.kh.blueming.memberlist.model.service.MemberListService;
-import com.kh.blueming.memberlist.model.vo.MemberList;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
+import com.kh.blueming.memberlist.model.service.MemberListService;
+import com.kh.blueming.memberlist.model.vo.MemberList;
 
 @Controller
 @RequestMapping("/memberlist")
@@ -121,4 +128,33 @@ public class MemberListController {
 		    // (만약 기존 가상조회 방식을 쓴다면 상세창으로 튕겨도 좋습니다. 여기선 안전하게 리스트로 리다이렉트합니다.)
 		    return "redirect:/memberlist";
 		}
+		
+		@InitBinder
+		public void initBinder(WebDataBinder binder) {
+		    // 1. 빈 문자열을 null로 변환
+		    binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+		    
+		    // 2. Date 타입에 빈 값이 들어올 경우 null 처리
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		}
+		
+		// 이제 사원 추가 폼으로 가는 길도 POST로만 열려있습니다.
+		// 1. 화면만 띄워주는 역할
+		@PostMapping("/insertForm")
+		public String insertMemberForm() {
+		    return "member/insertForm"; // JSP 이름
+		}
+
+		// 2. 데이터를 받아서 저장하는 역할
+		@PostMapping("/insert")
+		public String insertMember(MemberList member, RedirectAttributes rttr) {
+		    memlistService.insertMember(member);
+		    return "redirect:/memberlist"; // 저장 후 목록으로 이동
+		}
+		
+		
+		
+		
+		
 }

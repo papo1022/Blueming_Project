@@ -17,6 +17,9 @@
     <result column="ADDRESS" property="address"/>
     <result column="HIRE_DATE" property="hireDate"/>
     <result column="STATUS" property="status"/>
+    <result column="LEAVE_START_DATE" property="leaveStartDate"/>
+    <result column="LEAVE_END_DATE" property="leaveEndDate"/>
+    <result column="RETIRE_DATE" property="retireDate"/>
   </resultMap>
 
   <select id="selectSearchCount" parameterType="hashmap" resultType="int">
@@ -80,7 +83,7 @@
              ORDER BY D.DEPARTMENT_NAME ${sortOrder}
          </when>
          <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
-             ORDER BY P.POSITION_NAME ${sortOrder}
+             ORDER BY M.POSITION_ID ${sortOrder}
          </when>
          <when test="sortColumn != null and sortColumn != ''">
              ORDER BY M.${sortColumn} ${sortOrder}
@@ -140,7 +143,7 @@
              ORDER BY D.DEPARTMENT_NAME ${sortOrder}
          </when>
          <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
-             ORDER BY P.POSITION_NAME ${sortOrder}
+             ORDER BY M.POSITION_ID ${sortOrder}
          </when>
          <when test="sortColumn != null and sortColumn != ''">
              ORDER BY M.${sortColumn} ${sortOrder}
@@ -166,8 +169,7 @@
         M.DEPARTMENT_ID, 
         M.POSITION_ID, 
         M.ROLE, 
-        M.PWD_RESET_DATE,
-        D.DEPARTMENT_NAME,  
+        M.LEAVE_START_DATE,  M.LEAVE_END_DATE,    D.DEPARTMENT_NAME,  
         P.POSITION_NAME     
     FROM MEMBER M
     LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
@@ -185,7 +187,33 @@
          , POSITION_ID = #{positionId}
          , HIRE_DATE = #{hireDate}
          , STATUS = #{status}
+         , LEAVE_START_DATE = #{leaveStartDate, jdbcType=NUMERIC}
+         , LEAVE_END_DATE = #{leaveEndDate, jdbcType=NUMERIC}
+         ,	RETIRE_DATE = #{retireDate}
      WHERE MEMBER_ID = #{memberId}
   </update>
+
+<!-- 	<insert id="insertMember" parameterType="com.kh.blueming.memberlist.model.vo.MemberList">
+    INSERT INTO MEMBER (
+        MEMBER_ID, 
+        LOGIN_ID, 
+        LOGIN_PWD,
+        NAME, 
+        DEPT_ID, 
+        POSITION_ID, 
+        HIRE_DATE, 
+        STATUS
+    ) VALUES (
+        SEQ_MEMBER_ID.NEXTVAL, 
+        #{loginId}, 
+        #{loginPwd}, 
+        #{name}, 
+        #{deptId}, 
+        #{positionId}, 
+        #{hireDate}, 
+        'Y'
+    )
+</insert>
+ -->
 
 </mapper>
