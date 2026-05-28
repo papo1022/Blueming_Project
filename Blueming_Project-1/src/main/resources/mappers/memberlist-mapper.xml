@@ -193,27 +193,27 @@
      WHERE MEMBER_ID = #{memberId}
   </update>
 
-<!-- 	<insert id="insertMember" parameterType="com.kh.blueming.memberlist.model.vo.MemberList">
+ 	<insert id="insertMember" parameterType="memberlist">
     INSERT INTO MEMBER (
         MEMBER_ID, 
         LOGIN_ID, 
         LOGIN_PWD,
         NAME, 
-        DEPT_ID, 
+        DEPARTMENT_ID, 
         POSITION_ID, 
         HIRE_DATE, 
-        STATUS
-    ) VALUES (
-        SEQ_MEMBER_ID.NEXTVAL, 
+        STATUS,
+        EMAIL  ) VALUES (
+        #{memberId}, 
         #{loginId}, 
         #{loginPwd}, 
         #{name}, 
         #{deptId}, 
         #{positionId}, 
         #{hireDate}, 
-        'Y'
-    )
+        'Y',
+        #{email}  )
 </insert>
- -->
+ 
 
 </mapper>
