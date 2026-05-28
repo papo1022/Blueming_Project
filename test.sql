@@ -322,11 +322,10 @@ CROSS JOIN (
 
 -- ------------------------------------------------------------
 -- 10) 과제 제출 900건
--- STATUS: 1(미제출), 2(제출완료), 3(채점전), 4(채점완료)
 -- ------------------------------------------------------------
 INSERT INTO ASSIGNMENT_SUBMISSION (
     SUBMISSION_ID, ASSIGNMENT_ID, MEMBER_ID, CONTENT, FILE_ID,
-    SCORE, STATUS, SUBMITTED_DATE
+    SCORE, SUBMITTED_DATE
 )
 SELECT
     id,
@@ -335,12 +334,6 @@ SELECT
     '과제 제출 내용 #' || id,
     CASE WHEN MOD(id, 3) = 0 THEN MOD(id, 300) + 1 ELSE NULL END,
     CASE WHEN MOD(id, 4) = 0 THEN 70 + MOD(id, 31) ELSE NULL END,
-    CASE MOD(id, 4)
-      WHEN 1 THEN 1
-      WHEN 2 THEN 2
-      WHEN 3 THEN 3
-      ELSE 4
-    END,
     SYSDATE - MOD(id, 90)
 FROM (
     SELECT LEVEL AS id FROM dual CONNECT BY LEVEL <= 900

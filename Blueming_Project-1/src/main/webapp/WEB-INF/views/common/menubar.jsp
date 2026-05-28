@@ -38,6 +38,8 @@
             <div class="nav-area" align="center">
                 <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
                 <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
+                <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
             </div>
         </c:when>
         <c:otherwise>
@@ -47,6 +49,8 @@
                 <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
                 <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
                 <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
+                <!-- ASSIGNMENT는 주소 변경 필요 -->
                 
             </div>
         </c:otherwise>

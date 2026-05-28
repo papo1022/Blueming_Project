@@ -17,11 +17,7 @@ public class CourseService {
 
     @Autowired
     private CourseDao courseDao;
-
-    public int selectListCount() {
-        return courseDao.selectListCount(sqlSession);
-    }
-
+    
     public ArrayList<Course> selectCourseList(int currentPage, int courseLimit, String keyword, String sort) {
         return courseDao.selectCourseList(sqlSession, currentPage, courseLimit, keyword, sort);
     }
