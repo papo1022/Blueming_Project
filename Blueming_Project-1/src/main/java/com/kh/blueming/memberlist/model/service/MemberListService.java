@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.blueming.memberlist.model.dao.MemberListDao;
 import com.kh.blueming.memberlist.model.vo.MemberList;
-import com.kh.blueming.model.vo.PageInfo;
+import com.kh.blueming.common.model.vo.PageInfo;
 
 @Service
 public class MemberListService {

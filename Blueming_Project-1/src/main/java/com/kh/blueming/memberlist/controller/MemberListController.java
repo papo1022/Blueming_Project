@@ -13,8 +13,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.blueming.memberlist.model.service.MemberListService;
 import com.kh.blueming.memberlist.model.vo.MemberList;
-import com.kh.blueming.model.vo.PageInfo;
-import com.kh.blueming.template.Pageination;
+import com.kh.blueming.common.model.vo.PageInfo;
+import com.kh.blueming.common.template.Pageination;
 
 @Controller
 @RequestMapping("/memberlist")
