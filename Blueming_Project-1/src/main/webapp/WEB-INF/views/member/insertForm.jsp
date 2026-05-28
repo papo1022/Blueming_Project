@@ -19,7 +19,7 @@
 <body>
     <div class="insert-container">
         <h2>사원 추가</h2>
-        <form action="/blueming/memberlist/insertForm" method="post">
+        <form action="/blueming/memberlist/insert" method="post">
             
             <div class="insert-row">
                 <div class="insert-label">이름</div>
@@ -29,6 +29,11 @@
             <div class="insert-row">
                 <div class="insert-label">로그인ID</div>
                 <div class="insert-value"><input type="text" name="loginId" required></div>
+            </div>
+
+            <div class="insert-row">
+                <div class="insert-label">비밀번호</div>
+                <div class="insert-value"><input type="password" name="loginPwd" required></div>
             </div>
             
             <div class="insert-row">
@@ -62,9 +67,7 @@
             </div>
 
             <div class="btn-group">
-                <form action="insert" method="post">
-   					 <button type="submit">등록</button>
-				</form>
+                <button type="submit" class="btn btn-primary">등록</button>
                 <button type="button" class="btn" onclick="history.back()">취소</button>
             </div>
         </form>

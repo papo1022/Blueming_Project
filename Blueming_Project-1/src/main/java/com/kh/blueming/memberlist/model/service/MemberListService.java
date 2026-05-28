@@ -32,11 +32,8 @@ public class MemberListService {
     @Autowired
     private org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder bcryptPasswordEncoder;
 
-    // --- [추가] 사원 추가 기능 (암호화 적용) ---
- // MemberListService.java
     public int insertMember(MemberList member) {
-        String encPwd = bcryptPasswordEncoder.encode("1111");
-        member.setLoginPwd(encPwd); // 수정된 메소드명 적용
+        member.setLoginPwd(bcryptPasswordEncoder.encode(member.getLoginPwd()));
         return memlistDao.insertMember(sqlSession, member);
     }
     

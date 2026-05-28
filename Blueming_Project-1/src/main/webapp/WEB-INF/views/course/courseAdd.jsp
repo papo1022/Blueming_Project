@@ -25,8 +25,7 @@
     <h1>강의 등록</h1>
 
     <form action="addCourse" align="center" method="post">
-        <!--<input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>-->
-        <input type="hidden" name="memberId" value="1"><br>
+        <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
         * 강의명 <input type="text" name="courseTitle" id="courseTitle" required><br>
         * 강의 설명 <textarea name="description" id="description" required></textarea><br>
         * 강의 시작 시간 <input type="date" name="startDate" required><br>
