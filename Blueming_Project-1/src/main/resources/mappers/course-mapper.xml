@@ -79,6 +79,8 @@
 		WHERE COURSE_ID = #{courseId}
 	</select>
 	
+	
+	
 </mapper>
 
 

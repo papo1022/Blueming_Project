@@ -74,7 +74,7 @@
 <!-- 사원 상세조회 -->
 <select id="selectMemberDetail" parameterType="int" resultMap="memberlistResultSet">
 	SELECT MEMBER_ID, LOGIN_ID, LOGIN_PWD, NAME, EMAIL, PHONE, ADDRESS, 
-	       HIRE_DATE, RETIRE_DATE, STATUS, DEPARTMENT_ID, POSITION_ID, ROLE, PWD_RESET_DATE
+	       HIRE_DATE, RETIRE_DATE, STATUS, DEPARTMENT_ID, POSITION_ID, ROLE
 	  FROM MEMBER
 	 WHERE MEMBER_ID = #{memberId}
 	   AND STATUS = 'Y'

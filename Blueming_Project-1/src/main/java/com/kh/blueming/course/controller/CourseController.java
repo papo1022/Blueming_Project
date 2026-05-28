@@ -88,8 +88,8 @@ public class CourseController {
     
     //챕터 추가 페이지로 이동
     @GetMapping("addChapterView")
-    public ModelAndView addChapterForm(@RequestParam("cno") int courseNo, ModelAndView mv) {
-    	mv.addObject("courseNo", courseNo)
+    public ModelAndView addChapterForm(int courseId, ModelAndView mv) {
+    	mv.addObject("courseId", courseId)
     	  .setViewName("course/chapterAdd");
     	return mv;
     }

@@ -97,7 +97,7 @@
 
     <script>
         function chapterAdd(){
-            location.href = "chapterAdd?courseId=${course.courseId}";
+            location.href = "addChapterView?courseId=${course.courseId}";
         }
     </script>
 </body>
