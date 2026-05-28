@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c"
+    uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>blueming</title>
 </head>
 <body>
 
@@ -15,6 +17,12 @@
         <br>
         <h2 align="center">강의 상세조회</h2>
         <br>
+
+        <!-- 관리자에게만 보이는 버튼-->
+        <button class="btn btn-primary" onclick="chapterAdd();">
+            챕터 추가
+        </button>
+        <br><br>
 
         <table id="detail-area" class="table">
             <tr>
@@ -62,7 +70,35 @@
                 <td>${ requestScope.course.updatedDate }</td>
             </tr>
         </table>
+
+        <h2 align="center">챕터 리스트</h2>
+        <br><br>
+        <table id="chapter-area" class="table">
+
+            <tr>
+                <th width="10%">번호</th>
+                <th width="40%">제목</th>
+                <th width="30%">그래프</th>
+                <th width="10%">이수률</th>
+            </tr>
+
+            <c:forEach var="ch" items="${requestScope.at}">
+                <tr>
+                    <td>${ch.chapterId}</td>
+                    <td>${ch.chapterTitle}</td>
+                    <td>이수률 막대그래프</td>
+                    <td>n%</td>
+                </tr>
+            </c:forEach>
+
+        </table>
+
     </div>
 
+    <script>
+        function chapterAdd(){
+            location.href = "addChapterView?courseId=${course.courseId}";
+        }
+    </script>
 </body>
 </html>

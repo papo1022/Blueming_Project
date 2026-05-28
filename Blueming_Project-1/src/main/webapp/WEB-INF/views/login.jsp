@@ -4,7 +4,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>blueming</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <style>
 	body {
 		margin: 0;
@@ -20,15 +21,9 @@
 
 </head>
 <body>
-
-		
-	
-	
 		<!-- 로그인 관련 영역 -->
 		<div class="login-area" align="center">
 	
-				
-					
 					<form id="login-form" action="/blueming/member/login" method="post"> 
 			
 						<table>
@@ -62,9 +57,9 @@
 							<tr align="center">
 								<th colspan="2">
 									<button type="button" class="btn btn-secondary btn-sm" 
-														onclick="enrollpage1()">사원ID 찾기</button>
+														onclick="enrollPage1()">사원ID 찾기</button>
 									<button type="button" class="btn btn-secondary btn-sm"
-														onclick="enrollpage2()">사원PWD 찾기</button>
+														onclick="enrollPage2()">사원PWD 찾기</button>
 								</th>
 							</tr>
 							

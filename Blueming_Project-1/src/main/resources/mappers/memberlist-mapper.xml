@@ -4,81 +4,216 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="memberlistMapper">
 
-  <resultMap id="memberlistResultSet" type="memberlist">
+  <resultMap id="memberListResultSet" type="memberlist">
     <id column="MEMBER_ID" property="memberId"/>
+    <result column="LOGIN_ID" property="loginId"/>
     <result column="DEPARTMENT_ID" property="deptId"/>
     <result column="POSITION_ID" property="positionId"/>
+    <result column="DEPARTMENT_NAME" property="deptName"/> 
+    <result column="POSITION_NAME" property="positionName"/> 
     <result column="NAME" property="name"/>
+    <result column="EMAIL" property="email"/>
+    <result column="PHONE" property="phone"/>
+    <result column="ADDRESS" property="address"/>
     <result column="HIRE_DATE" property="hireDate"/>
+    <result column="STATUS" property="status"/>
+    <result column="LEAVE_START_DATE" property="leaveStartDate"/>
+    <result column="LEAVE_END_DATE" property="leaveEndDate"/>
+    <result column="RETIRE_DATE" property="retireDate"/>
   </resultMap>
 
-  <!-- 검색 결과 개수 -->
   <select id="selectSearchCount" parameterType="hashmap" resultType="int">
     SELECT COUNT(*)
-    FROM MEMBER
-    WHERE STATUS = 'Y'
+    FROM MEMBER M
+    LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
+    LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
+    WHERE M.STATUS IN ('Y', 'R', 'N')
     <if test="condition != null and condition != '' and keyword != null and keyword != ''">
-      AND
       <choose>
-        <when test="condition == 'memberId'">MEMBER_ID</when>
-        <when test="condition == 'deptId'">DEPARTMENT_ID</when>
-        <when test="condition == 'positionId'">POSITION_ID</when>
-        <when test="condition == 'name'">NAME</when>
+        <when test="condition == 'memberId'">AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'deptId'">AND D.DEPARTMENT_NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'positionId'">AND P.POSITION_NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'name'">AND M.NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'status'">
+            AND (
+                (#{keyword} LIKE '%재%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'Y'
+                OR (#{keyword} LIKE '%휴%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'R'
+                OR (#{keyword} LIKE '%퇴%' OR #{keyword} LIKE '%사%') AND M.STATUS = 'N'
+                OR M.STATUS LIKE '%' || UPPER(#{keyword}) || '%'
+            )
+        </when>
       </choose>
-      LIKE '%' || #{keyword} || '%'
     </if>
   </select>
 
-  <!-- 사원 목록 검색 -->
-  <select id="searchMemberList" parameterType="hashmap" resultMap="memberlistResultSet">
-    SELECT MEMBER_ID
-         , DEPARTMENT_ID
-         , POSITION_ID
-         , NAME
-         , HIRE_DATE
-      FROM MEMBER
-     WHERE STATUS = 'Y'
+  <select id="searchMemberList" parameterType="hashmap" resultMap="memberListResultSet">
+    SELECT M.MEMBER_ID
+         , M.DEPARTMENT_ID
+         , M.POSITION_ID
+         , M.NAME
+         , M.HIRE_DATE
+         , M.STATUS
+         , D.DEPARTMENT_NAME
+         , P.POSITION_NAME     
+      FROM MEMBER M
+      LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID) 
+      LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)       
+     WHERE M.STATUS IN ('Y', 'R', 'N')
     <if test="condition != null and condition != '' and keyword != null and keyword != ''">
-      AND
       <choose>
-        <when test="condition == 'memberId'">MEMBER_ID</when>
-        <when test="condition == 'deptId'">DEPARTMENT_ID</when>
-        <when test="condition == 'positionId'">POSITION_ID</when>
-        <when test="condition == 'name'">NAME</when>
+        <when test="condition == 'memberId'">AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'deptId'">AND D.DEPARTMENT_NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'positionId'">AND P.POSITION_NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'name'">AND M.NAME LIKE '%' || #{keyword} || '%'</when>
+        <when test="condition == 'status'">
+            AND (
+                (#{keyword} LIKE '%재%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'Y'
+                OR (#{keyword} LIKE '%휴%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'R'
+                OR (#{keyword} LIKE '%퇴%' OR #{keyword} LIKE '%사%') AND M.STATUS = 'N'
+                OR M.STATUS LIKE '%' || UPPER(#{keyword}) || '%'
+            )
+        </when>
       </choose>
-     	 LIKE '%' || #{keyword} || '%'
     </if>
-     ORDER BY MEMBER_ID
+     <choose>
+         <when test="sortColumn == 'STATUS'">
+             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3) ${sortOrder}
+         </when>
+         <when test="sortColumn == 'DEPARTMENT_ID' or sortColumn == 'DEPARTMENT_NAME'">
+             ORDER BY D.DEPARTMENT_NAME ${sortOrder}
+         </when>
+         <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
+             ORDER BY M.POSITION_ID ${sortOrder}
+         </when>
+         <when test="sortColumn != null and sortColumn != ''">
+             ORDER BY M.${sortColumn} ${sortOrder}
+         </when>
+         <otherwise>
+             ORDER BY M.MEMBER_ID DESC
+         </otherwise>
+     </choose>
   </select>
 
-  <!-- 전체 사원 개수 -->
   <select id="selectListCount" resultType="int">
     SELECT COUNT(*)
       FROM MEMBER
-     WHERE STATUS = 'Y'
+     WHERE STATUS IN ('Y', 'R', 'N')
   </select>
 
-  <!-- 전체 사원 목록 (페이징) -->
-  <select id="selectMemberList" parameterType="hashmap" resultMap="memberlistResultSet">
-    SELECT MEMBER_ID
-         , DEPARTMENT_ID
-         , POSITION_ID
-         , NAME
-         , HIRE_DATE
-      FROM MEMBER
-     WHERE STATUS = 'Y'
-     ORDER BY MEMBER_ID
+  <select id="selectMemberList" resultMap="memberListResultSet">
+    SELECT 
+           M.MEMBER_ID,
+           M.DEPARTMENT_ID,
+           M.POSITION_ID,
+           M.NAME,
+           M.HIRE_DATE,
+           M.STATUS,
+           D.DEPARTMENT_NAME,  
+           P.POSITION_NAME     
+      FROM MEMBER M
+      LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID) 
+      LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)       
+     WHERE M.STATUS IN ('Y', 'R', 'N') 
+     <if test="condition == 'memberId'">
+       AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'
+     </if>
+     <if test="condition == 'deptId'">
+       AND D.DEPARTMENT_NAME LIKE '%' || #{keyword} || '%'
+     </if>
+     <if test="condition == 'positionId'">
+       AND P.POSITION_NAME LIKE '%' || #{keyword} || '%'
+     </if>
+     <if test="condition == 'name'">
+       AND M.NAME LIKE '%' || #{keyword} || '%'
+     </if>
+     <if test="condition == 'status'">
+       AND (
+           (#{keyword} LIKE '%재%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'Y'
+           OR (#{keyword} LIKE '%휴%' OR #{keyword} LIKE '%직%') AND M.STATUS = 'R'
+           OR (#{keyword} LIKE '%퇴%' OR #{keyword} LIKE '%사%') AND M.STATUS = 'N'
+           OR M.STATUS LIKE '%' || UPPER(#{keyword}) || '%'
+       )
+     </if>
+     
+     <choose>
+         <when test="sortColumn == 'STATUS'">
+             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3) ${sortOrder}
+         </when>
+         <when test="sortColumn == 'DEPARTMENT_ID' or sortColumn == 'DEPARTMENT_NAME'">
+             ORDER BY D.DEPARTMENT_NAME ${sortOrder}
+         </when>
+         <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
+             ORDER BY M.POSITION_ID ${sortOrder}
+         </when>
+         <when test="sortColumn != null and sortColumn != ''">
+             ORDER BY M.${sortColumn} ${sortOrder}
+         </when>
+         <otherwise>
+             ORDER BY M.MEMBER_ID DESC
+         </otherwise>
+     </choose>
   </select>
 
+  <select id="selectMemberDetail" parameterType="int" resultMap="memberListResultSet">
+    SELECT 
+        M.MEMBER_ID, 
+        M.LOGIN_ID, 
+        M.LOGIN_PWD, 
+        M.NAME, 
+        M.EMAIL, 
+        M.PHONE, 
+        M.ADDRESS, 
+        M.HIRE_DATE, 
+        M.RETIRE_DATE, 
+        M.STATUS, 
+        M.DEPARTMENT_ID, 
+        M.POSITION_ID, 
+        M.ROLE, 
+        M.LEAVE_START_DATE,  M.LEAVE_END_DATE,    D.DEPARTMENT_NAME,  
+        P.POSITION_NAME     
+    FROM MEMBER M
+    LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
+    LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
+    WHERE M.MEMBER_ID = #{memberId}
+  </select>
+  
+  <update id="updateMember" parameterType="memberlist">
+    UPDATE MEMBER
+       SET NAME = #{name}
+         , EMAIL = #{email}
+         , PHONE = #{phone}
+         , ADDRESS = #{address}
+         , DEPARTMENT_ID = #{deptId}
+         , POSITION_ID = #{positionId}
+         , HIRE_DATE = #{hireDate}
+         , STATUS = #{status}
+         , LEAVE_START_DATE = #{leaveStartDate, jdbcType=NUMERIC}
+         , LEAVE_END_DATE = #{leaveEndDate, jdbcType=NUMERIC}
+         ,	RETIRE_DATE = #{retireDate}
+     WHERE MEMBER_ID = #{memberId}
+  </update>
 
-<!-- 사원 상세조회 -->
-<select id="selectMemberDetail" parameterType="int" resultMap="memberlistResultSet">
-	SELECT MEMBER_ID, LOGIN_ID, LOGIN_PWD, NAME, EMAIL, PHONE, ADDRESS, 
-	       HIRE_DATE, RETIRE_DATE, STATUS, DEPARTMENT_ID, POSITION_ID, ROLE, PWD_RESET_DATE
-	  FROM MEMBER
-	 WHERE MEMBER_ID = #{memberId}
-	   AND STATUS = 'Y'
-</select>
-
+ 	<insert id="insertMember" parameterType="memberlist">
+    INSERT INTO MEMBER (
+        MEMBER_ID, 
+        LOGIN_ID, 
+        LOGIN_PWD,
+        NAME, 
+        DEPARTMENT_ID, 
+        POSITION_ID, 
+        HIRE_DATE, 
+        STATUS,
+        EMAIL  ) VALUES (
+        #{memberId}, 
+        #{loginId}, 
+        #{loginPwd}, 
+        #{name}, 
+        #{deptId}, 
+        #{positionId}, 
+        #{hireDate}, 
+        'Y',
+        #{email}  )
+</insert>
+ 
 
 </mapper>

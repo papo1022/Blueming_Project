@@ -1,4 +1,4 @@
-package com.kh.blueming.course.dao;
+package com.kh.blueming.course.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,14 +7,11 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.course.model.vo.Course;
 
 @Repository
 public class CourseDao {
-
-    public int selectListCount(SqlSessionTemplate sqlSession) {
-        return sqlSession.selectOne("courseMapper.selectListCount");
-    }
 
     public ArrayList<Course> selectCourseList(SqlSessionTemplate sqlSession,
                                               int currentPage,
@@ -30,5 +27,21 @@ public class CourseDao {
 
         return (ArrayList) sqlSession.selectList("courseMapper.selectCourseList", map, rowBounds);
     }
+    
+    public Course selectCourse(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.selectOne("courseMapper.selectCourse", courseId);
+	}
+    
+    public Attachment selectAttachment(SqlSessionTemplate sqlSession, int courseId) {
+    	return sqlSession.selectOne("courseMapper.selectAttachment", courseId);
+	}
+
+	public int addCourse(SqlSessionTemplate sqlSession, Course c) {
+		return sqlSession.insert("courseMapper.addCourse", c);
+	}
+
+	
+
+	
 
 }

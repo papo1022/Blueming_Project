@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>blueming</title>
 </head>
 <body>
 <h2>비밀번호 찾기</h2>
