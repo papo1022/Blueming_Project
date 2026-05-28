@@ -72,7 +72,11 @@ public class CourseController {
     	
         Course course = courseService.selectCourse(courseId);
 
+        // Attachment at =
+        courseService.selectAttachment(courseId);
+
         mv.addObject("course", course)
+            // .addObject("at",at);
         	.setViewName("course/courseDetailView");
         return mv;
     }

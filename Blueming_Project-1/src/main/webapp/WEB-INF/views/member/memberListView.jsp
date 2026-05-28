@@ -127,7 +127,7 @@
                     </c:when>
                     <c:otherwise>
                         <c:forEach var="member" items="${requestScope.list}">
-						    <tr align="center" onclick="goDetail(${member.memberId})">
+						    <tr align="center" onclick='goDetail("${member.memberId}")'>
 						        <td>${member.memberId}</td>
 						        
 						        <td>${member.deptName}</td>
@@ -157,7 +157,7 @@
         <br><br>
         
         
-        <form id="goInsertForm" action="/blueming/memberlist/insertForm" method="post" style="display:none;"><form></form>
+		<form id="goInsertForm" action="/blueming/memberlist/insertForm" method="post" style="display:none;"></form>
 	
 
 			<button type="button" class="btn-add-member" onclick="document.getElementById('goInsertForm').submit();">
@@ -172,7 +172,7 @@
                     <c:choose>
                         <c:when test="${requestScope.pi.currentPage > 1}">
                             <a href="javascript:void(0);" onclick="pageMove(1)">처음</a>
-                            <a href="javascript:void(0);" onclick="pageMove(${requestScope.pi.currentPage - 1})">이전</a>
+                            <a href="javascript:void(0);" onclick='pageMove("${requestScope.pi.currentPage - 1}")'>이전</a>
                         </c:when>
                         <c:otherwise>
                             <span class="disabled-btn">처음</span>
@@ -188,7 +188,7 @@
                                 <span style="color: red; font-weight: bold; background-color: #fff1f0; border-color: #ffa39e;">${p}</span>
                             </c:when>
                             <c:otherwise>
-                                <a href="javascript:void(0);" onclick="pageMove(${p})">${p}</a>
+                                <a href="javascript:void(0);" onclick='pageMove("${p}")'>${p}</a>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
@@ -197,8 +197,8 @@
                 <div class="page-side-right">
                     <c:choose>
                         <c:when test="${requestScope.pi.currentPage < requestScope.pi.maxPage}">
-                            <a href="javascript:void(0);" onclick="pageMove(${requestScope.pi.currentPage + 1})">다음</a>
-                            <a href="javascript:void(0);" onclick="pageMove(${requestScope.pi.maxPage})">마지막</a>
+                            <a href="javascript:void(0);" onclick='pageMove("${requestScope.pi.currentPage + 1}")'>다음</a>
+                            <a href="javascript:void(0);" onclick='pageMove("${requestScope.pi.maxPage}")'>마지막</a>
                         </c:when>
                         <c:otherwise>
                             <span class="disabled-btn">다음</span>

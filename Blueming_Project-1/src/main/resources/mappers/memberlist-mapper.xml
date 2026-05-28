@@ -77,46 +77,16 @@
     </if>
      <choose>
          <when test="sortColumn == 'STATUS'">
-             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3)
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3) ${sortOrder}
          </when>
          <when test="sortColumn == 'DEPARTMENT_ID' or sortColumn == 'DEPARTMENT_NAME'">
-             ORDER BY D.DEPARTMENT_NAME
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY D.DEPARTMENT_NAME ${sortOrder}
          </when>
          <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
-             ORDER BY M.POSITION_ID
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY M.POSITION_ID ${sortOrder}
          </when>
-         <when test="sortColumn == 'MEMBER_ID'">
-             ORDER BY M.MEMBER_ID
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
-         </when>
-         <when test="sortColumn == 'NAME'">
-             ORDER BY M.NAME
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
-         </when>
-         <when test="sortColumn == 'HIRE_DATE'">
-             ORDER BY M.HIRE_DATE
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+         <when test="sortColumn != null and sortColumn != ''">
+             ORDER BY M.${sortColumn} ${sortOrder}
          </when>
          <otherwise>
              ORDER BY M.MEMBER_ID DESC
@@ -167,46 +137,16 @@
      
      <choose>
          <when test="sortColumn == 'STATUS'">
-             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3)
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY DECODE(TRIM(UPPER(M.STATUS)), 'Y', 1, 'R', 2, 'N', 3) ${sortOrder}
          </when>
          <when test="sortColumn == 'DEPARTMENT_ID' or sortColumn == 'DEPARTMENT_NAME'">
-             ORDER BY D.DEPARTMENT_NAME
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY D.DEPARTMENT_NAME ${sortOrder}
          </when>
          <when test="sortColumn == 'POSITION_ID' or sortColumn == 'POSITION_NAME'">
-             ORDER BY M.POSITION_ID
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+             ORDER BY M.POSITION_ID ${sortOrder}
          </when>
-         <when test="sortColumn == 'MEMBER_ID'">
-             ORDER BY M.MEMBER_ID
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
-         </when>
-         <when test="sortColumn == 'NAME'">
-             ORDER BY M.NAME
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
-         </when>
-         <when test="sortColumn == 'HIRE_DATE'">
-             ORDER BY M.HIRE_DATE
-             <choose>
-                 <when test="sortOrder == 'ASC'">ASC</when>
-                 <otherwise>DESC</otherwise>
-             </choose>
+         <when test="sortColumn != null and sortColumn != ''">
+             ORDER BY M.${sortColumn} ${sortOrder}
          </when>
          <otherwise>
              ORDER BY M.MEMBER_ID DESC

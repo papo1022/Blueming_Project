@@ -28,12 +28,14 @@ public class MemberListService {
     public MemberList selectMemberDetail(int memberId) { return memlistDao.selectMemberDetail(sqlSession, memberId); }
     public int updateMember(MemberList member) { return memlistDao.updateMember(sqlSession, member); }
     
-    // --- [추가] 사원 추가 기능 ---
+    // --- [추가] 사원 추가 기능 (암호화 적용) ---
     @Autowired
     private org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder bcryptPasswordEncoder;
 
     public int insertMember(MemberList member) {
-        member.setLoginPwd(bcryptPasswordEncoder.encode(member.getLoginPwd()));
+        String encPwd = bcryptPasswordEncoder.encode("1111");   // 실적용시 수정 필요
+        member.setLoginPwd(encPwd);
+        // member.setLoginPwd(bcryptPasswordEncoder.encode(member.getLoginPwd()));   // 실제로는 회원이 입력한 비밀번호를 암호화하여 저장해야 함
         return memlistDao.insertMember(sqlSession, member);
     }
     
