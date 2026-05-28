@@ -89,8 +89,8 @@
             <form id="search-form" action="/blueming/memberlist/search" method="post">
 				<select name="condition">
 				    <option value="memberId" ${requestScope.condition == 'memberId' ? 'selected' : ''}>사원번호</option>
-				    <option value="deptId" ${requestScope.condition == 'deptName' ? 'selected' : ''}>부서</option>
-				    <option value="positionId" ${requestScope.condition == 'positionName' ? 'selected' : ''}>직급</option>
+				    <option value="deptId" ${requestScope.condition == 'deptId' ? 'selected' : ''}>부서</option>
+				    <option value="positionId" ${requestScope.condition == 'positionId' ? 'selected' : ''}>직급</option>
 				    <option value="name" ${requestScope.condition == 'name' ? 'selected' : ''}>이름</option>
 				    <option value="status" ${requestScope.condition == 'status' ? 'selected' : ''}>상태(재직/휴직/퇴사)</option>
     			</select>
@@ -110,7 +110,7 @@
             <thead>
                 <tr>
                     <th onclick="clickSort('MEMBER_ID')">사원번호 ${requestScope.sortColumn == 'MEMBER_ID' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
-                    <th onclick="clickSort('DEPARTMENT_ID')">부서 ${requestScope.sortColumn == 'DEPARTMENT_NAME' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
+                    <th onclick="clickSort('DEPARTMENT_ID')">부서 ${requestScope.sortColumn == 'DEPARTMENT_ID' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
                     <th onclick="clickSort('POSITION_ID')">직급 ${requestScope.sortColumn == 'POSITION_ID' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
                     <th onclick="clickSort('NAME')">이름 ${requestScope.sortColumn == 'NAME' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
 					<th onclick="clickSort('STATUS')">상태 ${requestScope.sortColumn == 'STATUS' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>
