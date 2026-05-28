@@ -14,9 +14,10 @@
 		<result column="HIRE_DATE" property="hireDate" />
 		<result column="RETIRE_DATE" property="retireDate" />
 		<result column="DEPARTMENT_ID" property="departmentId" />
-		<result column="POSITION_ID" property="postionId" />
+		<result column="POSITION_ID" property="positionId" />
 		<result column="ROLE" property="role" />
-		<result column="PWD_RESET_DATE" property="passwordResetDate" />
+		<result column="LEAVE_START_DATE" property="leaveStartDate" />
+		<result column="LEAVE_END_DATE" property="leaveEndDate" />
 	</resultMap>
 	
 	<select id="loginMember" parameterType="member" 

@@ -28,7 +28,8 @@ public class Member {
 	private String departmentId;						//	DEPARTMENT_ID	VARCHAR2(3 BYTE)
 	private String positionId;							//	POSITION_ID	VARCHAR2(3 BYTE)
 	private String role;								//	ROLE	VARCHAR2(1 BYTE)
-	private Date pwdResetDate;							//	PWD_RESET_DATE	DATE
+	private Integer leaveStartDate;				//	LEAVE_START_DATE	NUMBER
+	private Integer leaveEndDate;					//	LEAVE_END_DATE	NUMBER
 	
 	
 	
