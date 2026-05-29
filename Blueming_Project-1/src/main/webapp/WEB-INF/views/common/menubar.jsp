@@ -47,6 +47,7 @@
                 <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
                 <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
                 <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">EnrollMemList</a></div>
                 
             </div>
         </c:otherwise>
