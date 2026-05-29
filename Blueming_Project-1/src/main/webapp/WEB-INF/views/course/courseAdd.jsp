@@ -16,22 +16,39 @@
         height : 300px;
         resize : none;
     }
+    
+    input[type="date"] {
+        width : 80%;
+    }
+
 </style>
 </head>
 <body>
 
-    <jsp:include page="../common/menubar.jsp" />
+    <jsp:include page="../common/mainMenubar.jsp" />
 
-    <h1>강의 등록</h1>
+    <h1 align="center">강의 등록</h1>
 
     <form action="addCourse" align="center" method="post">
-        <!--<input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>-->
-        <input type="hidden" name="memberId" value="1"><br>
-        * 강의명 <input type="text" name="courseTitle" id="courseTitle" required><br>
-        * 강의 설명 <textarea name="description" id="description" required></textarea><br>
-        * 강의 시작 시간 <input type="date" name="startDate" required><br>
-        * 강의 마감 시간 <input type="date" name="endDate" required><br>
-
+        <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
+        <table class="table">
+            <tr>
+                <td>* 강의명</td>
+                <td><input type="text" name="courseTitle" id="courseTitle" required></td>
+            </tr>
+            <tr>
+                <td>* 강의 설명</td>
+                <td><textarea name="description" id="description" required></textarea></td>
+            </tr>
+            <tr>
+                <td>* 강의 시작 시간</td>
+                <td><input type="date" name="startDate" required></td>
+            </tr>
+            <tr>
+                <td>* 강의 마감 시간</td>
+                <td><input type="date" name="endDate" required></td>
+            </tr> 
+        </table>
 
         <br><br>
         <div class="buttons" align="center">

@@ -109,7 +109,7 @@
 </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp" />
+    <jsp:include page="../common/mainMenubar.jsp" />
 
     <div class="outer">
         <br>
@@ -137,7 +137,7 @@
 
         <c:if test="${sessionScope.loginUser.role eq 'S' }">
             <div align="left" style="width:90%">
-                <a href="/blueming/course/enrollForm" class="btn btn-primary">강의 등록</a>
+                <a href="/blueming/course/addCourseView" class="btn btn-primary">강의 등록</a>
                 <!-- todo -->
                 <br><br>
             </div>

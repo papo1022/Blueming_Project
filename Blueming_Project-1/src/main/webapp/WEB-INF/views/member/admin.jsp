@@ -7,11 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<jsp:include page="../index.jsp" />
-		<br><br>
-	<h1 align="center" style="color : red;">
-		${ requestScope.errorMsg }
-	</h1>
+
+	<jsp:include page="../common/mainMenubar.jsp" />
 
 </body>
 </html>
