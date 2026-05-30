@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.blueming.member.model.service.MemberService;
 import com.kh.blueming.member.model.vo.Member;
@@ -111,5 +112,15 @@ public class MemberController {
 		
 		return "redirect:/";
 		
+	}
+	
+	@GetMapping("myPage")
+	public ModelAndView myPage(ModelAndView mv) {
+		
+		
+		mv.setViewName("member/myPage");
+		
+		
+		return mv;
 	}
 }
