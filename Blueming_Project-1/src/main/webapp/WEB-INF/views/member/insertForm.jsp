@@ -19,17 +19,43 @@
 <body>
     <div class="insert-container">
         <h2>사원 추가</h2>
-        <form action="/blueming/memberlist/insertForm" method="post">
+        <form action="/blueming/memberlist/insert" method="post">
             
             <div class="insert-row">
-                <div class="insert-label">이름</div>
-                <div class="insert-value"><input type="text" name="name" required></div>
-            </div>
+			    <div class="insert-label">사원번호</div>
+			    <div class="insert-value"><input type="text" name="memberId" required></div>
+			</div>
             
             <div class="insert-row">
                 <div class="insert-label">로그인ID</div>
                 <div class="insert-value"><input type="text" name="loginId" required></div>
             </div>
+            
+            <div class="insert-row">
+			    <div class="insert-label">비밀번호</div>
+			    <div class="insert-value"><input type="password" name="loginPwd" required></div>
+			</div>
+			
+			<div class="insert-row">
+                <div class="insert-label">이름</div>
+                <div class="insert-value"><input type="text" name="name" required></div>
+            </div>
+			
+			<div class="insert-row">
+			    <div class="insert-label">이메일</div>
+			    <div class="insert-value"><input type="email" name="email" required></div>
+			</div>
+			
+			<div class="insert-row">
+			    <div class="insert-label">전화번호</div>
+			    <div class="insert-value"><input type="tel" name="phone" placeholder="010-1234-5678" required></div>
+			</div>
+			
+			<div class="insert-row">
+			    <div class="insert-label">주소</div>
+			    <div class="insert-value"><input type="text" name="address" required></div>
+			</div>
+			
             
             <div class="insert-row">
                 <div class="insert-label">부서</div>
@@ -57,16 +83,30 @@
             </div>
             
             <div class="insert-row">
+                <div class="insert-label">권한코드</div>
+                <div class="insert-value">
+                    <select name="role">
+                        <option value="N">사원</option>
+                        <option value="S">관리자</option>
+                        <option value="R">인사</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="insert-row">
                 <div class="insert-label">입사일</div>
                 <div class="insert-value"><input type="date" name="hireDate" required></div>
             </div>
 
-            <div class="btn-group">
-                <form action="insert" method="post">
-   					 <button type="submit">등록</button>
-				</form>
-                <button type="button" class="btn" onclick="history.back()">취소</button>
-            </div>
+            
+                <div class="btn-group">
+             
+			        <button type="submit" class="btn btn-primary">등록</button>
+			        <button type="button" class="btn" onclick="history.back()">취소</button>
+   			    </div>
+
+			
+     	
         </form>
     </div>
 </body>

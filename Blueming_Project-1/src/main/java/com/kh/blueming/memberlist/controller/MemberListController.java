@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,8 @@ public class MemberListController {
 	
 	@Autowired
 	private MemberListService memlistService;
+	
+
 	
 	// 기본 목록 조회 (메뉴바 클릭 시 첫 진입은 GET 유지) - /blueming/memberlist
 	@GetMapping
@@ -146,11 +149,38 @@ public class MemberListController {
 		    return "member/insertForm"; // JSP 이름
 		}
 
+	
 		// 2. 데이터를 받아서 저장하는 역할
 		@PostMapping("/insert")
 		public String insertMember(MemberList member, RedirectAttributes rttr) {
-		    memlistService.insertMember(member);
-		    return "redirect:/memberlist"; // 저장 후 목록으로 이동
+		    
+			
+		    // 서비스에서 암호화를 처리하므로, 컨트롤러는 결과값만 받아 처리합니다.
+		    int result = memlistService.insertMember(member);
+		    
+		    // 처리 결과에 따라 메시지 설정
+		    if(result > 0) {
+		        rttr.addFlashAttribute("alertMsg", "사원 추가가 완료되었습니다.");
+		        return "redirect:/memberlist"; // 저장 후 목록으로 이동
+		    } else {
+		        rttr.addFlashAttribute("alertMsg", "사원 추가에 실패하였습니다.");
+		   
+		        return "redirect:/memberlist/insertForm";
+		    }
+		    
+		   
+		}
+		
+		@PostMapping("/delete")
+		public String deleteMember(int memberId, RedirectAttributes rttr) {
+		    int result = memlistService.deleteMember(memberId);
+		    
+		    if(result > 0) {
+		        rttr.addFlashAttribute("alertMsg", "사원 정보가 삭제되었습니다.");
+		    } else {
+		        rttr.addFlashAttribute("alertMsg", "삭제 실패하였습니다.");
+		    }
+		    return "redirect:/memberlist";
 		}
 		
 		

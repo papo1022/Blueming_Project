@@ -4,14 +4,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>blueming</title>
+<title>Insert title here</title>
 </head>
 <body>
-
-	<jsp:include page="menubar.jsp" />
-
-	<br><br>
-	
+	<jsp:include page="../index.jsp" />
+		<br><br>
 	<h1 align="center" style="color : red;">
 		${ requestScope.errorMsg }
 	</h1>

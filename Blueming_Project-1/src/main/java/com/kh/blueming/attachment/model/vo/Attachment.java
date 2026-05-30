@@ -16,7 +16,7 @@ import lombok.ToString;
 public class Attachment {
 	private int fileId;
 	private String originalName;
-	private String changeName;
+	private String changedName;
 	private String filePath;
 	private int fileSize;
 	private String type;

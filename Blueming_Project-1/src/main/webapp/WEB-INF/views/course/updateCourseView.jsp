@@ -21,37 +21,41 @@
         height : 300px;
         resize : none;
     }
-
-    #chapterTitle{
+    
+    input[type="date"] {
         width : 80%;
     }
+
 </style>
 </head>
 <body>
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    <br><br>
-    <h1 align="center">챕터 추가</h1>
-    <br><br>
-
-    <div class="outer" id="detail-area">
-        <form action="addChapter" align="center" method="post" enctype="multipart/form-data">
+    <h1 align="center">강의 등록</h1>
+    
+    <div class="outer">
+        <form action="addCourse" align="center" method="post">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
             <table class="table">
                 <tr>
-                    <td>챕터 번호</td>
-                    <td><input type="number" name="chapterOrder" value="${nextOrder}" required readonly ></td>
+                    <td>* 강의명</td>
+                    <td><input type="text" name="courseTitle" id="courseTitle" value={required></td>
                 </tr>
                 <tr>
-                    <td>* 챕터명 </td>
-                    <td><input type="text" name="chapterTitle" id="chapterTitle" required></td>
+                    <td>* 강의 설명</td>
+                    <td><textarea name="description" id="description" required></textarea></td>
                 </tr>
                 <tr>
-                    <td>동영상 첨부파일</td>
-                    <td><input type="file" accept="video/*" name="video"></td>
+                    <td>* 강의 시작 시간</td>
+                    <td><input type="date" name="startDate" required></td>
                 </tr>
+                <tr>
+                    <td>* 강의 마감 시간</td>
+                    <td><input type="date" name="endDate" required></td>
+                </tr> 
             </table>
+
             <br><br>
             <div class="buttons" align="center">
                 <button type="submit" class="btn btn-primary">등록하기</button>
@@ -59,7 +63,5 @@
             </div>
         </form>
     </div>
-
-    
 </body>
 </html>

@@ -8,6 +8,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.blueming.attachment.model.vo.Attachment;
+import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.course.model.vo.Course;
 
 @Repository
@@ -35,13 +36,29 @@ public class CourseDao {
     public Attachment selectAttachment(SqlSessionTemplate sqlSession, int courseId) {
     	return sqlSession.selectOne("courseMapper.selectAttachment", courseId);
 	}
+    
+    public ArrayList<Chapter> selectChapterList(SqlSessionTemplate sqlSession, int courseId) {
+    	return (ArrayList)sqlSession.selectList("courseMapper.selectChapterList", courseId);
+	}
+    
+    public Chapter selectChapter(SqlSessionTemplate sqlSession, int chapterId) {
+		return sqlSession.selectOne("courseMapper.selectChapter", chapterId);
+	}
 
 	public int addCourse(SqlSessionTemplate sqlSession, Course c) {
 		return sqlSession.insert("courseMapper.addCourse", c);
 	}
 
+	public int nextOrder(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.selectOne("courseMapper.nextOrder", courseId);
+	}
 	
-
-	
+//	public int addChapter(SqlSessionTemplate sqlSession, Chapter ch) {
+//		return sqlSession.insert("courseMapper.addChapter", ch);
+//	}
+//
+//	public int addAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+//		return sqlSession.insert("courseMapper.addAttachment", at);
+//	}
 
 }

@@ -7,22 +7,26 @@
 <head>
 <meta charset="UTF-8">
 <title>blueming</title>
+<style>
+    .outer {
+        width : 90%;
+        margin : 0 auto;
+    }
+    #chapter-area>tbody>tr:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
 
-    <jsp:include page="../common/menubar.jsp" />
+    <jsp:include page="../common/mainMenubar.jsp" />
 
     <div class="outer">
 
         <br>
         <h2 align="center">강의 상세조회</h2>
         <br>
-
-        <!-- 관리자에게만 보이는 버튼-->
-        <button class="btn btn-primary" onclick="chapterAdd();">
-            챕터 추가
-        </button>
-        <br><br>
 
         <table id="detail-area" class="table">
             <tr>
@@ -73,24 +77,43 @@
 
         <h2 align="center">챕터 리스트</h2>
         <br><br>
+
+        <!-- 관리자에게만 보이는 버튼-->
+        <div align="center">
+            <button class="btn btn-primary" onclick="chapterAdd();">
+                챕터 추가
+            </button>
+            <button class="btn btn-secondary" onclick="chapterUpdate();">
+                강의 수정
+            </button>
+            <button class="btn btn-warning" onclick="">
+                강의 환경설정
+            </button>
+            <button class="btn btn-danger" onclick="">
+                강의 삭제
+            </button>
+        </div>
+        <br><br>
+
         <table id="chapter-area" class="table">
-
-            <tr>
-                <th width="10%">번호</th>
-                <th width="40%">제목</th>
-                <th width="30%">그래프</th>
-                <th width="10%">이수률</th>
-            </tr>
-
-            <c:forEach var="ch" items="${requestScope.at}">
+            <thead>
                 <tr>
-                    <td>${ch.chapterId}</td>
-                    <td>${ch.chapterTitle}</td>
-                    <td>이수률 막대그래프</td>
-                    <td>n%</td>
+                    <th width="10%">챕터</th>
+                    <th width="40%">제목</th>
+                    <th width="30%">그래프</th>
+                    <th width="10%">이수률</th>
                 </tr>
-            </c:forEach>
-
+            </thead>
+            <tbody>
+                <c:forEach var="ch" items="${chapterList}">
+                    <tr>
+                        <td>${ch.chapterOrder}</td>
+                        <td>${ch.chapterTitle}</td>
+                        <td>이수률 막대그래프</td>
+                        <td>n%</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
         </table>
 
     </div>
@@ -99,6 +122,19 @@
         function chapterAdd(){
             location.href = "addChapterView?courseId=${course.courseId}";
         }
+
+        function courseUpdate(){
+            location.href = "updateCourserView?courseId=${course.courseId}";
+        }
+
+        $(function() {
+            //tr 요소 클릭시 이벤트 부여
+            $("#chapter-area>tbody>tr").click(function() {
+                let bno = $(this).children().eq(0).text();
+                
+                location.href = "chapterDetailView?chapterId=" + bno;
+            });
+        });
     </script>
 </body>
 </html>

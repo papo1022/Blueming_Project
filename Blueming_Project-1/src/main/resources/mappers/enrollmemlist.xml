@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="enrollmemlistMapper">
+
+			<resultMap id="enrollMap" type="map">
+			    <result column="ENROLLMENT_ID" property="enrollmentId" />
+			    <result column="MEMBER_ID"     property="memberId" />
+			    <result column="COURSE_ID"     property="courseId" />
+			    <result column="STATUS"        property="status" />
+			    <result column="START_DATE"    property="startDate" />
+			    <result column="COMPLETED_DATE" property="completedDate" />
+			    
+			    <result column="NAME"   property="Name" />
+			    <result column="COURSE_TITLE"  property="courseTitle" />
+			</resultMap>
+	
+    <select id="selectListCount" resultType="int">
+        SELECT COUNT(*) FROM ENROLLMENT
+    </select>
+
+    <select id="selectSearchCount" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*)
+        FROM ENROLLMENT E
+        JOIN MEMBER M ON E.MEMBER_ID = M.MEMBER_ID
+        JOIN COURSE C ON E.COURSE_ID = C.COURSE_ID
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="condition == 'name'"> AND M.NAME LIKE '%' || #{keyword} || '%' </when>
+                <when test="condition == 'course'"> AND C.COURSE_TITLE LIKE '%' || #{keyword} || '%' </when>
+            </choose>
+        </if>
+    </select>
+
+    <select id="selectEnrollmentList" resultType="map">
+        SELECT 
+            E.ENROLLMENT_ID, 
+            E.MEMBER_ID, 
+            E.COURSE_ID, 
+            M.NAME AS MEMBER_NAME, 
+            C.COURSE_TITLE,
+            E.STATUS,
+            TO_CHAR(E.START_DATE, 'YYYY-MM-DD') AS START_DATE
+        FROM ENROLLMENT E
+        JOIN MEMBER M ON E.MEMBER_ID = M.MEMBER_ID
+        JOIN COURSE C ON E.COURSE_ID = C.COURSE_ID
+        ORDER BY E.ENROLLMENT_ID DESC
+    </select>
+
+    <select id="searchEnrollmentList" parameterType="hashmap" resultType="map">
+        SELECT 
+            E.ENROLLMENT_ID, 
+            M.NAME AS MEMBER_NAME, 
+            C.COURSE_TITLE,
+            E.STATUS,
+            TO_CHAR(E.START_DATE, 'YYYY-MM-DD') AS START_DATE
+        FROM ENROLLMENT E
+        JOIN MEMBER M ON E.MEMBER_ID = M.MEMBER_ID
+        JOIN COURSE C ON E.COURSE_ID = C.COURSE_ID
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="condition == 'name'"> AND M.NAME LIKE '%' || #{keyword} || '%' </when>
+                <when test="condition == 'course'"> AND C.COURSE_TITLE LIKE '%' || #{keyword} || '%' </when>
+            </choose>
+        </if>
+        ORDER BY E.ENROLLMENT_ID DESC
+    </select>
+
+</mapper>
