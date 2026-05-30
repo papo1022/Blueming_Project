@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.blueming.member.model.service.MemberService;
 import com.kh.blueming.member.model.vo.Member;
@@ -53,6 +54,7 @@ public class MemberController {
 
 	    // 로그인 조회
 	    Member loginUser = memberService.loginMember(m);
+	    
 	    if(loginUser == null) {
 	    	System.out.println("[LOGIN][FAIL] user not found or inactive | loginId=" + m.getLoginId());
 	    }
@@ -77,13 +79,13 @@ public class MemberController {
 	        switch(loginUser.getRole()) {
 
 	            case "S":
-	                return "redirect:/admin/main";
+	            	return "member/admin";
 
 	            case "R":
-	                return "redirect:/hr/main";
+	                return "member/hr";
 
 	            case "N":
-	                return "redirect:/employee/main";
+	                return "member/employee";
 
 	            default:
 	                return "redirect:/";
@@ -96,5 +98,29 @@ public class MemberController {
 
 	        return "common/errorPage";
 	    }
+	}
+	
+	@GetMapping("logout")
+	public String logoutMember(HttpSession session) {
+		
+
+		session.removeAttribute("loginUser");
+		
+		
+		session.setAttribute("alertMsg", "성공적으로 로그아웃이 되었습니다.");
+		
+		
+		return "redirect:/";
+		
+	}
+	
+	@GetMapping("myPage")
+	public ModelAndView myPage(ModelAndView mv) {
+		
+		
+		mv.setViewName("member/myPage");
+		
+		
+		return mv;
 	}
 }
