@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.blueming.attachment.model.vo.Attachment;
+import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.course.model.dao.CourseDao;
 import com.kh.blueming.course.model.vo.Course;
 
@@ -24,6 +25,7 @@ public class CourseService {
         return courseDao.selectCourseList(sqlSession, currentPage, courseLimit, keyword, sort);
     }
     
+    
 	public Course selectCourse(int courseId) {
 		return courseDao.selectCourse(sqlSession, courseId);
 	}
@@ -32,9 +34,34 @@ public class CourseService {
 		return courseDao.selectAttachment(sqlSession, courseId);
 	}
 	
+	public ArrayList<Chapter> selectChapterList(int courseId) {
+		return courseDao.selectChapterList(sqlSession, courseId);
+	}
+	
+	public Chapter selectChapter(int chapterId) {
+		return courseDao.selectChapter(sqlSession, chapterId);
+	}
+	
 	@Transactional
 	public int addCourse(Course c) {
 		return courseDao.addCourse(sqlSession, c);
 	}
-    
+
+	public int nextOrder(int courseId) {
+		return courseDao.nextOrder(sqlSession, courseId);
+	}
+
+//	@Transactional
+//	public int addChapter(Chapter ch, Attachment at, int cnt) {
+//		
+//		int result1 = 1;
+//		if(cnt > 0) {
+//			result1 = courseDao.addAttachment(sqlSession, at);
+//			ch.setVideoFileId(at.getFileId());
+//		} else {
+//		}
+//		int result2 = courseDao.addChapter(sqlSession, ch);
+//		
+//		return result1*result2;
+//	}
 }

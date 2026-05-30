@@ -41,6 +41,7 @@
 		</choose>
 	</select>
 	
+	<!-- 코스 추가하기 -->
 	<insert id="addCourse" >
 		INSERT INTO COURSE(COURSE_ID,
 							COURSE_TITLE,
@@ -64,6 +65,7 @@
 							NULL)
 	</insert>
 	
+	<!-- 코스를 조회해서 상세정보 표기 -->
 	<select id="selectCourse" resultType="course" parameterType="map">
 		SELECT COURSE_ID AS courseId,
 				COURSE_TITLE AS courseTitle,
@@ -79,8 +81,79 @@
 		WHERE COURSE_ID = #{courseId}
 	</select>
 	
+	<!-- 챕터 리스트를 불러오기 -->
+	<select id="selectChapterList" resultType="chapter" parameterType="_int">
+		SELECT CHAPTER_ID AS chapterId,
+				COURSE_ID AS courseId,
+				CHAPTER_TITLE AS chapterTitle,
+				CHAPTER_ORDER AS chapterOrder,
+				VIDEO_FILE_ID AS videoFileId,
+				CREATE_DATE AS createDate,
+				UPDATED_DATE AS updatedDate
+		FROM CHAPTER 
+		WHERE COURSE_ID = #{courseId}
+	</select>
 	
+	<!-- 챕터 하나를 불러오기 -->
+	<select id="selectChapter" resultType="chapter" parameterType="map">
+		SELECT CHAPTER_ID AS chapterId,
+				COURSE_ID AS courseId,
+				CHAPTER_TITLE AS chapterTitle,
+				CHAPTER_ORDER AS chapterOrder,
+				VIDEO_FILE_ID AS videoFileId,
+				CREATE_DATE AS createDate,
+				UPDATED_DATE AS updatedDate
+		FROM CHAPTER 
+		WHERE CHAPTER_ID = #{chapterId}
+	</select>
 	
+	<!-- 챕터의 번호를 자동으로 지정해주는 코드 -->
+	<select id="nextOrder" resultType="_int" parameterType="_int">
+		SELECT NVL(MAX(CHAPTER_ORDER), 0) + 1
+		FROM CHAPTER
+		WHERE COURSE_ID = #{courseId}
+	</select>
+	
+	<!-- <insert id="addAttachment">
+		INSERT INTO ATTACHMENT (FILE_ID,
+								ORIGINAL_NAME,
+								CHANGED_NAME,
+								FILE_PATH,
+								FILE_SIZE,
+								TYPE,
+								VIDEO_DURATION,
+								MEMBER_ID,
+								STATUS,
+								UPLOAD_DATE)
+				VALUES ((SEQ_ANO.NEXTVAL),
+						#{originalName},
+						#{changedName},
+						#{filePath},
+						#{fileSize},
+						#{type},
+						NULL,
+						#{memberId},
+						'Y',
+						SYSDATE)
+	</insert>
+	
+	<insert id="addChapter">
+		INSERT INTO CHAPTER(CHAPTER_ID,
+							COURSE_ID,
+							CHAPTER_TITLE,
+							CHAPTER_ORDER,
+							VIDEO_FILE_ID,
+							CREATE_DATE,
+							UPDATED_DATE)
+					VALUES ((SEQ_CHNO.NEXTVAL),
+							#{courseId},
+							#{chapterTitle},
+							#{chapterOrder},
+							#{videoFileId},
+							SYSDATE,
+							SYSDATE)
+	</insert>
+	 -->
 </mapper>
 
 
