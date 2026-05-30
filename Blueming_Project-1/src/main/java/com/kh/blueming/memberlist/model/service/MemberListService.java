@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kh.blueming.common.model.vo.PageInfo;
@@ -20,26 +21,46 @@ public class MemberListService {
     @Autowired
     private MemberListDao memlistDao;
     
-    // --- 기존 기능들 ---
-    public int selectListCount() { return memlistDao.selectListCount(sqlSession); }
-    public ArrayList<MemberList> selectMemberList(PageInfo pi){ return memlistDao.selectMemberList(sqlSession,pi); }
-    public int selectSearchCount(HashMap<String,String> map) { return memlistDao.selectSearchCount(sqlSession,map); }
-    public ArrayList<MemberList> searchMemberList(HashMap<String, String> map, PageInfo pi) { return memlistDao.searchMemberList(sqlSession,map,pi); }
-    public MemberList selectMemberDetail(int memberId) { return memlistDao.selectMemberDetail(sqlSession, memberId); }
-    public int updateMember(MemberList member) { return memlistDao.updateMember(sqlSession, member); }
-    
-    // --- [추가] 사원 추가 기능 (암호화 적용) ---
     @Autowired
-    private org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder bcryptPasswordEncoder;
-
-    public int insertMember(MemberList member) {
-        String encPwd = bcryptPasswordEncoder.encode("1111");   // 실적용시 수정 필요
-        member.setLoginPwd(encPwd);
-        // member.setLoginPwd(bcryptPasswordEncoder.encode(member.getLoginPwd()));   // 실제로는 회원이 입력한 비밀번호를 암호화하여 저장해야 함
-        return memlistDao.insertMember(sqlSession, member);
+    private BCryptPasswordEncoder passwordEncoder; // 여기서 주입받아 사용
+    
+    // --- 기존 기능들 ---
+    public int selectListCount() { 
+    	return memlistDao.selectListCount(sqlSession); 
     }
+    public ArrayList<MemberList> selectMemberList(PageInfo pi){
+    	return memlistDao.selectMemberList(sqlSession,pi); 
+    	}
+    public int selectSearchCount(HashMap<String,String> map) {
+    	return memlistDao.selectSearchCount(sqlSession,map); 
+    	}
+    public ArrayList<MemberList> searchMemberList(HashMap<String, String> map, PageInfo pi) { 
+    	return memlistDao.searchMemberList(sqlSession,map,pi);
+    	}
+    public MemberList selectMemberDetail(int memberId) { 
+    	return memlistDao.selectMemberDetail(sqlSession, memberId); 
+    	}
+    public int updateMember(MemberList member) { 
+    	return memlistDao.updateMember(sqlSession, member); 
+    	}
     
+    	// 💡 사원 추가 메서드 추가
+    	// Service.java
+	    
+	
+	    public int insertMember(MemberList member) {
+	        // 1. 여기서 암호화 처리
+	        String encodedPwd = passwordEncoder.encode(member.getLoginPwd());
+	        member.setLoginPwd(encodedPwd);
+	        
+	        // 2. DAO로 전달
+	        return memlistDao.insertMember(sqlSession, member);
+	    }
+	    
+	    public int deleteMember(int memberId) {
+	        return memlistDao.deleteMember(sqlSession, memberId);
+	    }
+    	
     
-    
-    
+     	
 }
