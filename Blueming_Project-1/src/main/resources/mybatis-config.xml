@@ -25,6 +25,7 @@
 		<typeAlias type="com.kh.blueming.notice.model.vo.Notice" alias="notice" />
 		<typeAlias type="com.kh.blueming.assignment.model.vo.Assignment" alias="assignment" />
 		<typeAlias type="com.kh.blueming.attachment.model.vo.Attachment" alias="Attachment" />
+		<typeAlias type="com.kh.blueming.enrollmemlist.model.vo.EnrollMemList" alias="enrollmemlist" />
 	</typeAliases>
 	
 	<!-- 

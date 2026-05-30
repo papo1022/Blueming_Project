@@ -51,6 +51,7 @@
                 <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
                 <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
                 <!-- ASSIGNMENT는 주소 변경 필요 -->
+                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">EnrollMemList</a></div>
                 
             </div>
         </c:otherwise>

@@ -20,6 +20,7 @@
     <result column="LEAVE_START_DATE" property="leaveStartDate"/>
     <result column="LEAVE_END_DATE" property="leaveEndDate"/>
     <result column="RETIRE_DATE" property="retireDate"/>
+    <result column="ROLE" property="role"/>
   </resultMap>
 
   <select id="selectSearchCount" parameterType="hashmap" resultType="int">
@@ -203,7 +204,10 @@
         POSITION_ID, 
         HIRE_DATE, 
         STATUS,
-        EMAIL  ) VALUES (
+        EMAIL,
+        PHONE,
+        ADDRESS,
+        ROLE  ) VALUES (
         #{memberId}, 
         #{loginId}, 
         #{loginPwd}, 
@@ -212,8 +216,17 @@
         #{positionId}, 
         #{hireDate}, 
         'Y',
-        #{email}  )
-</insert>
+        #{email},
+        #{phone},
+        #{address},
+        #{role}  )
+	</insert>
+ 
+ 	<update id="deleteMember" parameterType="int">
+	    UPDATE MEMBER 
+	    SET STATUS = 'N' 
+	    WHERE MEMBER_ID = #{memberId}
+	</update>
  
 
 </mapper>

@@ -47,4 +47,9 @@ public class MemberListDao {
         // XML의 id를 확인하세요: memberlistMapper.insertMember
         return sqlSession.insert("memberlistMapper.insertMember", member);
     }
+
+	public int deleteMember(SqlSessionTemplate sqlSession, int memberId) {
+		
+		return sqlSession.update("memberlistMapper.deleteMember",memberId);
+	}
 }
