@@ -25,18 +25,53 @@
 			CREATE_DATE AS createDate,
 			UPDATED_DATE AS updatedDate
 		FROM COURSE
-		<if test="keyword != null and keyword != ''">
-		WHERE (
-				COURSE_TITLE LIKE '%' || #{keyword} || '%'
-				OR DESCRIPTION LIKE '%' || #{keyword} || '%'
-			)
-		</if>
+		<where>
+			<if test="isAdmin == null or isAdmin == false">
+				(
+					EXISTS (
+						SELECT 1
+						FROM COURSE_TARGET CT_MATCH
+						WHERE CT_MATCH.COURSE_ID = COURSE.COURSE_ID
+						  AND (
+							(
+								UPPER(CT_MATCH.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서')
+								AND CT_MATCH.TARGET_VALUE = #{departmentId}
+							)
+							OR (
+								UPPER(CT_MATCH.TARGET_TYPE) IN ('POS', 'POSITION', '직급')
+								AND CT_MATCH.TARGET_VALUE = #{positionId}
+							)
+						  )
+					)
+					OR (
+						NOT EXISTS (
+							SELECT 1
+							FROM COURSE_TARGET CT_SPEC
+							WHERE CT_SPEC.COURSE_ID = COURSE.COURSE_ID
+							  AND UPPER(CT_SPEC.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서', 'POS', 'POSITION', '직급')
+						)
+						AND EXISTS (
+							SELECT 1
+							FROM COURSE_TARGET CT_ALL
+							WHERE CT_ALL.COURSE_ID = COURSE.COURSE_ID
+							  AND UPPER(CT_ALL.TARGET_TYPE) IN ('ALL', '전체')
+						)
+					)
+				)
+			</if>
+			<if test="keyword != null and keyword != ''">
+				AND (
+					COURSE_TITLE LIKE '%' || #{keyword} || '%'
+					OR DESCRIPTION LIKE '%' || #{keyword} || '%'
+				)
+			</if>
+		</where>
 		<choose>
 			<when test="sort == 'oldest'">
-				ORDER BY STATUS DESC, CREATE_DATE ASC
+				ORDER BY STATUS DESC, CREATE_DATE DESC
 			</when>
 			<otherwise>
-				ORDER BY STATUS DESC, CREATE_DATE DESC
+				ORDER BY STATUS DESC, CREATE_DATE ASC
 			</otherwise>
 		</choose>
 	</select>

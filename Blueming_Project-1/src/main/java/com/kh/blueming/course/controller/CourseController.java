@@ -53,7 +53,8 @@ public class CourseController {
             @RequestParam(value = "page", defaultValue = "1") int currentPage,
             @RequestParam(value = "limit", defaultValue = "4") int courseLimit,
             @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "sort", defaultValue = "latest") String sort) {
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            HttpSession session) {
 
         if (currentPage < 1) {
             currentPage = 1;
@@ -67,7 +68,18 @@ public class CourseController {
             sort = "latest";
         }
 
-        return courseService.selectCourseList(currentPage, courseLimit, keyword, sort);
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        String departmentId = (loginUser != null) ? loginUser.getDepartmentId() : null;
+        String positionId = (loginUser != null) ? loginUser.getPositionId() : null;
+        boolean isAdmin = loginUser != null && "S".equals(loginUser.getRole());
+
+        return courseService.selectCourseList(currentPage,
+                                              courseLimit,
+                                              keyword,
+                                              sort,
+                                              departmentId,
+                                              positionId,
+                                              isAdmin);
     }
     
     //카드를 누르면 상세설명 페이지로 이동

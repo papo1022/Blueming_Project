@@ -110,6 +110,7 @@
 </head>
 <body>
     <jsp:include page="../common/mainMenubar.jsp" />
+    <jsp:include page="../common/dateFormatUtil.jsp" />
 
     <div class="outer">
         <br>
@@ -194,12 +195,6 @@
             return desc.length > 40 ? desc.substring(0, 40) + "..." : desc;
         }
 
-        function formatDateOnly(value) {
-            if (!value) return "";
-            const str = String(value);
-            return str.includes("T") ? str.split("T")[0] : str;
-        }
-
         function appendCourseCards(list) {
             let resultStr = "";
 
@@ -207,8 +202,8 @@
                 const course = list[i];
                 const title = escapeHtml(course.courseTitle);
                 const description = escapeHtml(cutDescription(course.description));
-                const startDate = formatDateOnly(course.startDate);
-                const endDate = formatDateOnly(course.endDate);
+                const startDate = formatDateOnlyKst(course.startDate);
+                const endDate = formatDateOnlyKst(course.endDate);
                 const period = escapeHtml(startDate + " ~ " + endDate + " (" + (course.status || "") + ")");
                 const totalHours = escapeHtml(String(course.totalHours == null ? "" : course.totalHours));
 

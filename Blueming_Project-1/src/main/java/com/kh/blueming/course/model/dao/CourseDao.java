@@ -18,10 +18,16 @@ public class CourseDao {
                                               int currentPage,
                                               int courseLimit,
                                               String keyword,
-                                              String sort) {
-        HashMap<String, String> map = new HashMap<>();
+                                              String sort,
+                                              String departmentId,
+                                              String positionId,
+                                              boolean isAdmin) {
+        HashMap<String, Object> map = new HashMap<>();
         map.put("keyword", keyword);
         map.put("sort", sort);
+        map.put("departmentId", departmentId);
+        map.put("positionId", positionId);
+        map.put("isAdmin", isAdmin);
 
         int offset = (currentPage - 1) * courseLimit;
         RowBounds rowBounds = new RowBounds(offset, courseLimit);

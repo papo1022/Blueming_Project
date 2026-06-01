@@ -21,8 +21,21 @@ public class CourseService {
     @Autowired
     private CourseDao courseDao;
     
-    public ArrayList<Course> selectCourseList(int currentPage, int courseLimit, String keyword, String sort) {
-        return courseDao.selectCourseList(sqlSession, currentPage, courseLimit, keyword, sort);
+	public ArrayList<Course> selectCourseList(int currentPage,
+											  int courseLimit,
+											  String keyword,
+											  String sort,
+											  String departmentId,
+											  String positionId,
+											  boolean isAdmin) {
+		return courseDao.selectCourseList(sqlSession,
+										  currentPage,
+										  courseLimit,
+										  keyword,
+										  sort,
+										  departmentId,
+										  positionId,
+										  isAdmin);
     }
     
     
