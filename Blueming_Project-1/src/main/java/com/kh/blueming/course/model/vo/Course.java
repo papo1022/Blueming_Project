@@ -24,4 +24,6 @@ public class Course {
     private int totalHours; // 총 강의 시간
     private Date createDate; // 강의 생성일
     private Date updatedDate; // 강의 수정일
+    
+    private String name;
 }

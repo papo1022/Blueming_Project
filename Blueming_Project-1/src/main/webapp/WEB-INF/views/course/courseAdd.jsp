@@ -29,7 +29,7 @@
 
     <h1 align="center">강의 등록</h1>
 
-    <form action="addCourse" align="center" method="post">
+    <form action="addCourse" align="center" method="post" onsubmit="return validateForm();">
         <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
         <table class="table">
             <tr>
@@ -56,5 +56,18 @@
             <button type="reset" class="btn btn-warning">초기화</button>
         </div>
     </form>
+
+    <script>
+        function validateForm() {
+            const startDate = new Date(document.querySelector('input[name="startDate"]').value);
+            const endDate = new Date(document.querySelector('input[name="endDate"]').value);
+            
+            if (startDate > endDate) {
+                alert("강의 시작 날짜는 마감 날짜보다 이전이어야 합니다.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>

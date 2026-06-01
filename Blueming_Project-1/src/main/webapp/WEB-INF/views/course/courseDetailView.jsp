@@ -39,7 +39,7 @@
             </tr>
             <tr>
                 <th>작성자</th>
-                <td>${ requestScope.course.memberId }</td>
+                <td>${ requestScope.course.name }</td>
             </tr>
             <tr>
                 <th>총 수업 시간</th>
@@ -80,18 +80,23 @@
 
         <!-- 관리자에게만 보이는 버튼-->
         <div align="center">
-            <button class="btn btn-primary" onclick="chapterAdd();">
-                챕터 추가
-            </button>
-            <button class="btn btn-secondary" onclick="chapterUpdate();">
-                강의 수정
-            </button>
-            <button class="btn btn-warning" onclick="">
-                강의 환경설정
-            </button>
-            <button class="btn btn-danger" onclick="">
-                강의 삭제
-            </button>
+            <form>
+                <button type="button" class="btn btn-primary" onclick="chapterAdd();">
+                    챕터 추가
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="courseUpdate();">
+                    강의 수정
+                </button>
+                <button type="button"class="btn btn-warning" onclick="">
+                    강의 환경설정
+                </button>
+            </form>
+            <form id="deleteForm" action="deleteCourse" method="post">
+                <input type="hidden" name="courseId" value="${course.courseId}">
+                <button type="button" class="btn btn-danger" onclick="courseDelete();">
+                    강의 삭제
+                </button>
+            </form>
         </div>
         <br><br>
 
@@ -107,6 +112,7 @@
             <tbody>
                 <c:forEach var="ch" items="${chapterList}">
                     <tr>
+                        <td style="display:none;">${ch.chapterId}</td>
                         <td>${ch.chapterOrder}</td>
                         <td>${ch.chapterTitle}</td>
                         <td>이수률 막대그래프</td>
@@ -124,17 +130,22 @@
         }
 
         function courseUpdate(){
-            location.href = "updateCourserView?courseId=${course.courseId}";
+            location.href = "updateCourseView?courseId=${course.courseId}";
         }
 
         $(function() {
             //tr 요소 클릭시 이벤트 부여
             $("#chapter-area>tbody>tr").click(function() {
-                let bno = $(this).children().eq(0).text();
-                
-                location.href = "chapterDetailView?chapterId=" + bno;
+                let chno = $(this).children().eq(0).text();
+                location.href = "chapterDetailView?chapterId=" + chno;
             });
         });
+
+        function courseDelete(){
+            if(confirm("정말로 강의를 삭제하시겠습니까?")){
+                document.getElementById("deleteForm").submit();
+            }
+        }
     </script>
 </body>
 </html>

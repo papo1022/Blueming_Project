@@ -98,22 +98,24 @@
 							(#{endDate} - #{startDate}) * 24,
 							SYSDATE,
 							NULL)
+			
 	</insert>
 	
 	<!-- 코스를 조회해서 상세정보 표기 -->
 	<select id="selectCourse" resultType="course" parameterType="map">
-		SELECT COURSE_ID AS courseId,
-				COURSE_TITLE AS courseTitle,
-				DESCRIPTION AS description,
-				MEMBER_ID AS memberId,
-				STATUS AS status,
-				START_DATE AS startDate,
-				END_DATE AS endDate,
-				TOTAL_HOURS AS totalHours,
-				CREATE_DATE AS createDate,
-				UPDATED_DATE AS updatedDate
-		FROM COURSE
-		WHERE COURSE_ID = #{courseId}
+		SELECT C.COURSE_ID AS courseId,
+				C.COURSE_TITLE AS courseTitle,
+				C.DESCRIPTION AS description,
+				M.NAME AS name,
+				C.STATUS AS status,
+				C.START_DATE AS startDate,
+				C.END_DATE AS endDate,
+				C.TOTAL_HOURS AS totalHours,
+				C.CREATE_DATE AS createDate,
+				C.UPDATED_DATE AS updatedDate
+		FROM COURSE C, MEMBER M
+		WHERE C.MEMBER_ID = M.MEMBER_ID
+		AND COURSE_ID = #{courseId}
 	</select>
 	
 	<!-- 챕터 리스트를 불러오기 -->
@@ -149,30 +151,36 @@
 		WHERE COURSE_ID = #{courseId}
 	</select>
 	
-	<!-- <insert id="addAttachment">
-		INSERT INTO ATTACHMENT (FILE_ID,
-								ORIGINAL_NAME,
-								CHANGED_NAME,
-								FILE_PATH,
-								FILE_SIZE,
-								TYPE,
-								VIDEO_DURATION,
-								MEMBER_ID,
-								STATUS,
-								UPLOAD_DATE)
-				VALUES ((SEQ_ANO.NEXTVAL),
-						#{originalName},
-						#{changedName},
-						#{filePath},
-						#{fileSize},
-						#{type},
-						NULL,
-						#{memberId},
-						'Y',
-						SYSDATE)
+	<insert id="addAttachment">
+	<selectKey resultType="int" keyProperty="fileId" order="BEFORE">
+			SELECT SEQ_ANO.NEXTVAL FROM DUAL
+	</selectKey>
+	INSERT INTO ATTACHMENT (FILE_ID,
+							ORIGINAL_NAME,
+							CHANGED_NAME,
+							FILE_PATH,
+							FILE_SIZE,
+							TYPE,
+							VIDEO_DURATION,
+							MEMBER_ID,
+							STATUS,
+							UPLOAD_DATE)
+			VALUES (#{fileId},
+					#{originalName},
+					#{changedName},
+					#{filePath},
+					#{fileSize},
+					#{type},
+					NULL,
+					#{memberId},
+					'Y',
+					SYSDATE)
 	</insert>
 	
-	<insert id="addChapter">
+	<insert id="addChapterVideo">
+		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
+				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+		</selectKey>
 		INSERT INTO CHAPTER(CHAPTER_ID,
 							COURSE_ID,
 							CHAPTER_TITLE,
@@ -180,7 +188,7 @@
 							VIDEO_FILE_ID,
 							CREATE_DATE,
 							UPDATED_DATE)
-					VALUES ((SEQ_CHNO.NEXTVAL),
+					VALUES (#{chapterId},
 							#{courseId},
 							#{chapterTitle},
 							#{chapterOrder},
@@ -188,7 +196,43 @@
 							SYSDATE,
 							SYSDATE)
 	</insert>
-	 -->
+	
+	<insert id="addChapter">
+		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
+				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO COURSE(CHAPTER_ID,
+							COURSE_ID,
+							CHAPTER_TITLE,
+							CHAPTER_ORDER,
+							VIDEO_FILE_ID,
+							CREATE_DATE,
+							UPDATED_DATE)
+					VALUES (#{chapterId},
+							#{courseId},
+							#{chapterTitle},
+							#{chapterOrder},
+							NULL,
+							SYSDATE,
+							SYSDATE)
+	</insert>
+	
+	<update id="updateCourse">
+		UPDATE COURSE
+		SET COURSE_TITLE = #{courseTitle},
+			DESCRIPTION = #{description},
+			START_DATE = #{startDate},
+			END_DATE = #{endDate},
+			TOTAL_HOURS = (#{endDate} - #{startDate}) * 24,
+			UPDATED_DATE = SYSDATE
+		WHERE MEMBER_ID = #{memberId}
+		AND COURSE_ID = #{courseId}
+	</update>
+	
+	<delete id="deleteCourse">
+		DELETE FROM COURSE
+		WHERE COURSE_ID = #{courseId}
+	</delete>
 </mapper>
 
 

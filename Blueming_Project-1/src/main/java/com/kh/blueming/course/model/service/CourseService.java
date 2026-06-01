@@ -64,17 +64,32 @@ public class CourseService {
 		return courseDao.nextOrder(sqlSession, courseId);
 	}
 
-//	@Transactional
-//	public int addChapter(Chapter ch, Attachment at, int cnt) {
-//		
-//		int result1 = 1;
-//		if(cnt > 0) {
-//			result1 = courseDao.addAttachment(sqlSession, at);
-//			ch.setVideoFileId(at.getFileId());
-//		} else {
-//		}
-//		int result2 = courseDao.addChapter(sqlSession, ch);
-//		
-//		return result1*result2;
-//	}
+	@Transactional
+	public int addChapter(Chapter ch, Attachment at, int cnt) {
+		
+		int result1 = 1;
+		int result2 = 0;
+		if(cnt > 0) {
+			result1 = courseDao.addAttachment(sqlSession, at);
+			ch.setVideoFileId(at.getFileId());
+			System.out.println("courseId = " + ch.getCourseId());
+			System.out.println("videoFileId = " + ch.getVideoFileId());
+			result2 = courseDao.addChapterVideo(sqlSession, ch);
+		} else {
+			result2 = courseDao.addChapter(sqlSession, ch);
+		}
+		
+		
+		return result1*result2;
+	}
+
+	@Transactional
+	public int updateCourse(Course c) {
+		return courseDao.updateCourse(sqlSession, c);
+	}
+
+	@Transactional
+	public int deleteCourse(int courseId) {
+		return courseDao.deleteCourse(sqlSession, courseId);
+	}
 }
