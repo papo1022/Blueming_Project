@@ -136,8 +136,10 @@
 	    function goEdit() {
 	        document.getElementById("editForm").submit();
 	    }
+	 // memberListDetail.jsp
 	    function goList() {
-	        history.back(); 
+	        // history.back()은 세션 상태를 복원하지 못할 수 있음
+	        location.href = "${pageContext.request.contextPath}/memberlist";
 	    }
 	</script>
 </body>

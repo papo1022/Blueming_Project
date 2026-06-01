@@ -16,13 +16,15 @@ public class MemberListDao {
         return sqlSession.selectOne("memberlistMapper.selectListCount");
     }
     
-    public ArrayList<MemberList> selectMemberList(SqlSessionTemplate sqlSession, PageInfo pi) {
+ // MemberListDao.java
+    public ArrayList<MemberList> selectMemberList(SqlSessionTemplate sqlSession, PageInfo pi, HashMap<String, String> map) {
         int limit = pi.getBoardLimit();
         int offset = (pi.getCurrentPage() - 1) * limit;
         RowBounds rowBounds = new RowBounds(offset, limit);
-        return (ArrayList) sqlSession.selectList("memberlistMapper.selectMemberList", null, rowBounds);
+        
+        // 쿼리 호출 시 map을 전달
+        return (ArrayList) sqlSession.selectList("memberlistMapper.selectMemberList", map, rowBounds);
     }
-
     public int selectSearchCount(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
         return sqlSession.selectOne("memberlistMapper.selectSearchCount", map);
     }

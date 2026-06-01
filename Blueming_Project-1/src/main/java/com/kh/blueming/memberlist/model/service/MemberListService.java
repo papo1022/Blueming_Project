@@ -7,11 +7,13 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.memberlist.model.dao.MemberListDao;
 import com.kh.blueming.memberlist.model.vo.MemberList;
 
+@Transactional
 @Service
 public class MemberListService {
     
@@ -28,9 +30,11 @@ public class MemberListService {
     public int selectListCount() { 
     	return memlistDao.selectListCount(sqlSession); 
     }
-    public ArrayList<MemberList> selectMemberList(PageInfo pi){
-    	return memlistDao.selectMemberList(sqlSession,pi); 
-    	}
+ // MemberListService.java 에 추가/수정
+    public ArrayList<MemberList> selectMemberList(PageInfo pi, HashMap<String, String> map) {
+        // DAO로 맵과 pi를 함께 전달하도록 수정
+        return memlistDao.selectMemberList(sqlSession, pi, map);
+    }
     public int selectSearchCount(HashMap<String,String> map) {
     	return memlistDao.selectSearchCount(sqlSession,map); 
     	}

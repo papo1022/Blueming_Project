@@ -22,7 +22,13 @@ public class EnrollMemList {
 				private Date startDate;		//	START_DATE
 				private Date completedDate;		//	COMPLETED_DATE
 	
-				
+				private String Name;   // M.NAME
+			    private String courseTitle;  // C.COURSE_TITLE
+			    private String deptId;
+			    private String deptName;
+			    private String positionId;
+			    private String positionName;
+			    
 	
 
 }
