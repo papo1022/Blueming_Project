@@ -1,157 +1,91 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>notice 작성</title>
-
+<title>Insert title here</title>
 <style>
+	#update-form table {
+		margin : auto;
+		width : 90%;
+	}
 
-    body{
-        margin: 0;
-        padding: 30px;
-        background-color: #f5f6fa;
-        font-family: Arial, sans-serif;
-    }
-
-    .notice-wrap{
-        width: 900px;
-        margin: auto;
-        background-color: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-
-    .notice-title{
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 30px;
-    }
-
-    table{
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th{
-        width: 120px;
-        background-color: #f1f2f6;
-        text-align: center;
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    td{
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    input[type=text]{
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-sizing: border-box;
-        font-size: 14px;
-    }
-
-    textarea{
-        width: 100%;
-        height: 300px;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        resize: none;
-        box-sizing: border-box;
-        font-size: 14px;
-    }
-
-    .btn-area{
-        margin-top: 30px;
-        text-align: center;
-    }
-
-    button{
-        width: 120px;
-        padding: 12px;
-        border: none;
-        border-radius: 6px;
-        font-size: 15px;
-        cursor: pointer;
-        margin: 0 5px;
-    }
-
-    .submit-btn{
-        background-color: #3742fa;
-        color: white;
-    }
-
-    .cancel-btn{
-        background-color: #747d8c;
-        color: white;
-    }
-
+	#update-form input, #update-form textarea {
+		width : 100%;
+		padding : 5px;
+		margin : 5px;
+	}
+	#update-form textarea {
+		resize : none;
+		height : 300px;
+	}
 </style>
-
 </head>
 <body>
 
-    <div class="notice-wrap">
+	<jsp:include page="../common/mainMenubar.jsp" />
 
-        <div class="notice-title">
-            공지사항 수정
-        </div>
+	<div class="outer">
+		
+		<br>
+		<h2 align="center">공지사항 수정</h2>
+		<br>
+		
+		<!-- 
+			* 공지사항 수정 기능 구현
+			- 수정할 제목과 내용을 입력하고 수정하기 버튼을 클릭하면
+			  
+			  http://localhost:8006/myweb/notice/update 로 POST 방식으로 요청
+		-->
+		<form id="update-form" action="/blueming/notice/update" method="post">
 
-        <form action="${pageContext.request.contextPath}/notice/update" method="post">
+			<!--
+				* 공지사항 수정 시 제목과 내용을 입력받아서 수정해야함!!
+				- 눈에 보이지는 않지만 해당 수정할 공지사항의 글번호도 같이 넘겨줘야함!!
+				  (input type="hidden")
+			-->
+			
+			<input type="hidden" name="noticeId" value="${ requestScope.n.noticeId }">
+			
+			<table class="table">
+				<tr>
+					<th>제목</th>
+					<td>
+						<input type="text" name="noticeTitle"
+							   value="${ requestScope.n.noticeTitle }" required>
+					</td>
+				</tr>
+				<tr>
+					<th>내용</th>
+					<td>
+						<textarea name="content" 
+								  required>${ requestScope.n.content }</textarea>
+					</td>
+				</tr>
+			</table>
 
-            <input type="hidden" name="noticeId" value="${requestScope.n.noticeId}">
-            <table>
+			<br><br>
 
-                <tr>
-                    <th>제목</th>
-                    <td>
-                        <input 
-                            type="text" 
-                            name="noticeTitle"
-                            value="${requestScope.n.noticeTitle}"
-                            required
-                        >
-                    </td>
-                </tr>
+			<div align="center">
+				<button type="submit" class="btn btn-primary btn-sm">수정하기</button>
+				<button type="button" class="btn btn-secondary btn-sm"
+						onclick="history.back();">뒤로가기</button>
+			</div>
 
-                <tr>
-                    <th>내용</th>
-                    <td>
-                        <textarea 
-                            name="content"
-                            required
-                        >${requestScope.n.content}</textarea>
-                    </td>
-                </tr>
-
-            </table>
-
-            <div class="btn-area">
-
-                <button type="submit" class="submit-btn">
-                    수정
-                </button>
-
-                <button 
-                    type="reset"
-                    class="cancel-btn"
-                >
-                    초기화
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
+		</form>
+		
+		<br><br>
+		
+	</div>
+	
+	<br><br>
 
 </body>
 </html>
+
+
+
+
+
+
