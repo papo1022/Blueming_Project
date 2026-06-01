@@ -8,9 +8,25 @@ import com.kh.blueming.member.model.vo.Member;
 @Repository
 public class MemberDao {
 	
+
 public Member loginMember(SqlSessionTemplate sqlSession, Member m) {
-		
-		return sqlSession.selectOne("memberMapper.loginMember", m);
-	}
+	
+	return sqlSession.selectOne("memberMapper.loginMember", m);
+}
+
+public int updatePwd(SqlSessionTemplate sqlSession, Member m) {
+	
+	return sqlSession.update("memberMapper.updatePwd", m);
+}
+
+public int updateMember(SqlSessionTemplate sqlSession, Member m) {
+	
+	return sqlSession.update("memberMapper.updateMember", m);
+}
+
+public int deleteMember(SqlSessionTemplate sqlSession, String loginId) {
+	
+	return sqlSession.update("memberMapper.deleteMember", loginId);
+}
 
 }
