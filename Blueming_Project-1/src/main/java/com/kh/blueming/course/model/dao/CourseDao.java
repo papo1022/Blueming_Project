@@ -53,12 +53,29 @@ public class CourseDao {
 		return sqlSession.selectOne("courseMapper.nextOrder", courseId);
 	}
 	
-//	public int addChapter(SqlSessionTemplate sqlSession, Chapter ch) {
-//		return sqlSession.insert("courseMapper.addChapter", ch);
-//	}
-//
-//	public int addAttachment(SqlSessionTemplate sqlSession, Attachment at) {
-//		return sqlSession.insert("courseMapper.addAttachment", at);
-//	}
+	public int addChapter(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.insert("courseMapper.addChapter", ch);
+	}
+
+	public int addAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+		return sqlSession.insert("courseMapper.addAttachment", at);
+	}
+
+	public int addChapterVideo(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.insert("courseMapper.addChapterVideo", ch);
+	}
+
+	public int updateCourse(SqlSessionTemplate sqlSession, Course c) {
+		return sqlSession.update("courseMapper.updateCourse", c);
+	}
+
+	public int deleteCourse(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.update("courseMapper.deleteCourse", courseId);
+	}
+
+	public int deleteChapter(SqlSessionTemplate sqlSession, int courseId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

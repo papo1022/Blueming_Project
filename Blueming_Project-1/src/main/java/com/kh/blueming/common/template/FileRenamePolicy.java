@@ -32,7 +32,7 @@ public class FileRenamePolicy {
 		//applicationScope 내장객체로부터 저장할 경로 알아내기
 		//session으로부터 얻어낼 수 있음
 		String savePath = session.getServletContext()
-									.getRealPath("path");
+									.getRealPath(path);
 		// 앞의 /는 webapp 폴더를 나타내고, 뒤 /는 해당 폴더의 내부
 		
 		//경로와 수정파일 합체 후 파일 업로드

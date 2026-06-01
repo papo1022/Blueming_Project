@@ -38,6 +38,7 @@
     <div class="outer" id="detail-area">
         <form action="addChapter" align="center" method="post" enctype="multipart/form-data">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
+            <input type="hidden" name="courseId" value="${courseId}">
             <table class="table">
                 <tr>
                     <td>챕터 번호</td>
@@ -52,7 +53,7 @@
                     <td><input type="file" accept="video/*" name="video"></td>
                 </tr>
             </table>
-            <br><br>
+            <br><br> 
             <div class="buttons" align="center">
                 <button type="submit" class="btn btn-primary">등록하기</button>
                 <button type="reset" class="btn btn-warning">초기화</button>

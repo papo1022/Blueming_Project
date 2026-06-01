@@ -135,54 +135,109 @@ public class CourseController {
     	return mv;
     }
     
-//    //챕터를 데이터베이스에 추가하는 코드
-//    @PostMapping("addChapter")
-//    public String addChapter(Chapter ch, @RequestParam(value="video", required=false) MultipartFile video, Model model, HttpSession session) {
-//    	
-//    	Attachment at = new Attachment();
-//    	int cnt = 0;
-//    	
-//		if(video != null && !video.isEmpty()) {
-//			String replaceOriginalName = XssDefencePolicy.defence(at.getOriginalName());
-//	    	at.setOriginalName(replaceOriginalName);
-//	    	
-//			//파일명 수정
-//			String changeName = FileRenamePolicy.saveFile(video, session, 
-//								"/resources/video_upfiles/");
-//			
-//			//파일 확장자 검사
-//			String contentType = video.getContentType();
-//			
-//			//파일 크기 검사
-//			long size = video.getSize() / 1024 / 1024;
-//			at.setFileSize((int) size);
-//			
-//			//영상 길이 검사
-//			//내일의 나에게 맡기는 걸로
-//			
-//			//멤버 ID 가져오기
-//			Member loginUser = (Member)session.getAttribute("loginUser");
-//					
-//			at.setOriginalName(video.getOriginalFilename());
-//			at.setChangedName(changeName);
-//			at.setFilePath("/resources/video_upfiles/");
-//			at.setType(contentType);
-//			at.setMemberId(loginUser.getMemberId());
-//			cnt++;
-//		}
-//		
-//		String replaceTitle = XssDefencePolicy.defence(ch.getChapterTitle());
-//    	ch.setChapterTitle(replaceTitle);
-//    	
-//    	int result = courseService.addChapter(ch, at, cnt);
-//    	
-//    	if(result > 0) {
-//			session.setAttribute("alertMsg", "챕터 등록 완료");
-//			return "redirect:/course/courseDetailView?courseId=" + ch.getCourseId();
-//		} else {
-//			model.addAttribute("errorMsg", "등록에 실패했습니다.");
-//			return "common/errorPage";
-//		}
-//    }
+    //챕터를 데이터베이스에 추가하는 코드
+    @PostMapping("addChapter")
+    public String addChapter(Chapter ch, @RequestParam(value="video", required=false) MultipartFile video, Model model, HttpSession session) {
+    	
+    	Attachment at = new Attachment();
+    	int cnt = 0;
+    	
+		if(video != null && !video.isEmpty()) {
+			String replaceOriginalName = XssDefencePolicy.defence(at.getOriginalName());
+	    	at.setOriginalName(replaceOriginalName);
+	    	
+			//파일명 수정
+			String changeName = FileRenamePolicy.saveFile(video, session, 
+								"resources/video_upfiles/");
+			
+			//파일 확장자 검사
+			String contentType = video.getContentType();
+			
+			//파일 크기 검사
+			long size = video.getSize() / 1024 / 1024;
+			at.setFileSize((int) size);
+			
+			//영상 길이 검사
+			//내일의 나에게 맡기는 걸로
+			
+			//멤버 ID 가져오기
+			Member loginUser = (Member)session.getAttribute("loginUser");
+					
+			at.setOriginalName(video.getOriginalFilename());
+			at.setChangedName(changeName);
+			at.setFilePath("resources/video_upfiles/");
+			at.setType(contentType);
+			at.setMemberId(loginUser.getMemberId());
+			cnt = 1;
+		}
+		
+		String replaceTitle = XssDefencePolicy.defence(ch.getChapterTitle());
+    	ch.setChapterTitle(replaceTitle);
+    	
+    	int result = courseService.addChapter(ch, at, cnt);
+    	
+    	if(result > 0) {
+			session.setAttribute("alertMsg", "챕터 등록 완료");
+			return "redirect:/course/detail?courseId=" + ch.getCourseId();
+		} else {
+			model.addAttribute("errorMsg", "등록에 실패했습니다.");
+			return "common/errorPage";
+		}
+    }
     
+    //코스 수정 페이지로 이동
+	@GetMapping("updateCourseView")
+	public ModelAndView updateForm(ModelAndView mv, @RequestParam("courseId") int courseId) {
+		
+		Course c = courseService.selectCourse(courseId);
+		mv.addObject("c", c).setViewName("course/courseUpdate");
+		return mv;
+	}
+    
+	//코스 수정하기
+	@PostMapping("updateCourse")
+    public String updateCourse(Course c, Model model, HttpSession session) {
+    	
+    	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
+    	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
+    	
+    	c.setCourseTitle(replaceTitle);
+    	c.setDescription(replaceDescription);
+    	
+    	int result = courseService.updateCourse(c);
+    	System.out.println(c.getMemberId());
+    	System.out.println(c.getCourseId());
+    	
+    	if(result > 0) {
+			session.setAttribute("alertMsg", "강의 수정 완료");
+			return "redirect:/course/list";
+		} else {
+			model.addAttribute("errorMsg", "등록에 실패했습니다.");
+			return "common/errorPage";
+		}
+    }
+	
+	//코스를 삭제하는 코드
+	@PostMapping("deleteCourse")
+	public String deleteCourse(@RequestParam("courseId") int courseId, Model model, HttpSession session) {
+		
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		Course c = courseService.selectCourse(courseId);
+		
+		if(loginUser.getMemberId() != c.getMemberId()) {
+			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			return "common/errorPage";
+		}
+		
+		int result = courseService.deleteCourse(courseId);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", "강의 삭제 완료");
+			return "redirect:/course/list";
+		} else {
+			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			return "common/errorPage";
+		}
+		
+	}
 }
