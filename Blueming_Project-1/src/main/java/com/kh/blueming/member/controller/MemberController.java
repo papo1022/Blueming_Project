@@ -1,0 +1,308 @@
+package com.kh.blueming.member.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.kh.blueming.member.model.service.MemberService;
+import com.kh.blueming.member.model.vo.Member;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("member")
+public class MemberController {
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	private MemberService memberService;
+
+	@GetMapping("login")
+	public String loginForm() {
+	    return "login";
+	}
+	
+	@RequestMapping("/")
+	public String home(HttpSession session) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    
+	    // 로그인 상태가 아니라면 views/index.jsp (로그인 화면)로 이동
+	    if (loginUser == null) {
+	        return "index"; 
+	    }
+	    
+	    // 로그인 상태라면 권한(Role)별 페이지로 이동
+	    String role = loginUser.getRole();
+	    if ("S".equals(role)) {
+	        return "member/admin";      // views/member/admin.jsp
+	    } else if ("R".equals(role)) {
+	        return "member/hr";         // views/member/hr.jsp
+	    } else {
+	        return "member/employee";   // views/member/employee.jsp
+	    }
+	}
+
+	@PostMapping("login")
+	public String loginMember(Member m, String saveId, Model model,
+	          HttpSession session, HttpServletResponse response) {
+
+	    // 아이디 저장 쿠키 처리
+	    if((saveId != null) && (saveId.equals("y"))) {
+
+	        Cookie cookie = new Cookie("saveId", m.getLoginId());
+	        cookie.setMaxAge(30 * 24 * 60 * 60); // 30일 유지
+	        cookie.setPath("/blueming/");
+
+	        response.addCookie(cookie);
+
+	    } else {
+
+	        Cookie cookie = new Cookie("saveId", m.getLoginId());
+	        cookie.setMaxAge(0);
+	        cookie.setPath("/blueming/");
+
+	        response.addCookie(cookie);
+	    }
+
+	    // 로그인 조회
+	    Member loginUser = memberService.loginMember(m);
+	    
+	    if(loginUser == null) {
+	    	System.out.println("[LOGIN][FAIL] user not found or inactive | loginId=" + m.getLoginId());
+	    }
+
+	    boolean passwordMatched = (loginUser != null)
+	    		&& bCryptPasswordEncoder.matches(m.getLoginPwd(), loginUser.getLoginPwd());
+	    if((loginUser != null) && !passwordMatched) {
+	    	System.out.println("[LOGIN][FAIL] password mismatch | loginId=" + m.getLoginId());
+			// System.out.println("ENC(password) = " + bCryptPasswordEncoder.encode("password"));
+	    }
+
+	    // 비밀번호 확인
+	    if(passwordMatched) {
+
+	        // 세션 저장
+	        session.setAttribute("loginUser", loginUser);
+
+	        session.setAttribute("alertMsg",
+	                             "성공적으로 로그인이 되었습니다.");
+
+	        // 권한별 페이지 이동
+	        switch(loginUser.getRole()) {
+
+	            case "S":
+	            	return "member/admin";
+
+	            case "R":
+	                return "member/hr";
+
+	            case "N":
+	                return "member/employee";
+
+	            default:
+	                return "redirect:/";
+	        }
+
+	    } else {
+
+	        model.addAttribute("errorMsg",
+	                           "로그인에 실패했습니다.");
+
+	        return "common/errorPage";
+	    }
+	}
+	
+	@GetMapping("logout")
+	public String logoutMember(HttpSession session) {
+		
+
+		session.removeAttribute("loginUser");
+		
+		
+		session.setAttribute("alertMsg", "성공적으로 로그아웃이 되었습니다.");
+		
+		
+		return "redirect:/";
+		
+	}
+	
+	@GetMapping("myPage")
+	public ModelAndView myPage(ModelAndView mv) {
+		
+		
+		mv.setViewName("member/myPage");
+		
+		
+		return mv;
+	}
+	
+	@PostMapping("updatePwd")
+	public String updatePwd(String loginId, String loginPwd, String updatePwd, HttpSession session) {
+		
+		// System.out.println(userPwd);
+		// System.out.println(updatePwd);
+		
+		// > 쿼리문을 미리 짜봤더니 
+		//   해당 회원(== 비번을 바꾸고자 하는 회원 == 현재 로그인한 회원) 의 아이디도 필요함!!
+		
+		// * 현재 로그인한 회원의 정보를 알아내는 방법
+		// 1. HttpSession 객체로부터 꺼내오는 방법
+		// String userId = ((Member)(session.getAttribute("loginUser"))).getUserId();
+		// System.out.println(userId);
+		
+		// 2. form 태그 내부에서 <input type="hidden"> 을 통해 로그인한 회원의 정보를 넘기는 방법
+		// System.out.println(userId);
+		
+		// > 평문 아이디, 평문 현재의 비밀번호, 평문 바꿀 비밀번호
+		
+		// 우선 사용자가 입력한 평문 현재의 비밀번호와 
+		// 세션에 담겨있는 현재 로그인한 사용자의 암호화된 비밀번호가 맞아 떨어지는지 대조
+		Member loginUser = (Member)(session.getAttribute("loginUser"));
+		
+		if(bCryptPasswordEncoder.matches(loginPwd, loginUser.getLoginPwd())) {
+			// > 평문과 암호문 비밀번호가 맞아 떨어질 경우 
+			
+			// 비밀번호 변경 요청 서비스 호출 후 결과 받기
+			// > 변경할 비밀번호 또한 암호문 형태로 변경해야한다!!
+			String updateEncPwd = bCryptPasswordEncoder.encode(updatePwd);
+			
+			// 아이디와 변경할 비밀번호의 암호문을 넘기면서 서비스 호출 및 결과 받기
+			// > 두 개 이상의 값을 한번에 넘길 경우에는 무조건 VO 등으로 가공해서 한번에 넘긴다!!
+			Member m = new Member();
+			m.setLoginId(loginId);
+			m.setLoginPwd(updateEncPwd);
+			
+			int result = memberService.updatePwd(m);
+			
+			// 처리된 결과에 따라 사용자가 보게 될 응답페이지를 지정
+			if(result > 0) { 
+				// > 비밀번호 변경 성공
+				
+				// 현재 로그인한 회원의 정보가 조금이라도 변경되었다면 
+				// 무조건 그 갱신된 정보를 다시 불러와서 세션에 덮어씌워야함!!
+				// > 기존의 로그인용 서비스 재활용하기
+				Member updateMem = memberService.loginMember(m);
+				
+				session.setAttribute("loginUser", updateMem);
+				// > 동일한 키값으로 한번 더 추가를 하면 밸류가 덮어씌워짐!!
+				
+				// 비밀번호가 잘 변경되었음을 1회성 알림 문구로 담아줄 것
+				session.setAttribute("alertMsg", "성공적으로 비밀번호가 변경되었습니다.");
+				
+			} else {
+				// > 비밀번호 변경 실패
+				
+				// 1회성 알림문구를 담기
+				session.setAttribute("alertMsg", "비밀번호 변경에 실패했습니다.");
+			}
+			
+		} else {
+			// > 평문과 암호문 비밀번호가 맞아 떨어지지 않을 경우
+			//   (사용자가 현재 비밀번호를 잘못 입력한 경우)
+			
+			// 1회성 알림 문구로 잘못입력했다고 알려주기
+			session.setAttribute("alertMsg", "잘못된 비밀번호입니다. 다시 입력해주세요.");
+		}
+		
+		// 뭐가 되었든 간에 마이페이지로 url 재요청
+		return "redirect:/member/myPage";
+	}
+	@PostMapping("update")
+	public ModelAndView updateMember(Member m, ModelAndView mv, HttpSession session) {
+		
+	
+		
+		int result = memberService.updateMember(m);
+		
+		// 3. 결과에 따른 응답페이지 처리
+		if(result > 0) {
+			// > 회원 정보 변경 성공
+			
+			// 갱신된 회원의 정보를 다시 조회해와서 세션에 덮어씌운 후
+			// > 기존의 로그인용 서비스를 재활용 해서 단순히 호출해서 쓸 것!!
+			//   (아까 로그인용 쿼리문에서 아이디가 일치하고 STATUS = 'Y' 일 경우만 조회되도록 수정했음)
+			Member updateMem = memberService.loginMember(m);
+			
+			session.setAttribute("loginUser", updateMem);
+			// > session 에 이미 loginUser 라는 키 + 밸류로 갱신 전 회원의 정보가 담겨있는 상황
+			//   loginUser 키값으로 갱신된 회원의 정보를 다시 setAttribute 하면
+			//   동일한 키값으로 데이터가 덮어씌워진다!! (HashMap 과 동일)
+			
+			// 일회성 문구를 담아서 마이페이지로 url 재요청 
+			// > 우리가 마이페이지에서 내 정보 조회 기능을 별도로 따로 조회해서 출력하는게 아니라
+			//   이미 세션에 담겨있던 해당 회원의 정보를 그냥 출력해줬기 때문에
+			//   회원 정보 변경이 일어난 후 갱신된 정보로 다시 세션에 덮어씌워주는것 까지 해줘야함!!
+			session.setAttribute("alertMsg", "성공적으로 회원 정보가 변경되었습니다.");
+			
+			// ModelAndView 방식으로도 url 재요청이 가능!!
+			mv.setViewName("redirect:/member/myPage");
+			// > 똑같이 "redirect:url주소" 를 적는다!!
+			
+		} else {
+			// > 회원 정보 변경 실패
+			
+			// 에러 문구를 담아서 에러페이지로 포워딩
+			mv.addObject("errorMsg", "회원정보 변경에 실패했습니다.");
+			
+			mv.setViewName("common/errorPage");
+			// > /WEB-INF/views/common/errorPage.jsp
+		}
+		
+		return mv;
+		
+	}
+
+	@PostMapping("delete")
+	public String deleteMember(String userPwd, HttpSession session, Model model) {
+		
+		// 우선 사용자가 입력한 평문 비밀번호와 세션에 담겨있는 암호화된 기존의 비밀번호를 대조하기
+		Member loginUser = (Member)(session.getAttribute("loginUser"));
+		
+		if(bCryptPasswordEncoder.matches(userPwd, loginUser.getLoginPwd())) {
+			// > 평문과 암호문 비밀번호가 맞아 떨어질 경우
+			
+			// 회원 탈퇴 서비스 요청 후 결과 받기
+			int result = memberService.deleteMember(loginUser.getLoginId());
+			
+			// 탈퇴 처리 결과에 따른 응답 페이지 지정
+			if(result > 0) { 
+				// > 탈퇴 성공
+				
+				// 로그아웃 처리 후 일회성 알림 문구를 담고 메인페이지로 url 재요청
+				session.removeAttribute("loginUser");
+				
+				session.setAttribute("alertMsg", "성공적으로 회원 탈퇴 처리 되었습니다. 그동안 이용해 주셔서 감사합니다.");
+				
+				return "redirect:/";
+				
+			} else {
+				// > 탈퇴 실패
+				
+				// 에러문구를 담아서 에러페이지로 포워딩
+				model.addAttribute("errorMsg", "회원 탈퇴에 실패했습니다.");
+				
+				return "common/errorPage";
+			}
+			
+		} else {
+			// > 평문과 암호문 비밀번호가 다를 경우
+			//   (현재 비밀번호를 잘못 입력한 경우)
+			
+			// 1회성 알림 문구로 잘못 입력했음을 알려주고, 마이페이지로 url 재요청
+			session.setAttribute("alertMsg", "잘못된 비밀번호입니다. 다시 입력해주세요.");
+			
+			return "redirect:/member/myPage";
+		}
+		
+	}
+	
+	
+}

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="assignmentMapper">
+
+    <!-- 과제 전체 목록 조회 -->
+    <!-- 과제테이블과 강의테이블 JOIN -->
+    <select id="selectAssignmentList" parameterType="map" resultType="assignment">
+        SELECT
+            A.ASSIGNMENT_ID AS assignmentId,
+            A.COURSE_ID AS courseId,
+            A.ASSIGNMENT_TITLE AS assignmentTitle,
+            A.DESCRIPTION AS description,
+            A.START_DATE AS startDate,
+            A.DUE_DATE AS dueDate,
+            A.MAX_SCORE AS maxScore,
+            C.COURSE_TITLE AS courseTitle,
+            NVL(CH.CHAPTER_TITLE, '미지정') AS chapterTitle,
+            S.SUBMISSION_ID AS submissionId,
+            S.SCORE AS score,
+            S.CONTENT AS submittedContent,
+            S.FILE_ID AS submittedFileId,
+            AT.ORIGINAL_NAME AS submittedFileName
+        FROM ASSIGNMENT A
+        JOIN COURSE C ON A.COURSE_ID = C.COURSE_ID
+        LEFT JOIN (
+            SELECT
+                COURSE_ID,
+                MIN(CHAPTER_TITLE) KEEP (DENSE_RANK FIRST ORDER BY CHAPTER_ORDER ASC, CHAPTER_ID ASC) AS CHAPTER_TITLE
+            FROM CHAPTER
+            GROUP BY COURSE_ID
+        ) CH ON CH.COURSE_ID = A.COURSE_ID
+        LEFT JOIN (
+            SELECT ASSIGNMENT_ID, SUBMISSION_ID, SCORE, CONTENT, FILE_ID
+            FROM (
+                SELECT
+                    ASSIGNMENT_ID,
+                    SUBMISSION_ID,
+                    SCORE,
+                    CONTENT,
+                    FILE_ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY ASSIGNMENT_ID
+                        ORDER BY SUBMITTED_DATE DESC, SUBMISSION_ID DESC
+                    ) AS RN
+                FROM ASSIGNMENT_SUBMISSION
+                WHERE MEMBER_ID = #{memberId}
+            )
+            WHERE RN = 1
+        ) S ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        LEFT JOIN ATTACHMENT AT ON AT.FILE_ID = S.FILE_ID
+        <where>
+        <if test="isAdmin == null or isAdmin == false">
+            (
+                EXISTS (
+                    SELECT 1
+                    FROM COURSE_TARGET CT_MATCH
+                    WHERE CT_MATCH.COURSE_ID = A.COURSE_ID
+                      AND (
+                        (
+                            UPPER(CT_MATCH.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서')
+                            AND CT_MATCH.TARGET_VALUE = #{departmentId}
+                        )
+                        OR (
+                            UPPER(CT_MATCH.TARGET_TYPE) IN ('POS', 'POSITION', '직급')
+                            AND CT_MATCH.TARGET_VALUE = #{positionId}
+                        )
+                      )
+                )
+                OR (
+                    NOT EXISTS (
+                        SELECT 1
+                        FROM COURSE_TARGET CT_SPEC
+                        WHERE CT_SPEC.COURSE_ID = A.COURSE_ID
+                          AND UPPER(CT_SPEC.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서', 'POS', 'POSITION', '직급')
+                    )
+                    AND EXISTS (
+                        SELECT 1
+                        FROM COURSE_TARGET CT_ALL
+                        WHERE CT_ALL.COURSE_ID = A.COURSE_ID
+                          AND UPPER(CT_ALL.TARGET_TYPE) IN ('ALL', '전체')
+                    )
+                )
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+                A.ASSIGNMENT_TITLE LIKE '%' || #{keyword} || '%'
+                OR C.COURSE_TITLE LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+        </where>
+        <choose>
+            <when test='"deadline".equals(targetType)'>
+                ORDER BY A.DUE_DATE ASC, C.COURSE_TITLE ASC, A.ASSIGNMENT_ID ASC
+            </when>
+            <otherwise>
+                ORDER BY C.COURSE_TITLE ASC, A.DUE_DATE ASC, A.ASSIGNMENT_ID ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 첨부파일 삽입 -->
+    <insert id="insertAttachment" parameterType="Attachment">
+        <selectKey keyProperty="fileId" resultType="_int" order="BEFORE">
+            SELECT GREATEST(
+                       NVL((SELECT MAX(FILE_ID) + 1 FROM ATTACHMENT), 1),
+                       SEQ_ANO.NEXTVAL
+                   )
+            FROM DUAL
+        </selectKey>
+        INSERT INTO ATTACHMENT (
+            FILE_ID,
+            ORIGINAL_NAME,
+            CHANGED_NAME,
+            FILE_PATH,
+            FILE_SIZE,
+            TYPE,
+            VIDEO_DURATION,
+            MEMBER_ID,
+            STATUS,
+            UPLOAD_DATE
+        ) VALUES (
+            #{fileId},
+            #{originalName},
+            #{changedName},
+            #{filePath},
+            #{fileSize},
+            #{type},
+            #{videoDuration},
+            #{memberId},
+            #{status},
+            SYSDATE
+        )
+    </insert>
+
+    <select id="selectLatestSubmissionInfo" parameterType="map" resultType="map">
+        SELECT SUBMISSION_ID AS submissionId,
+               FILE_ID AS fileId
+        FROM (
+            SELECT SUBMISSION_ID,
+                   FILE_ID,
+                   ROW_NUMBER() OVER (ORDER BY SUBMITTED_DATE DESC, SUBMISSION_ID DESC) AS RN
+            FROM ASSIGNMENT_SUBMISSION
+            WHERE ASSIGNMENT_ID = #{assignmentId}
+              AND MEMBER_ID = #{memberId}
+        )
+        WHERE RN = 1
+    </select>
+
+    <update id="updateAttachmentStatusToN" parameterType="_int">
+        UPDATE ATTACHMENT
+        SET STATUS = 'N'
+        WHERE FILE_ID = #{fileId}
+    </update>
+
+    <insert id="insertAssignmentSubmission" parameterType="map">
+        <selectKey keyProperty="submissionId" resultType="_int" order="BEFORE">
+            SELECT GREATEST(
+                       NVL((SELECT MAX(SUBMISSION_ID) + 1 FROM ASSIGNMENT_SUBMISSION), 1),
+                       SEQ_ASNO.NEXTVAL
+                   )
+            FROM DUAL
+        </selectKey>
+        INSERT INTO ASSIGNMENT_SUBMISSION (
+            SUBMISSION_ID,
+            ASSIGNMENT_ID,
+            MEMBER_ID,
+            CONTENT,
+            FILE_ID,
+            SUBMITTED_DATE
+        ) VALUES (
+            #{submissionId},
+            #{assignmentId},
+            #{memberId},
+            #{content},
+            #{fileId},
+            SYSDATE
+        )
+    </insert>
+
+    <update id="updateAssignmentSubmission" parameterType="map">
+        UPDATE ASSIGNMENT_SUBMISSION
+        SET CONTENT = #{content},
+            FILE_ID = #{fileId},
+            SCORE = NULL,
+            SUBMITTED_DATE = SYSDATE
+        WHERE SUBMISSION_ID = #{submissionId}
+    </update>
+    
+</mapper>

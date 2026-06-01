@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<!-- 
+		* settings 영역
+		- 마이바티스가 구동될 때 (런타임 시) 필요한 설정값들을 적어주는 부분 
+	-->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	
+	<!-- 
+		* typeAliases 영역
+		- VO 클래스의 풀클래스명을 일일이 적기 귀찮기 때문에 짧게 별칭을 붙여주는 부분
+		- VO 클래스가 만들어지기 전에 미리 적어두면 ClassNotFoundException 발생!!
+	-->
+	<typeAliases>
+		<typeAlias type="com.kh.blueming.course.model.vo.Course" alias="course" />	
+		<typeAlias type="com.kh.blueming.chapter.model.vo.Chapter" alias="chapter" />	
+		<typeAlias type="com.kh.blueming.member.model.vo.Member" alias="member" />
+		<typeAlias type="com.kh.blueming.memberlist.model.vo.MemberList" alias="memberlist" />
+		<typeAlias type="com.kh.blueming.notice.model.vo.Notice" alias="notice" />
+		<typeAlias type="com.kh.blueming.assignment.model.vo.Assignment" alias="assignment" />
+		<typeAlias type="com.kh.blueming.attachment.model.vo.Attachment" alias="Attachment" />
+		<typeAlias type="com.kh.blueming.enrollmemlist.model.vo.EnrollMemList" alias="enrollmemlist" />
+	</typeAliases>
+	
+	<!-- 
+		* environments 영역
+		- 접속할 DB 의 정보를 기술하는 부분
+		- 마이바티스를 Spring 에 연동해서 쓸 경우에는 생략한다!!
+		  (이미 Spring 설정파일인 application.properties 에서 적어뒀기 때문 - DB 연동 주도권을 스프링이 갖겠다)
+	-->
+	
+	<!-- 
+		* mappers 영역
+		- 실행할 SQL 문들을 담을 mapper 파일들의 경로를 등록하는 부분
+		- 마찬가지로 마이바티스를 Spring 에 연동해서 쓸 경우에는 생략한다!!
+		  (마찬가지로 Spring 설정파일인 application.properties 에 적음!! - 쿼리문 실행 주도권을 스프링이 갖겠다)
+	-->
+	
+</configuration>

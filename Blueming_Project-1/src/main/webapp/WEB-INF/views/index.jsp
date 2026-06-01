@@ -4,9 +4,22 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>blueming</title>
+<style>
+	body {
+		margin: 0;
+		height: 100vh;
+
+		display: flex;
+		justify-content: center; /* 가로 가운데 */
+		align-items: center;     /* 세로 가운데 */
+	}
+
+
+</style>
+
 </head>
 <body>
-	<h1>테스트테스트</h1>
+	<jsp:include page="common/menubar.jsp" />
 </body>
 </html>
