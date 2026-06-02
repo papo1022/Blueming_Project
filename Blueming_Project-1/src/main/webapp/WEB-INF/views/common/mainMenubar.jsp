@@ -71,7 +71,7 @@
         <div class="nav-area" align="center">
             <div class="menu"><a href="/">Home</a></div>
             <div class="menu"><a href="/blueming/notice/list">Notice</a></div>
-            <div class="menu"><a href="/blueming/memberlist">사원관리</a></div>
+            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
             <div class="menu"><a href="/blueming/course/list">교육관리</a></div>
         </div>
     </c:when>
