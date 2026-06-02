@@ -86,7 +86,6 @@
 							START_DATE,
 							END_DATE,
 							TOTAL_HOURS,
-							CREATE_DATE,
 							UPDATED_DATE)
 					VALUES (SEQ_CNO.NEXTVAL + 80,
 							#{courseTitle},
@@ -112,7 +111,8 @@
 				C.END_DATE AS endDate,
 				C.TOTAL_HOURS AS totalHours,
 				C.CREATE_DATE AS createDate,
-				C.UPDATED_DATE AS updatedDate
+				C.UPDATED_DATE AS updatedDate,
+				M.MEMBER_ID AS memberId
 		FROM COURSE C, MEMBER M
 		WHERE C.MEMBER_ID = M.MEMBER_ID
 		AND COURSE_ID = #{courseId}
@@ -151,9 +151,10 @@
 		WHERE COURSE_ID = #{courseId}
 	</select>
 	
+	<!-- 첨부파일을 추가하는 코드 -->
 	<insert id="addAttachment">
 	<selectKey resultType="int" keyProperty="fileId" order="BEFORE">
-			SELECT SEQ_ANO.NEXTVAL FROM DUAL
+			SELECT (SEQ_ANO.NEXTVAL)+300 FROM DUAL
 	</selectKey>
 	INSERT INTO ATTACHMENT (FILE_ID,
 							ORIGINAL_NAME,
@@ -177,9 +178,10 @@
 					SYSDATE)
 	</insert>
 	
+	<!-- 첨부파일이 있을 경우 챕터 추가 코드 -->
 	<insert id="addChapterVideo">
 		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
-				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+				SELECT (SEQ_CHNO.NEXTVAL)+400 FROM DUAL
 		</selectKey>
 		INSERT INTO CHAPTER(CHAPTER_ID,
 							COURSE_ID,
@@ -197,11 +199,12 @@
 							SYSDATE)
 	</insert>
 	
+	<!-- 첨부파일이 없을 경우 챕터 추가 코드 -->
 	<insert id="addChapter">
 		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
-				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+				SELECT (SEQ_CHNO.NEXTVAL)+400 FROM DUAL
 		</selectKey>
-		INSERT INTO COURSE(CHAPTER_ID,
+		INSERT INTO CHAPTER(CHAPTER_ID,
 							COURSE_ID,
 							CHAPTER_TITLE,
 							CHAPTER_ORDER,
@@ -217,6 +220,7 @@
 							SYSDATE)
 	</insert>
 	
+	<!-- 코스 내용 수정 -->
 	<update id="updateCourse">
 		UPDATE COURSE
 		SET COURSE_TITLE = #{courseTitle},
@@ -229,10 +233,42 @@
 		AND COURSE_ID = #{courseId}
 	</update>
 	
+	<!-- 코스 삭제 -->
 	<delete id="deleteCourse">
 		DELETE FROM COURSE
 		WHERE COURSE_ID = #{courseId}
 	</delete>
+	
+	<!-- 챕터 전부 삭제 -->
+	<delete id="deleteAllChapter">
+		DELETE FROM CHAPTER
+		WHERE COURSE_ID = #{courseId}
+	</delete>
+	
+	<delete id="deleteChapter">
+		DELETE FROM CHAPTER
+		WHERE CHAPTER_ID = #{chapterId}
+	</delete>
+	
+	<delete id="deleteAttachment">
+		DELETE FROM ATTACHMENT
+		WHERE FILE_ID = #{videoFileId}
+	</delete>
+	
+	<select id="selectAttachment" resultType="attachment">
+		SELECT FILE_ID AS fileId,
+				ORIGINAL_NAME AS originalName,
+				CHANGED_NAME AS changedName,
+				FILE_SIZE AS fileSize,
+				TYPE AS type,
+				VIDEO_DURATION AS videoDuration,
+				MEMBER_ID AS memberId,
+				STATUS AS status,
+				UPLOAD_DATE AS uploadDate
+		FROM ATTACHMENT
+		WHERE FILE_ID = #{videoFileId}
+	</select>
+	
 </mapper>
 
 
