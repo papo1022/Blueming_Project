@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,19 +64,69 @@
 <body>
 
 
-				<div class="nav-area" align="center">
-		                <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-		                <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-		                <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
-		                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-		            </div>
+				<c:choose>
+
+    
+    <c:when test="${loginUser.role eq 'S'}">
+        <div class="nav-area" align="center">
+            <div class="menu"><a href="/">Home</a></div>
+            <div class="menu"><a href="/blueming/notice/list">Notice</a></div>
+            <div class="menu"><a href="/blueming/memberlist">사원관리</a></div>
+            <div class="menu"><a href="/blueming/course/list">교육관리</a></div>
+        </div>
+    </c:when>
+
+    
+    <c:when test="${loginUser.role eq 'R'}">
+        <div class="nav-area" align="center">
+            <div class="menu"><a href="/">Home</a></div>
+            <div class="menu"><a href="/blueming/notice/list">Notice</a></div>
+            <div class="menu"><a href="/blueming/memberlist">사원조회</a></div>
+        </div>
+    </c:when>
+
+
+    <c:otherwise>
+        <div class="nav-area" align="center">
+            <div class="menu"><a href="/">Home</a></div>
+            <div class="menu"><a href="/blueming/notice/list">Notice</a></div>
+            <div class="menu"><a href="/blueming/course/list">Course</a></div>
+            <div class="menu"><a href="/blueming/assignment/list">Assignment</a></div>
+        </div>
+    </c:otherwise>
+
+</c:choose>
 					
 					<div id="user-info">
-					<b>${loginUser.name}</b> 님 환영합니다. <br><br>
+					이름 <b>${loginUser.name}</b>  <br><br>
+					부서 : <b>
+				    <c:choose>
+				        <c:when test="${loginUser.departmentId eq 'D01'}">인사팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D02'}">개발팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D03'}">디자인팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D04'}">영업팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D05'}">마케팅팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D06'}">운영팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D07'}">품질관리팀</c:when>
+				        <c:when test="${loginUser.departmentId eq 'D08'}">전략기획팀</c:when>
+				        <c:otherwise>부서없음</c:otherwise>
+				    </c:choose>
+					</b> <br><br>
+					직급 : <b>
+				    <c:choose>
+				        <c:when test="${loginUser.positionId eq 'P01'}">사원</c:when>
+				        <c:when test="${loginUser.positionId eq 'P02'}">주임</c:when>
+				        <c:when test="${loginUser.positionId eq 'P03'}">대리</c:when>
+				        <c:when test="${loginUser.positionId eq 'P04'}">과장</c:when>
+				        <c:when test="${loginUser.positionId eq 'P05'}">차장</c:when>
+				        <c:when test="${loginUser.positionId eq 'P06'}">부장</c:when>
+				        <c:otherwise>직급없음</c:otherwise>
+				    </c:choose>
+					</b>
 		
 					<div align="center">
-						<a href="<c:url value='/member/myPage'/>">마이페이지</a>
-						<a href="<c:url value='/member/logout'/>">로그아웃</a>
+						<a href="/blueming/member/myPage">마이페이지</a>
+						<a href="/blueming/member/logout">로그아웃</a>
 					</div>
 					</div>
 
