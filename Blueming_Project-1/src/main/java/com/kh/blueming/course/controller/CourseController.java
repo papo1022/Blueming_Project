@@ -1,5 +1,6 @@
 package com.kh.blueming.course.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.common.template.FileRenamePolicy;
+import com.kh.blueming.common.template.VideoDurationPolicy;
 import com.kh.blueming.common.template.XssDefencePolicy;
 import com.kh.blueming.course.model.service.CourseService;
 import com.kh.blueming.course.model.vo.Course;
@@ -155,30 +157,31 @@ public class CourseController {
     	int cnt = 0;
     	
 		if(video != null && !video.isEmpty()) {
-			String replaceOriginalName = XssDefencePolicy.defence(at.getOriginalName());
-	    	at.setOriginalName(replaceOriginalName);
-	    	
 			//파일명 수정
 			String changeName = FileRenamePolicy.saveFile(video, session, 
 								"resources/video_upfiles/");
-			
-			//파일 확장자 검사
+			String originalName = video.getOriginalFilename();
+			String fileType = VideoDurationPolicy.extractExtension(originalName, changeName);
 			String contentType = video.getContentType();
 			
-			//파일 크기 검사
-			long size = video.getSize() / 1024 / 1024;
-			at.setFileSize((int) size);
+			//파일 크기 검사 (bytes)
+			at.setFileSize((int) video.getSize());
 			
-			//영상 길이 검사
-			//내일의 나에게 맡기는 걸로
-			
+			//영상 길이 추출 (ffprobe)
+			String realPath = session.getServletContext().getRealPath("resources/video_upfiles/");
+			Integer videoDuration = VideoDurationPolicy.extractVideoDurationSeconds(
+					new File(realPath, changeName),
+					originalName,
+					contentType);
+
 			//멤버 ID 가져오기
 			Member loginUser = (Member)session.getAttribute("loginUser");
 					
-			at.setOriginalName(video.getOriginalFilename());
+			at.setOriginalName(originalName);
 			at.setChangedName(changeName);
 			at.setFilePath("resources/video_upfiles/");
-			at.setType(contentType);
+			at.setType(fileType);
+			at.setVideoDuration(videoDuration);
 			at.setMemberId(loginUser.getMemberId());
 			cnt = 1;
 		}

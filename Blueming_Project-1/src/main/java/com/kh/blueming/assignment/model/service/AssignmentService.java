@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.assignment.model.dao.AssignmentDao;
 import com.kh.blueming.assignment.model.vo.Assignment;
 import com.kh.blueming.common.template.FileRenamePolicy;
+import com.kh.blueming.common.template.VideoDurationPolicy;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -81,18 +84,20 @@ public class AssignmentService {
             if (originalName == null || originalName.isBlank()) {
                 originalName = changedName;
             }
-            int dotIndex = (originalName != null) ? originalName.lastIndexOf('.') : -1;
-            String ext = (dotIndex >= 0) ? originalName.substring(dotIndex + 1) : "file";
-            if (ext.length() > 10) {
-                ext = ext.substring(0, 10);
-            }
+            String ext = VideoDurationPolicy.extractExtension(originalName, changedName);
 
             attachment.setOriginalName(originalName);
             attachment.setChangedName(changedName);
             attachment.setFilePath("/resources/upload-submission/");
             attachment.setFileSize((int) upfile.getSize());
             attachment.setType(ext);
-            attachment.setVideoDuration(0);
+            String contentType = upfile.getContentType();
+            String realPath = session.getServletContext().getRealPath("/resources/upload-submission/");
+                Integer videoDuration = VideoDurationPolicy.extractVideoDurationSeconds(
+                    new File(realPath, changedName),
+                    originalName,
+                    contentType);
+            attachment.setVideoDuration(videoDuration);
             attachment.setMemberId(memberId);
             attachment.setStatus("Y");
 
