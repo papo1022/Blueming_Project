@@ -31,6 +31,12 @@ public class MemberController {
 	@Autowired
 	private JavaMailSender mailSender;
 	
+	@GetMapping("login")
+	public String loginGet() {
+	   
+	    return "login";
+	}
+	
 	@GetMapping("enrollForm1")
 	public String enrollForm1() {
 		return "member/enrollForm1"; 
@@ -39,6 +45,22 @@ public class MemberController {
 	@GetMapping("enrollForm2")
 	public String enrollForm2() {
 		return "member/enrollForm2"; 
+	}
+	
+	
+	@GetMapping("admin")
+	public String admin() {
+	    return "member/admin";
+	}
+
+	@GetMapping("hr")
+	public String hr() {
+	    return "member/hr";
+	}
+
+	@GetMapping("employee")
+	public String employee() {
+	    return "member/employee";
 	}
 	
 	/**
@@ -256,14 +278,14 @@ public class MemberController {
 	        // 권한별 페이지 이동
 	        switch(loginUser.getRole()) {
 
-	            case "S":
-	            	return "member/admin";
+	        case "S":
+	            return "redirect:/member/admin";
 
-	            case "R":
-	                return "member/hr";
+	        case "R":
+	            return "redirect:/member/hr";
 
-	            case "N":
-	                return "member/employee";
+	        case "N":
+	            return "redirect:/member/employee";
 
 	            default:
 	                return "redirect:/";
