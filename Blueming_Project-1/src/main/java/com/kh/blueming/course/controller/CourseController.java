@@ -211,17 +211,26 @@ public class CourseController {
     
 	//코스 수정하기
 	@PostMapping("updateCourse")
-    public String updateCourse(Course c, Model model, HttpSession session) {
+    public String updateCourse(@RequestParam("courseId") int courseId, Model model, HttpSession session) {
     	
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		Course c = courseService.selectCourse(courseId);
+		
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
     	
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
     	
+    	System.out.println("loginUser = " + loginUser.getMemberId());
+    	System.out.println("writer = " + c.getMemberId());
+    	
+    	if(loginUser.getMemberId() != c.getMemberId()) {
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 수정할 수 없습니다.");
+			return "common/errorPage";
+		}
+    	
     	int result = courseService.updateCourse(c);
-    	System.out.println(c.getMemberId());
-    	System.out.println(c.getCourseId());
     	
     	if(result > 0) {
 			session.setAttribute("alertMsg", "강의 수정 완료");
@@ -240,7 +249,7 @@ public class CourseController {
 		Course c = courseService.selectCourse(courseId);
 		
 		if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
 			return "common/errorPage";
 		}
 		
@@ -253,6 +262,38 @@ public class CourseController {
 			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
 			return "common/errorPage";
 		}
+	}
+	
+	//챕터 1개를 삭제하는 코드
+	@PostMapping("deleteChapter")
+	public String deleteChapter(@RequestParam("chapterId") int chapterId, Model model, HttpSession session) {
 		
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		Chapter ch = courseService.selectChapter(chapterId);
+		Course c = courseService.selectCourse(ch.getCourseId());
+		
+		if(loginUser.getMemberId() != c.getMemberId()) {
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
+			return "common/errorPage";
+		}
+		
+		int result = courseService.deleteChapter(chapterId);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", "강의 삭제 완료");
+			return "redirect:/course/detail?courseId=" + c.getCourseId();
+		} else {
+			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			return "common/errorPage";
+		}
+	}
+	
+	//챕터를 수정하는 화면으로 이동
+	@GetMapping("updateChapterView")
+	public ModelAndView updateChapterForm(ModelAndView mv, @RequestParam("chapterId") int chapterId) {
+		
+		Chapter ch = courseService.selectChapter(chapterId);
+		mv.addObject("ch", ch).setViewName("course/chapterUpdate");
+		return mv;
 	}
 }

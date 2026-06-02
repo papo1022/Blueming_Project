@@ -80,12 +80,19 @@ public class CourseDao {
 	}
 
 	public int deleteCourse(SqlSessionTemplate sqlSession, int courseId) {
-		return sqlSession.update("courseMapper.deleteCourse", courseId);
+		return sqlSession.delete("courseMapper.deleteCourse", courseId);
 	}
 
-	public int deleteChapter(SqlSessionTemplate sqlSession, int courseId) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int deleteAllChapter(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.delete("courseMapper.deleteAllChapter", courseId);
+	}
+
+	public int deleteChapter(SqlSessionTemplate sqlSession, int chapterId) {
+		return sqlSession.delete("courseMapper.deleteChapter", chapterId);
+	}
+
+	public int deleteAttachment(SqlSessionTemplate sqlSession, int videoFileId) {
+		return sqlSession.delete("courseMapper.deleteAttachment", videoFileId);
 	}
 
 }

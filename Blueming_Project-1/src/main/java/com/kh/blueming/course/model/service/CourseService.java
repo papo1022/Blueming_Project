@@ -1,6 +1,7 @@
 package com.kh.blueming.course.model.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,6 @@ public class CourseService {
 		if(cnt > 0) {
 			result1 = courseDao.addAttachment(sqlSession, at);
 			ch.setVideoFileId(at.getFileId());
-			System.out.println("courseId = " + ch.getCourseId());
-			System.out.println("videoFileId = " + ch.getVideoFileId());
 			result2 = courseDao.addChapterVideo(sqlSession, ch);
 		} else {
 			result2 = courseDao.addChapter(sqlSession, ch);
@@ -93,6 +92,37 @@ public class CourseService {
 
 	@Transactional
 	public int deleteCourse(int courseId) {
-		return courseDao.deleteCourse(sqlSession, courseId);
+		
+		ArrayList<Chapter> chapterList = courseDao.selectChapterList(sqlSession, courseId);
+		
+		int result1 = 1;
+		
+		int result2 = courseDao.deleteAllChapter(sqlSession, courseId);
+		
+		for(Chapter ch : chapterList) {
+			if(ch.getVideoFileId() > 0) {
+				result1 *= courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
+			}
+		}
+		
+		int result3 = courseDao.deleteCourse(sqlSession, courseId);
+		
+		return result1 * result2 * result3;
+		
+	}
+	
+	@Transactional
+	public int deleteChapter(int chapterId) {
+		Chapter ch = courseDao.selectChapter(sqlSession, chapterId);
+		
+		int result1 = 1;
+		
+		int result2 = courseDao.deleteChapter(sqlSession, chapterId);
+		
+		if(ch.getVideoFileId() > 0) {
+			result1 = courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
+		}
+		
+		return result1 * result2;
 	}
 }
