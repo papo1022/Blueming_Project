@@ -25,7 +25,7 @@
         <h2>사원 인사정보 관리</h2>
         
         <div id="search-area" align="center" style="margin-bottom: 20px;">
-            <form id="search-form" action="${pageContext.request.contextPath}/memberlist/search" method="post">
+            <form id="search-form" action="${pageContext.request.contextPath}/memberlist" method="get">
                 <select name="condition" id="condition">
                     <option value="memberId" ${requestScope.condition == 'memberId' ? 'selected' : ''}>사원번호</option>
                     <option value="deptId" ${requestScope.condition == 'deptId' ? 'selected' : ''}>부서</option>
@@ -110,12 +110,13 @@
    
 
 	<form id="actionForm" action="${pageContext.request.contextPath}/memberlist" method="get" style="display:none;">
-	    <input type="hidden" name="cpage" id="cpage">
-	    <input type="hidden" name="sortColumn" id="sortColumn" value="${requestScope.sortColumn}">
-	    <input type="hidden" name="sortOrder" id="sortOrder" value="${requestScope.sortOrder}">
-	    <input type="hidden" name="condition" value="${requestScope.condition}">
-	    <input type="hidden" name="keyword" value="${requestScope.keyword}">
-	</form>
+    <input type="hidden" name="cpage" id="cpage">
+    <input type="hidden" name="sortColumn" id="sortColumn" value="${requestScope.sortColumn}">
+    <input type="hidden" name="sortOrder" id="sortOrder" value="${requestScope.sortOrder}">
+    
+    <input type="hidden" name="condition" value="${requestScope.condition}">
+    <input type="hidden" name="keyword" value="${requestScope.keyword}">
+</form>
 
 <script>
 //JSP 하단의 스크립트 수정
@@ -136,15 +137,34 @@ function clickSort(columnName) {
     form.submit();
 }
 
-    function pageMove(page) {
-        document.getElementById('cpage').value = page;
-        document.getElementById('actionForm').submit();
+function pageMove(page) {
+    // 폼 객체 확인
+    let actionForm = document.getElementById('actionForm');
+    if (!actionForm) {
+        console.error("actionForm을 찾을 수 없습니다!");
+        return;
     }
+    
+    // 값 세팅
+    document.getElementById('cpage').value = page;
+    
+    // 로그 확인
+    console.log("제출할 폼의 cpage 값: " + document.getElementById('cpage').value);
+    
+    // 폼 제출 (강제)
+    actionForm.submit();
+}
 
  // 상세 보기 버튼 클릭 시 실행할 함수
     // 추천 방식: 폼 전송 말고 URL 이동
 function goDetail(memberId) {
     location.href = "${pageContext.request.contextPath}/memberlist/detail?memberId=" + memberId;
+}
+
+
+function resetSearch() {
+    // 검색 폼의 action URL로 이동하되, 파라미터 없이 보냄
+    location.href = "${pageContext.request.contextPath}/memberlist";
 }
 </script>
 </body>
