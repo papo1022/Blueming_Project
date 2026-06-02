@@ -1,12 +1,15 @@
 package com.kh.blueming.member.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.blueming.member.model.service.MemberService;
@@ -24,11 +27,166 @@ public class MemberController {
 	
 	@Autowired
 	private MemberService memberService;
-
-	@GetMapping("login")
-	public String loginForm() {
-	    return "login";
+	
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	@GetMapping("enrollForm1")
+	public String enrollForm1() {
+		return "member/enrollForm1"; 
 	}
+
+	@GetMapping("enrollForm2")
+	public String enrollForm2() {
+		return "member/enrollForm2"; 
+	}
+	
+	/**
+	 * [아이디 찾기] STEP 1: 인증번호 이메일 발송
+	 * @param m 사용자가 입력한 name과 email 정보가 담긴 객체
+	 */
+	@ResponseBody
+	@PostMapping("sendCodeForId")
+	public String sendCodeForId(Member m, HttpSession session) {
+		// 1. 입력받은 이름과 이메일로 가입된 아이디가 존재하는지 확인 (VO 가공 정책 준수)
+		String loginId = memberService.findIdByEmail(m);
+		if (loginId == null) {
+			return "NOT_FOUND"; // 일치하는 회원 없음
+		}
+		
+		// 2. 6자리 난수(인증번호) 생성 후 메일 발송
+		String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
+		try {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(m.getEmail());
+			message.setSubject("[Blueming] 아이디 찾기 본인확인 인증번호");
+			message.setText("안녕하세요. 아이디 찾기를 위한 인증번호는 [" + authCode + "] 입니다.");
+			mailSender.send(message);
+			
+			// 3. 인증번호 확인을 위해 세션에 임시 저장
+			session.setAttribute("idAuthCode", authCode);
+			session.setAttribute("targetEmail", m.getEmail());
+			session.setAttribute("targetName", m.getName());
+			return "SUCCESS";
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+	}
+
+	/**
+	 * [아이디 찾기] STEP 2: 인증번호 확인 후 아이디 노출 페이지 이동
+	 */
+	@PostMapping("findId")
+	public String findId(String code, HttpSession session, Model model) {
+		String savedCode = (String) session.getAttribute("idAuthCode");
+		String email = (String) session.getAttribute("targetEmail");
+		String name = (String) session.getAttribute("targetName");
+		
+		if (savedCode != null && savedCode.equals(code)) {
+			Member m = new Member();
+			m.setEmail(email);
+			m.setName(name);
+			
+			String loginId = memberService.findIdByEmail(m);
+			model.addAttribute("loginId", loginId);
+			
+			// 인증용 세션 초기화
+			session.removeAttribute("idAuthCode");
+			session.removeAttribute("targetEmail");
+			session.removeAttribute("targetName");
+			
+			return "member/findIdResult"; // views/member/findIdResult.jsp
+		} else {
+			session.setAttribute("alertMsg", "인증번호가 일치하지 않습니다.");
+			return "redirect:/member/findIdForm"; // 다시 찾기 폼으로 리다이렉트
+		}
+	}
+
+	/**
+	 * [비밀번호 찾기] STEP 1: 아이디, 이름, 이메일 일치 여부 확인 후 인증번호 발송
+	 */
+	@ResponseBody
+	@PostMapping("sendCodeForPwd")
+	public String sendCodeForPwd(Member m, HttpSession session) {
+		// 1. 입력받은 정보와 일치하는 회원이 있는지 확인
+		int count = memberService.checkMemberExist(m);
+		if (count == 0) {
+			return "NOT_FOUND"; 
+		}
+		
+		// 2. 존재한다면 인증번호 생성 및 메일 발송
+		String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
+		try {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(m.getEmail());
+			message.setSubject("[Blueming] 비밀번호 찾기 본인확인 인증번호");
+			message.setText("안녕하세요. 비밀번호 재설정을 위한 인증번호는 [" + authCode + "] 입니다.");
+			mailSender.send(message);
+			
+			// 3. 비밀번호 재설정을 위해 주요 정보를 세션에 보관
+			session.setAttribute("pwdAuthCode", authCode);
+			session.setAttribute("targetEmail", m.getEmail());
+			session.setAttribute("targetId", m.getLoginId());
+			return "SUCCESS";
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "ERROR";
+		}
+	}
+
+	/**
+	 * [비밀번호 찾기] STEP 2: 인증번호 일치 시 새 비밀번호 입력 폼으로 이동
+	 */
+	@PostMapping("verifyPwdCode")
+	public String verifyPwdCode(String code, HttpSession session) {
+		String savedCode = (String) session.getAttribute("pwdAuthCode");
+		
+		if (savedCode != null && savedCode.equals(code)) {
+			session.setAttribute("pwdPassed", true); // 인증 통과 자격 부여
+			session.removeAttribute("pwdAuthCode");
+			return "member/resetPasswordForm"; // views/member/resetPasswordForm.jsp
+		} else {
+			session.setAttribute("alertMsg", "인증번호가 일치하지 않습니다.");
+			return "redirect:/member/findPwdForm"; 
+		}
+	}
+
+	/**
+	 * [비밀번호 찾기] STEP 3: 최종 새로운 비밀번호로 재설정 처리 (암호화 반영)
+	 * @param newPwd 사용자가 새로 입력한 평문 비밀번호
+	 */
+	@PostMapping("resetPassword")
+	public String resetPassword(String newPwd, HttpSession session) {
+		Boolean pwdPassed = (Boolean) session.getAttribute("pwdPassed");
+		String loginId = (String) session.getAttribute("targetId");
+		String email = (String) session.getAttribute("targetEmail");
+		
+		// 비정상적인 URL 접근 차단
+		if (pwdPassed == null || !pwdPassed) {
+			return "redirect:/"; 
+		}
+		
+		// 기존 updatePwd 로직처럼 bCryptPasswordEncoder를 사용해 암호화 진행
+		String encryptedPwd = bCryptPasswordEncoder.encode(newPwd);
+		
+		Member m = new Member();
+		m.setLoginId(loginId);
+		m.setEmail(email);
+		m.setLoginPwd(encryptedPwd); // 암호화된 비밀번호 대입
+		
+		int result = memberService.resetPassword(m);
+		
+		if (result > 0) {
+			session.invalidate(); // 인증에 사용된 세션 제거 및 전체 로그아웃 효과
+			return "member/resetPwdSuccess"; // views/member/resetPwdSuccess.jsp
+		} else {
+			return "common/errorPage";
+		}
+	}
+	
 	
 	@RequestMapping("/")
 	public String home(HttpSession session) {

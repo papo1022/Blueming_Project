@@ -8,6 +8,18 @@ import com.kh.blueming.member.model.vo.Member;
 @Repository
 public class MemberDao {
 	
+	public String findIdByEmail(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.selectOne("memberMapper.findIdByEmail", m);
+	}
+
+	public int checkMemberExist(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.selectOne("memberMapper.checkMemberExist", m);
+	}
+
+	public int resetPassword(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.update("memberMapper.resetPassword", m);
+	}
+	
 
 public Member loginMember(SqlSessionTemplate sqlSession, Member m) {
 	
