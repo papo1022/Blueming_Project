@@ -70,6 +70,7 @@ public class CourseService {
 		
 		int result1 = 1;
 		int result2 = 0;
+		int result3 = 0;
 		if(cnt > 0) {
 			result1 = courseDao.addAttachment(sqlSession, at);
 			ch.setVideoFileId(at.getFileId());
@@ -77,9 +78,11 @@ public class CourseService {
 		} else {
 			result2 = courseDao.addChapter(sqlSession, ch);
 		}
+		if (result1 > 0 && result2 > 0) {
+			result3 = courseDao.updateTotalHoursInMinutes(sqlSession, ch.getCourseId());
+		}
 		
-		
-		return result1*result2;
+		return result1 * result2 * result3;
 	}
 
 	@Transactional
