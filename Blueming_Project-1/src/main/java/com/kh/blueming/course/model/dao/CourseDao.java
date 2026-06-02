@@ -71,6 +71,10 @@ public class CourseDao {
 		return sqlSession.insert("courseMapper.addChapterVideo", ch);
 	}
 
+	public int updateTotalHoursInMinutes(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.update("courseMapper.updateTotalHoursInMinutes", courseId);
+	}
+
 	public int updateCourse(SqlSessionTemplate sqlSession, Course c) {
 		return sqlSession.update("courseMapper.updateCourse", c);
 	}
