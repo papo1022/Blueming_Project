@@ -3,75 +3,137 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="noticeMapper">
-	<resultMap id="noticeResultSet" type="Notice">
-		<id column="NOTICE_ID" property="noticeId"/>
-		<result column="NOTICE_TITLE" property="noticeTitle"/>
-		<result column="CONTENT" property="content"/>
-		<result column="MEMBER_ID" property="memberId"/>
-		<result column="COUNT" property="count"/>
-		<result column="CREATED_DATE" property="createdDate"/>
-		<result column="UPDATED_DATE" property="updatedDate"/>
-		<result column="FILE_ID" property="fileId"/>
-		<result column="STATUS" property="status"/>
+
+<resultMap id="noticeResultSet" type="notice">
+		<id column="NOTICE_ID" property="noticeId" />
+		<result column="NOTICE_TITLE" property="noticeTitle" />
+		<result column="CONTENT" property="content" />
+		<result column="MEMBER_ID" property="memberId" />
+		<result column="COUNT" property="count" />
+		<result column="CREATED_DATE" property="createdDate" />
+		<result column="UPDATED_DATE" property="updateDate" />
+		<result column="FILE_ID" property="fileIdNumber" />
+		<result column="STATUS" property="Status" />
 		
-		<result column="NAME" property="name"/>
 	</resultMap>
-	
 	<select id="selectNoticeList" resultMap="noticeResultSet">
-		SELECT NOTICE_ID,
-			   NOTICE_TITLE,
-			   MEMBER.NAME AS NAME,
-			   COUNT,
-			   CREATED_DATE
-		FROM NOTICE
-		JOIN MEMBER USING (MEMBER_ID)
-		WHERE NOTICE.STATUS='Y'
-		ORDER BY NOTICE_ID DESC
+		SELECT N.NOTICE_ID
+		     , N.NOTICE_TITLE
+		     , N.MEMBER_ID
+		     , N.COUNT
+		     , N.CREATED_DATE
+		FROM NOTICE N
+		JOIN MEMBER M ON (N.MEMBER_ID = M.MEMBER_ID)
+		WHERE N.STATUS = 'Y'
+		ORDER BY N.NOTICE_ID DESC
 	</select>
-	
-	<insert id="insertNotice" parameterType="notice">
-		INSERT INTO NOTICE (NOTICE_ID
-							, NOTICE_TITLE
-							, CONTENT
-							, MEMBER_ID)
-			VALUES (SEQ_NNO.NEXTVAL
-					, #{noticeTitle}
-					, #{content}
-					, #{memberId})
-	</insert>
-	
+	<insert id="insertNotice">
+    INSERT INTO NOTICE(
+        NOTICE_ID,
+        NOTICE_TITLE,
+        CONTENT,
+        MEMBER_ID
+    )
+    VALUES(
+        SEQ_NNO.NEXTVAL,
+        #{noticeTitle},
+        #{content},
+        #{memberId}
+    )
+		</insert>
+		
 	<update id="increaseCount" parameterType="_int">
 		UPDATE NOTICE
-		SET COUNT = COUNT + 1
-		WHERE NOTICE_ID = #{noticeNo}
-		AND STATUS = 'Y'
+		   SET COUNT = COUNT + 1
+		 WHERE NOTICE_ID = #{noticeId}
+		   AND STATUS = 'Y'
 	</update>
 	
-	<select id="selectNotice" resultMap="noticeResultSet" parameterType="_int">
-	 SELECT NOTICE_ID,
-	 		NOTICE_TITLE,
-	 		CONTENT,
-	 		MEMBER.NAME AS NAME,
-	 		CREATED_DATE,
-	 		UPDATED_DATE
-	 FROM NOTICE
-	 JOIN MEMBER USING(MEMBER_ID)
-	 WHERE NOTICE.STATUS = 'Y'
-	 AND NOTICE_ID = #{noticeId}
+	<!-- 공지사항 상세조회용 쿼리문 -->
+	<select id="selectNotice" parameterType="_int" resultMap="noticeResultSet">
+			SELECT N.NOTICE_ID
+			     , N.NOTICE_TITLE
+			     , N.CONTENT
+			     , N.MEMBER_ID
+			     , N.CREATED_DATE
+			FROM NOTICE N
+			JOIN MEMBER M ON (N.MEMBER_ID = M.MEMBER_ID)
+			WHERE N.NOTICE_ID = #{nno}
+			  AND N.STATUS = 'Y'
 	</select>
-	
+	<!-- 공지사항 수정용 쿼리문 -->
 	<update id="updateNotice" parameterType="notice">
 		UPDATE NOTICE
-		SET NOTICE_TITLE = #{noticeTitle},
-			CONTENT = #{content}
-		WHERE NOTICE_ID = #{noticeId}
-		AND STATUS = 'Y'
+		   SET NOTICE_TITLE = #{noticeTitle}
+		     , CONTENT = #{content}
+		 WHERE NOTICE_ID = #{noticeId}
+		   AND STATUS = 'Y'
 	</update>
 	
+	<!-- 공지사항 삭제용 쿼리문 -->
 	<update id="deleteNotice" parameterType="_int">
 		UPDATE NOTICE
-		SET STATUS = 'N'
-		WHERE NOTICE_ID = #{noticeId}
-		AND STATUS = 'Y'
+		   SET STATUS = 'N'
+		 WHERE NOTICE_Id = #{noticeId}
+		   AND STATUS = 'Y'
 	</update>
+	
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM NOTICE
+		 WHERE STATUS = 'Y'
+	</select>
+	
+	
+	<select id="selectNoticeList2"
+        parameterType="hashmap" resultMap="noticeResultSet">
+
+	    SELECT N.NOTICE_ID
+	         , N.NOTICE_TITLE
+	         , N.MEMBER_ID
+	         , N.COUNT
+	         , N.CREATED_DATE
+	    FROM NOTICE N
+	    JOIN MEMBER M ON N.MEMBER_ID = M.MEMBER_ID
+	    WHERE N.STATUS = 'Y'
+	    ORDER BY N.NOTICE_ID DESC
+
+	</select>
+	<select id="selectSearchCount" parameterType="hashmap"
+								   resultType="_int">
+		SELECT COUNT(*)
+		  FROM NOTICE N
+		  JOIN MEMBER M ON (N.MEMBER_ID = M.MEMBER_ID)
+		 WHERE N.STATUS = 'Y' 
+		   AND
+		   <if test="condition == 'title'">
+		   		N.NOTICE_TITLE 
+		   </if>
+		   <if test="condition == 'content'">
+		   		N.CONTENT 
+		   </if>
+		   					  LIKE '%' || #{keyword} || '%' 
+	</select>
+	<select id="searchNoticeList" parameterType="hashmap"
+								 resultMap="noticeResultSet">
+		SELECT N.NOTICE_ID
+		     , N.NOTICE_TITLE
+		     , N.MEMBER_ID
+		     , N.COUNT
+		     , N.CREATED_DATE
+		  FROM NOTICE N
+		  JOIN MEMBER M ON (N.MEMBER_ID = M.MEMBER_ID)
+		 WHERE N.STATUS = 'Y'
+		   AND 
+		   <choose>
+		   		<when test="condition == 'title'">
+		   			N.NOTICE_TITLE
+		   		</when>
+		   		<otherwise>
+		   			N.CONTENT
+		   		</otherwise>
+		   </choose>
+		   						  LIKE '%' || #{keyword} || '%'
+		 ORDER BY N.NOTICE_ID DESC
+	</select>
 </mapper>

@@ -20,7 +20,7 @@ public class Attachment {
 	private String filePath;
 	private int fileSize;
 	private String type;
-	private int videoDuration;
+	private Integer videoDuration;
 	private int memberId;
 	private String status;
 	private Date uploadDate;

@@ -1,5 +1,6 @@
 package com.kh.blueming.course.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.common.template.FileRenamePolicy;
+import com.kh.blueming.common.template.VideoDurationPolicy;
 import com.kh.blueming.common.template.XssDefencePolicy;
 import com.kh.blueming.course.model.service.CourseService;
 import com.kh.blueming.course.model.vo.Course;
@@ -155,30 +157,31 @@ public class CourseController {
     	int cnt = 0;
     	
 		if(video != null && !video.isEmpty()) {
-			String replaceOriginalName = XssDefencePolicy.defence(at.getOriginalName());
-	    	at.setOriginalName(replaceOriginalName);
-	    	
 			//파일명 수정
 			String changeName = FileRenamePolicy.saveFile(video, session, 
 								"resources/video_upfiles/");
-			
-			//파일 확장자 검사
+			String originalName = video.getOriginalFilename();
+			String fileType = VideoDurationPolicy.extractExtension(originalName, changeName);
 			String contentType = video.getContentType();
 			
-			//파일 크기 검사
-			long size = video.getSize() / 1024 / 1024;
-			at.setFileSize((int) size);
+			//파일 크기 검사 (bytes)
+			at.setFileSize((int) video.getSize());
 			
-			//영상 길이 검사
-			//내일의 나에게 맡기는 걸로
-			
+			//영상 길이 추출 (ffprobe)
+			String realPath = session.getServletContext().getRealPath("resources/video_upfiles/");
+			Integer videoDuration = VideoDurationPolicy.extractVideoDurationSeconds(
+					new File(realPath, changeName),
+					originalName,
+					contentType);
+
 			//멤버 ID 가져오기
 			Member loginUser = (Member)session.getAttribute("loginUser");
 					
-			at.setOriginalName(video.getOriginalFilename());
+			at.setOriginalName(originalName);
 			at.setChangedName(changeName);
 			at.setFilePath("resources/video_upfiles/");
-			at.setType(contentType);
+			at.setType(fileType);
+			at.setVideoDuration(videoDuration);
 			at.setMemberId(loginUser.getMemberId());
 			cnt = 1;
 		}
@@ -208,17 +211,26 @@ public class CourseController {
     
 	//코스 수정하기
 	@PostMapping("updateCourse")
-    public String updateCourse(Course c, Model model, HttpSession session) {
+    public String updateCourse(@RequestParam("courseId") int courseId, Model model, HttpSession session) {
     	
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		Course c = courseService.selectCourse(courseId);
+		
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
     	
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
     	
+    	System.out.println("loginUser = " + loginUser.getMemberId());
+    	System.out.println("writer = " + c.getMemberId());
+    	
+    	if(loginUser.getMemberId() != c.getMemberId()) {
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 수정할 수 없습니다.");
+			return "common/errorPage";
+		}
+    	
     	int result = courseService.updateCourse(c);
-    	System.out.println(c.getMemberId());
-    	System.out.println(c.getCourseId());
     	
     	if(result > 0) {
 			session.setAttribute("alertMsg", "강의 수정 완료");
@@ -237,7 +249,7 @@ public class CourseController {
 		Course c = courseService.selectCourse(courseId);
 		
 		if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
 			return "common/errorPage";
 		}
 		
@@ -250,6 +262,38 @@ public class CourseController {
 			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
 			return "common/errorPage";
 		}
+	}
+	
+	//챕터 1개를 삭제하는 코드
+	@PostMapping("deleteChapter")
+	public String deleteChapter(@RequestParam("chapterId") int chapterId, Model model, HttpSession session) {
 		
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		Chapter ch = courseService.selectChapter(chapterId);
+		Course c = courseService.selectCourse(ch.getCourseId());
+		
+		if(loginUser.getMemberId() != c.getMemberId()) {
+			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
+			return "common/errorPage";
+		}
+		
+		int result = courseService.deleteChapter(chapterId);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", "강의 삭제 완료");
+			return "redirect:/course/detail?courseId=" + c.getCourseId();
+		} else {
+			model.addAttribute("errorMsg", "삭제에 실패했습니다.");
+			return "common/errorPage";
+		}
+	}
+	
+	//챕터를 수정하는 화면으로 이동
+	@GetMapping("updateChapterView")
+	public ModelAndView updateChapterForm(ModelAndView mv, @RequestParam("chapterId") int chapterId) {
+		
+		Chapter ch = courseService.selectChapter(chapterId);
+		mv.addObject("ch", ch).setViewName("course/chapterUpdate");
+		return mv;
 	}
 }
