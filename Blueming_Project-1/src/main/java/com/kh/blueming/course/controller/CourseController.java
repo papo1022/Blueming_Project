@@ -285,4 +285,12 @@ public class CourseController {
 		}
 	}
 	
+	//챕터를 수정하는 화면으로 이동
+	@GetMapping("updateChapterView")
+	public ModelAndView updateChapterForm(ModelAndView mv, @RequestParam("chapterId") int chapterId) {
+		
+		Chapter ch = courseService.selectChapter(chapterId);
+		mv.addObject("ch", ch).setViewName("course/chapterUpdate");
+		return mv;
+	}
 }

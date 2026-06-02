@@ -41,7 +41,7 @@
 
         <!-- 관리자에게만 보이는 버튼-->
         <div align="center">
-            <button class="btn btn-warning" onclick="">
+            <button class="btn btn-warning" onclick="updateChapter();">
                 챕터 수정
             </button>
             <form id="deleteForm" action="deleteChapter" method="post">
@@ -64,6 +64,10 @@
             if(confirm("정말로 챕터를 삭제하시겠습니까?")){
                 document.getElementById("deleteForm").submit();
             }
+        }
+
+        function updateChapter(){
+            window.location.href = "updateChapterView?chapterId=${chapter.chapterId}";
         }
     </script>
 </body>
