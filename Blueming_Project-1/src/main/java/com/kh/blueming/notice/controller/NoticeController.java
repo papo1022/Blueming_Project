@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kh.blueming.board.model.vo.Board;
 import com.kh.blueming.common.model.vo.PageInfo;
-import com.kh.blueming.common.template.Pagination;
+import com.kh.blueming.common.template.Pageination;
 import com.kh.blueming.common.template.XssDefencePolicy;
 import com.kh.blueming.notice.model.service.NoticeService;
 import com.kh.blueming.notice.model.vo.Notice;
@@ -79,7 +78,7 @@ public class NoticeController {
 		// > 마찬가지로 공통 코드 작업을 해둘 것!!
 		
 		// Pagination 클래스를 생성하고 그 안에 getPageInfo 라는 메소드를 만들것!!
-		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 
+		PageInfo pi = Pageination.getPageInfo(listCount, currentPage, 
 											 pageLimit, boardLimit);
 		
 		// System.out.println(listCount);
@@ -171,7 +170,7 @@ public class NoticeController {
 		// 위의 searchCount, currentPage, pageLimit, boardLimit 를 가지고
 		// maxPage, startPage, endPage 를 계산해서 구해야함!!
 		// > 그리고 이걸 모두 PageInfo 로 한번에 가공해야함!!
-		PageInfo pi = Pagination.getPageInfo(searchCount, currentPage, 
+		PageInfo pi = Pageination.getPageInfo(searchCount, currentPage, 
 											 pageLimit, boardLimit);
 		
 		// 위의 HashMap 과 PageInfo 둘 다 넘기면서 검색용 쿼리문을 실행해서 결과를 받아야함!!

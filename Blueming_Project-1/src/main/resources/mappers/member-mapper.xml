@@ -36,7 +36,8 @@
 		   SET LOGIN_PWD = #{loginPwd}
 		 WHERE LOGIN_ID = #{loginId}
 		   AND STATUS = 'Y'
-	</update>
+		</update>
+		
 		<update id="updateMember" parameterType="member">
 		UPDATE MEMBER
 		   SET NAME = #{name}

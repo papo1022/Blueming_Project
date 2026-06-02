@@ -401,7 +401,7 @@ public class MemberController {
 	
 		
 		int result = memberService.updateMember(m);
-		
+		System.out.println(result);
 		// 3. 결과에 따른 응답페이지 처리
 		if(result > 0) {
 			// > 회원 정보 변경 성공
@@ -409,7 +409,11 @@ public class MemberController {
 			// 갱신된 회원의 정보를 다시 조회해와서 세션에 덮어씌운 후
 			// > 기존의 로그인용 서비스를 재활용 해서 단순히 호출해서 쓸 것!!
 			//   (아까 로그인용 쿼리문에서 아이디가 일치하고 STATUS = 'Y' 일 경우만 조회되도록 수정했음)
+			
+			
 			Member updateMem = memberService.loginMember(m);
+			
+			
 			
 			session.setAttribute("loginUser", updateMem);
 			// > session 에 이미 loginUser 라는 키 + 밸류로 갱신 전 회원의 정보가 담겨있는 상황
