@@ -61,10 +61,6 @@ public class MemberListService {
 	        return memlistDao.insertMember(sqlSession, member);
 	    }
 	    
-	    public int deleteMember(int memberId) {
-	        return memlistDao.deleteMember(sqlSession, memberId);
-	    }
-    	
-    
+
      	
 }

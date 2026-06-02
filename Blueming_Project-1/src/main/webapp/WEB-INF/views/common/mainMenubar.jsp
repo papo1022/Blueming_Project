@@ -69,6 +69,7 @@
 		                <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
 		                <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
 		                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
+		                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">EnrollMemList</a></div>
 		            </div>
 					
 					<div id="user-info">

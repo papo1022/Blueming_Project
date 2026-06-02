@@ -23,12 +23,20 @@
     <result column="ROLE" property="role"/>
   </resultMap>
 
+  <select id="selectListCount" resultType="int">
+    SELECT COUNT(*)
+      FROM MEMBER M
+     WHERE M.STATUS IN ('Y', 'R', 'N')
+       
+  </select>
+
   <select id="selectSearchCount" parameterType="hashmap" resultType="int">
     SELECT COUNT(*)
     FROM MEMBER M
     LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
     LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
     WHERE M.STATUS IN ('Y', 'R', 'N')
+   
     <if test="condition != null and condition != '' and keyword != null and keyword != ''">
       <choose>
         <when test="condition == 'memberId'">AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'</when>
@@ -48,18 +56,13 @@
   </select>
 
   <select id="searchMemberList" parameterType="hashmap" resultMap="memberListResultSet">
-    SELECT M.MEMBER_ID
-         , M.DEPARTMENT_ID
-         , M.POSITION_ID
-         , M.NAME
-         , M.HIRE_DATE
-         , M.STATUS
-         , D.DEPARTMENT_NAME
-         , P.POSITION_NAME     
+    SELECT M.MEMBER_ID, M.DEPARTMENT_ID, M.POSITION_ID, M.NAME, M.HIRE_DATE, M.STATUS,
+           D.DEPARTMENT_NAME, P.POSITION_NAME     
       FROM MEMBER M
       LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID) 
       LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)       
      WHERE M.STATUS IN ('Y', 'R', 'N')
+     
     <if test="condition != null and condition != '' and keyword != null and keyword != ''">
       <choose>
         <when test="condition == 'memberId'">AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'</when>
@@ -95,29 +98,13 @@
      </choose>
   </select>
 
-  <select id="selectListCount" resultType="int">
-    SELECT COUNT(*)
-      FROM MEMBER
-     WHERE STATUS IN ('Y', 'R', 'N')
-  </select>
-
- <select id="selectMemberList" parameterType="hashmap" resultMap="memberListResultSet">
-    SELECT 
-           M.MEMBER_ID, M.DEPARTMENT_ID, M.POSITION_ID, M.NAME, M.HIRE_DATE, M.STATUS,
+<select id="selectMemberList" parameterType="hashmap" resultMap="memberListResultSet">
+    SELECT M.MEMBER_ID, M.DEPARTMENT_ID, M.POSITION_ID, M.NAME, M.HIRE_DATE, M.STATUS,
            D.DEPARTMENT_NAME, P.POSITION_NAME     
       FROM MEMBER M
       LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID) 
       LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)       
-     WHERE M.STATUS IN ('Y', 'R', 'N') 
-     
-     <if test="condition != null and condition != '' and keyword != null and keyword != ''">
-         <choose>
-            <when test="condition == 'memberId'">AND M.MEMBER_ID LIKE '%' || #{keyword} || '%'</when>
-            <when test="condition == 'deptId'">AND D.DEPARTMENT_NAME LIKE '%' || #{keyword} || '%'</when>
-            <when test="condition == 'positionId'">AND P.POSITION_NAME LIKE '%' || #{keyword} || '%'</when>
-            <when test="condition == 'name'">AND M.NAME LIKE '%' || #{keyword} || '%'</when>
-         </choose>
-     </if>
+     WHERE M.STATUS IN ('Y', 'R', 'N')
      
      <choose>
          <when test="sortColumn == 'STATUS'">
@@ -133,22 +120,9 @@
 </select>
 
   <select id="selectMemberDetail" parameterType="int" resultMap="memberListResultSet">
-    SELECT 
-        M.MEMBER_ID, 
-        M.LOGIN_ID, 
-        M.LOGIN_PWD, 
-        M.NAME, 
-        M.EMAIL, 
-        M.PHONE, 
-        M.ADDRESS, 
-        M.HIRE_DATE, 
-        M.RETIRE_DATE, 
-        M.STATUS, 
-        M.DEPARTMENT_ID, 
-        M.POSITION_ID, 
-        M.ROLE, 
-        M.LEAVE_START_DATE,  M.LEAVE_END_DATE,    D.DEPARTMENT_NAME,  
-        P.POSITION_NAME     
+    SELECT M.MEMBER_ID, M.LOGIN_ID, M.LOGIN_PWD, M.NAME, M.EMAIL, M.PHONE, M.ADDRESS, M.HIRE_DATE, 
+           M.RETIRE_DATE, M.STATUS, M.DEPARTMENT_ID, M.POSITION_ID, M.ROLE, M.LEAVE_START_DATE, 
+           M.LEAVE_END_DATE, D.DEPARTMENT_NAME, P.POSITION_NAME     
     FROM MEMBER M
     LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
     LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
@@ -157,49 +131,16 @@
   
   <update id="updateMember" parameterType="memberlist">
     UPDATE MEMBER
-       SET NAME = #{name}
-         , EMAIL = #{email}
-         , PHONE = #{phone}
-         , ADDRESS = #{address}
-         , DEPARTMENT_ID = #{deptId}
-         , POSITION_ID = #{positionId}
-         , HIRE_DATE = #{hireDate}
-         , STATUS = #{status}
-         , LEAVE_START_DATE = #{leaveStartDate, jdbcType=NUMERIC}
-         , LEAVE_END_DATE = #{leaveEndDate, jdbcType=NUMERIC}
-         ,	RETIRE_DATE = #{retireDate}
+       SET NAME = #{name}, EMAIL = #{email}, PHONE = #{phone}, ADDRESS = #{address}, 
+           DEPARTMENT_ID = #{deptId}, POSITION_ID = #{positionId}, HIRE_DATE = #{hireDate}, 
+           STATUS = #{status}, LEAVE_START_DATE = #{leaveStartDate, jdbcType=NUMERIC}, 
+           LEAVE_END_DATE = #{leaveEndDate, jdbcType=NUMERIC}, RETIRE_DATE = #{retireDate}
      WHERE MEMBER_ID = #{memberId}
   </update>
 
- 	<insert id="insertMember" parameterType="memberlist">
-    INSERT INTO MEMBER (
-        MEMBER_ID, 
-        LOGIN_ID, 
-        LOGIN_PWD,
-        NAME, 
-        DEPARTMENT_ID, 
-        POSITION_ID, 
-        HIRE_DATE, 
-        STATUS,
-        EMAIL,
-        PHONE,
-        ADDRESS,
-        ROLE  ) VALUES (
-        #{memberId}, 
-        #{loginId}, 
-        #{loginPwd}, 
-        #{name}, 
-        #{deptId}, 
-        #{positionId}, 
-        #{hireDate}, 
-        'Y',
-        #{email},
-        #{phone},
-        #{address},
-        #{role}  )
-	</insert>
+  <insert id="insertMember" parameterType="memberlist">
+    INSERT INTO MEMBER (MEMBER_ID, LOGIN_ID, LOGIN_PWD, NAME, DEPARTMENT_ID, POSITION_ID, HIRE_DATE, STATUS, EMAIL, PHONE, ADDRESS, ROLE) 
+    VALUES (#{memberId}, #{loginId}, #{loginPwd}, #{name}, #{deptId}, #{positionId}, #{hireDate}, 'Y', #{email}, #{phone}, #{address}, #{role})
+  </insert>
  
- 	
- 
-
 </mapper>
