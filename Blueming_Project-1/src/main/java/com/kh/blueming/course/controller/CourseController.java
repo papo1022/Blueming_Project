@@ -245,10 +245,6 @@ public class CourseController {
 					contentType);
 
 			//멤버 ID 가져오기
-			Member loginUser = (Member)session.getAttribute("loginUser");
-			
-					
-			at.setOriginalName(originalName);
 			at.setChangedName(changeName);
 			at.setFilePath("resources/video_upfiles/");
 			at.setType(fileType);
@@ -292,8 +288,8 @@ public class CourseController {
     public String updateCourse(@RequestParam("courseId") int courseId, Course c, Model model, HttpSession session) {
     	
 		Member loginUser = (Member)session.getAttribute("loginUser");
-		Course c = courseService.selectCourse(courseId);
-		if (!canManageCourse(loginUser, c)) {
+		Course originCourse = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, originCourse)) {
 			model.addAttribute("errorMsg", "강의를 수정할 권한이 없습니다.");
 			return "common/errorPage";
 		}
@@ -301,13 +297,10 @@ public class CourseController {
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
     	
+	    	c.setCourseId(courseId);
+	    	c.setMemberId(originCourse.getMemberId());
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
-    	
-    	if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 수정할 수 없습니다.");
-			return "common/errorPage";
-		}
     	
     	int result = courseService.updateCourse(c);
     	
@@ -514,7 +507,7 @@ public class CourseController {
 			return "common/errorPage";
 		}
 	}
-  }
+
 	
 	// 챕터 시청 진도 저장 (Ajax)
 	@ResponseBody

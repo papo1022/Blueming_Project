@@ -131,6 +131,8 @@ public class CourseDao {
 
 	public int deleteChapterVideo(SqlSessionTemplate sqlSession, Chapter ch) {
 		return sqlSession.update("courseMapper.deleteChapterVideo", ch);
+	}
+
 	public Attachment selectVideoAttachmentByChapterId(SqlSessionTemplate sqlSession, int chapterId) {
 		return sqlSession.selectOne("courseMapper.selectVideoAttachmentByChapterId", chapterId);
 	}
