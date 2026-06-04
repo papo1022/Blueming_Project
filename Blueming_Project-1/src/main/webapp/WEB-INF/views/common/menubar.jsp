@@ -38,9 +38,9 @@
             <div class="nav-area" align="center">
                 <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
                 <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-                <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+                <div class="menu"><a href="<c:url value='/memberlist'/>">사원정보관리</a></div>
                 <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">EnrollMemList</a></div>
+                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
             </div>
         </c:when>
         <c:otherwise>
@@ -49,10 +49,10 @@
                 <!-- 임시로 로그인 기능이 없어서 비로그인 상태로도 확인용 -->
                 <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
                 <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-                <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+                <div class="menu"><a href="<c:url value='/memberlist'/>">사원정보관리</a></div>
                 <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
                 <!-- ASSIGNMENT는 주소 변경 필요 -->
-                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">EnrollMemList</a></div>
+                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
                 
             </div>
         </c:otherwise>

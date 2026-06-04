@@ -100,6 +100,9 @@
         <div class="menu">
             <a href="<c:url value='/memberlist'/>">사원조회</a>
         </div>
+        
+        <div class="menu">
+        <a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
 
     </c:if>
 
