@@ -29,6 +29,7 @@
 		<typeAlias type="com.kh.blueming.course.model.vo.CourseCard" alias="courseCard" />
     	<typeAlias type="com.kh.blueming.assignment.model.vo.AssignmentCard" alias="assignmentCard" />
     	<typeAlias type="com.kh.blueming.member.model.vo.MemberProfile" alias="memberProfile" />
+    	<typeAlias type="com.kh.blueming.hrdashboard.model.vo.HrDashboardMember" alias="hrDashboardMember" />
 	</typeAliases>
 	
 	<!-- 

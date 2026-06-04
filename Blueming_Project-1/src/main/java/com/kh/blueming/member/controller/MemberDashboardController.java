@@ -2,8 +2,10 @@ package com.kh.blueming.member.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kh.blueming.assignment.model.vo.AssignmentCard;
@@ -18,20 +20,22 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/dashboard")
 public class MemberDashboardController {
 
+	@Autowired
 	private MemberDashboardService memberDashboardService;
 	
+	@GetMapping("main")
 	public String dashboard(HttpSession session, Model model) {
 		
 		// 1. 세션에서 로그인한 사용자 정보 가져오기
-		Member loginMember = (Member)session.getAttribute("loginMember");
+		Member loginUser = (Member)session.getAttribute("loginUser");
 		
 		// 2. 로그인 안 했으면 로그인 페이지로 보내기
-		if(loginMember == null) {
+		if(loginUser == null) {
 			
 			return "redirect:/member/login"; // 주소 맞는지 확인 필요
 		}
 		
-		int memberId = loginMember.getMemberId();
+		int memberId = loginUser.getMemberId();
 		
 		// 3. Service 호출해서 데이터 가져오기
 		MemberProfile profile = memberDashboardService.selectMemberProfile(memberId);
