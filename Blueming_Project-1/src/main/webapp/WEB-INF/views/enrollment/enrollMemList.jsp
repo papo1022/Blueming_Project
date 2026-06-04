@@ -36,10 +36,10 @@
         <div class="table-container">
             <table class="table table-bordered">
                 <thead>
-                    <th><a href="javascript:void(0);" onclick="sortList('COURSE_TITLE')" class="sort-link">강의명 ↓</a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('START_DATE')" class="sort-link">시작일 ↓</a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('END_DATE')" class="sort-link">종료일 ↓</a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('STATUS')" class="sort-link">상태 ↓</a></th>
+                    <th><a href="javascript:void(0);" onclick="sortList('COURSE_TITLE')" class="sort-link">강의명 </a></th>
+					<th><a href="javascript:void(0);" onclick="sortList('START_DATE')" class="sort-link">시작일 </a></th>
+					<th><a href="javascript:void(0);" onclick="sortList('END_DATE')" class="sort-link">종료일 </a></th>
+					<th><a href="javascript:void(0);" onclick="sortList('STATUS')" class="sort-link">상태 </a></th>
                 </thead>
                 <tbody>
                     <c:choose>

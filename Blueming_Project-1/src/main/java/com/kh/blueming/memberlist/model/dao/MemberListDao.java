@@ -53,7 +53,14 @@ public class MemberListDao {
         return sqlSession.insert("memberlistMapper.insertMember", member);
     }
 
-
+    public ArrayList<MemberList> selectDeptList(SqlSessionTemplate sqlSession) {
+        // memberlistMapper.xml에 정의할 id와 동일해야 합니다.
+        return (ArrayList) sqlSession.selectList("memberlistMapper.selectDeptList");
+    }
+    
+    public ArrayList<MemberList> selectPosList(SqlSessionTemplate sqlSession) {
+        return (ArrayList) sqlSession.selectList("memberlistMapper.selectPosList");
+    }
 	
 	
 }

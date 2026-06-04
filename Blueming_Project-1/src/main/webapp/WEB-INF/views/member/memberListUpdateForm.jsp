@@ -78,27 +78,27 @@
 			    <div class="update-label">부서</div>
 			    <div class="update-value">
 			    	<select name="deptId" id="deptSelect">
-			            <option value="D01" ${member.deptId == 'D01' ? 'selected' : ''}>인사팀</option>
-			            <option value="D02" ${member.deptId == 'D02' ? 'selected' : ''}>개발팀</option>
-			            <option value="D03" ${member.deptId == 'D03' ? 'selected' : ''}>디자인팀</option>
-			            <option value="D04" ${member.deptId == 'D04' ? 'selected' : ''}>영업팀</option>
-			            <option value="D05" ${member.deptId == 'D05' ? 'selected' : ''}>마케팅팀</option>
-			            <option value="D06" ${member.deptId == 'D06' ? 'selected' : ''}>운영팀</option>
-			            <option value="D07" ${member.deptId == 'D07' ? 'selected' : ''}>품질관리팀</option>
+						 <c:forEach var="dept" items="${deptList}">
+					            <option value="${dept.deptId}" 
+					                    ${member.deptId == dept.deptId ? 'selected' : ''}>
+					                ${dept.deptName}
+					            </option>
+       					 </c:forEach>
 			        </select>
 			    </div>
 			</div>
 		
 			<div class="update-row">
 			    <div class="update-label">직급</div>
-			    <div class="update-value">
-			    	<select name="positionId" id="positionSelect">
-			            <option value="P01" ${member.positionId == 'P01' ? 'selected' : ''}>사원</option>
-			            <option value="P02" ${member.positionId == 'P02' ? 'selected' : ''}>주임</option>
-			            <option value="P03" ${member.positionId == 'P03' ? 'selected' : ''}>대리</option>
-			            <option value="P04" ${member.positionId == 'P04' ? 'selected' : ''}>과장</option>
-			            <option value="P05" ${member.positionId == 'P05' ? 'selected' : ''}>차장</option>
-			        </select>
+			   	 <div class="update-value">
+			    	 <select name="positionId" id="positionSelect">
+					        <c:forEach var="pos" items="${posList}">
+					            <option value="${pos.positionId}" 
+					                    ${member.positionId == pos.positionId ? 'selected' : ''}>
+					                ${pos.positionName}
+					            </option>
+					        </c:forEach>
+   					 </select>
 			    </div>
 			</div>
 			
