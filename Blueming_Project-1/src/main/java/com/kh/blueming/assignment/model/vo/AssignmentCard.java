@@ -1,4 +1,4 @@
-package com.kh.blueming.course.model.vo;
+package com.kh.blueming.assignment.model.vo;
 
 import java.sql.Date;
 
@@ -14,11 +14,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CourseCard {
-    private int courseId;
+public class AssignmentCard {
+    private int assignmentId;
+    private String assignmentTitle;
+    private Date dueDate;
     private String courseTitle;
-    private Date endDate;
-    private int dDay;
-    private int progressRate;
-    private String courseStatus; // IN_PROGRESS(수강중) / DONE(수강완료) / CLOSED(마감)
+    private String submitStatus; // SUBMITTED(제출) / NOT_SUBMITTED(미제출)
 }
