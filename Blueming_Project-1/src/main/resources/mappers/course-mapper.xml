@@ -68,10 +68,10 @@
 		</where>
 		<choose>
 			<when test="sort == 'oldest'">
-				ORDER BY STATUS DESC, CREATE_DATE DESC
+				ORDER BY STATUS DESC, CREATE_DATE ASC
 			</when>
 			<otherwise>
-				ORDER BY STATUS DESC, CREATE_DATE ASC
+				ORDER BY STATUS DESC, CREATE_DATE DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -95,7 +95,7 @@
 							'W',
 							#{startDate},
 							#{endDate},
-							(#{endDate} - #{startDate}) * 24,
+							0,
 							SYSDATE,
 							NULL)
 			
@@ -153,7 +153,11 @@
 	
 	<insert id="addAttachment">
 	<selectKey resultType="int" keyProperty="fileId" order="BEFORE">
-			SELECT SEQ_ANO.NEXTVAL FROM DUAL
+			SELECT GREATEST(
+					   NVL((SELECT MAX(FILE_ID) + 1 FROM ATTACHMENT), 1),
+					   SEQ_ANO.NEXTVAL
+				   )
+			FROM DUAL
 	</selectKey>
 	INSERT INTO ATTACHMENT (FILE_ID,
 							ORIGINAL_NAME,
@@ -171,7 +175,7 @@
 					#{filePath},
 					#{fileSize},
 					#{type},
-					NULL,
+					#{videoDuration},
 					#{memberId},
 					'Y',
 					SYSDATE)
@@ -179,7 +183,11 @@
 	
 	<insert id="addChapterVideo">
 		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
-				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+				SELECT GREATEST(
+						   NVL((SELECT MAX(CHAPTER_ID) + 1 FROM CHAPTER), 1),
+						   SEQ_CHNO.NEXTVAL
+					   )
+				FROM DUAL
 		</selectKey>
 		INSERT INTO CHAPTER(CHAPTER_ID,
 							COURSE_ID,
@@ -199,9 +207,13 @@
 	
 	<insert id="addChapter">
 		<selectKey resultType="int" keyProperty="chapterId" order="BEFORE">
-				SELECT SEQ_CHNO.NEXTVAL FROM DUAL
+				SELECT GREATEST(
+						   NVL((SELECT MAX(CHAPTER_ID) + 1 FROM CHAPTER), 1),
+						   SEQ_CHNO.NEXTVAL
+					   )
+				FROM DUAL
 		</selectKey>
-		INSERT INTO COURSE(CHAPTER_ID,
+		INSERT INTO CHAPTER(CHAPTER_ID,
 							COURSE_ID,
 							CHAPTER_TITLE,
 							CHAPTER_ORDER,
@@ -223,10 +235,20 @@
 			DESCRIPTION = #{description},
 			START_DATE = #{startDate},
 			END_DATE = #{endDate},
-			TOTAL_HOURS = (#{endDate} - #{startDate}) * 24,
 			UPDATED_DATE = SYSDATE
 		WHERE MEMBER_ID = #{memberId}
 		AND COURSE_ID = #{courseId}
+	</update>
+
+	<update id="updateTotalHoursInMinutes" parameterType="_int">
+		UPDATE COURSE C
+		SET C.TOTAL_HOURS = (
+			SELECT NVL(ROUND(SUM(NVL(A.VIDEO_DURATION, 0)) / 3600), 0)
+			FROM CHAPTER CH
+			LEFT JOIN ATTACHMENT A ON A.FILE_ID = CH.VIDEO_FILE_ID
+			WHERE CH.COURSE_ID = C.COURSE_ID
+		)
+		WHERE C.COURSE_ID = #{courseId}
 	</update>
 	
 	<delete id="deleteCourse">
