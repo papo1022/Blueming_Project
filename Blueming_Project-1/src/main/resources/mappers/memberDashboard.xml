@@ -7,7 +7,7 @@
 
     <!-- 이 아래로 쿼리문 작성 -->
     <!-- 1. 사원 프로필 조회 -->
-    <select id="selectMemberProfile" parameterType="_int" resultType="member">
+    <select id="selectMemberProfile" parameterType="_int" resultType="memberProfile">
         SELECT M.MEMBER_ID AS memberId,
                M.NAME AS name,
                M.EMAIL AS email,
@@ -21,7 +21,7 @@
     </select>
 
     <!-- 2. 내 강의 목록 조회 -->
-    <select id="selectMyCourseList" parameterType="_int" resultType="map">
+    <select id="selectMyCourseList" parameterType="_int" resultType="courseCard">
         SELECT C.COURSE_ID AS courseId,
                C.COURSE_TITLE AS courseTitle,
                C.END_DATE AS endDate,
@@ -55,7 +55,7 @@
     </select>
 
     <!-- 3. 내 과제 목록 조회 -->
-    <select id="selectMyAssignmentList" parameterType="_int" resultType="map">
+    <select id="selectMyAssignmentList" parameterType="_int" resultType="assignmentCard">
         SELECT A.ASSIGNMENT_ID AS assignmentId,
                A.ASSIGNMENT_TITLE AS assignmentTitle,
                A.DUE_DATE AS dueDate,
