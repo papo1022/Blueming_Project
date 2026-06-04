@@ -117,8 +117,15 @@ public class MemberListController {
             mv.setViewName("redirect:/");
             return mv;
         }
+        mv.addObject("deptList", memlistService.selectDeptList());
+        ArrayList<MemberList> posList = memlistService.selectPosList();
+        
+        mv.addObject("posList", posList);
+        
         MemberList member = memlistService.selectMemberDetail(memberId);
         mv.addObject("member", member).setViewName("member/memberListUpdateForm");
+        
+        
         return mv;
     }
     

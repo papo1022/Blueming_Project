@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.blueming.assignment.model.service.AssignmentService;
 import com.kh.blueming.assignment.model.vo.Assignment;
 import com.kh.blueming.common.template.XssDefencePolicy;
+import com.kh.blueming.course.model.service.CourseService;
+import com.kh.blueming.course.model.vo.Course;
+import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.member.model.vo.Member;
 
 import jakarta.servlet.http.HttpSession;
@@ -28,19 +32,172 @@ public class AssignmentController {
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
+    private CourseService courseService;
+
+    private boolean canManageCourse(Member loginUser, Course course) {
+        return loginUser != null
+            && course != null
+            && ("S".equals(loginUser.getRole()) || loginUser.getMemberId() == course.getMemberId());
+    }
+
     @GetMapping("list")
     public ModelAndView selectAssignmentList(@RequestParam(value = "keyword", required = false) String keyword,
-                                         @RequestParam(value = "targetType", defaultValue = "cName") String targetType,
-                                         ModelAndView mv) {
+                                            @RequestParam(value = "targetType", defaultValue = "cName") String targetType,
+                                            @RequestParam(value = "mineOnly", defaultValue = "false") boolean mineOnly,
+                                            ModelAndView mv) {
         if (!"deadline".equals(targetType)) {
                 targetType = "cName";
         }
 
         mv.addObject("keyword", keyword)
           .addObject("targetType", targetType)
+          .addObject("mineOnly", mineOnly)
           .setViewName("assignment/assignmentListView");
 
         return mv;
+    }
+
+    @GetMapping("addView")
+    public ModelAndView addAssignmentView(@RequestParam("chapterId") int chapterId, ModelAndView mv, HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        Chapter chapter = courseService.selectChapter(chapterId);
+        Course course = chapter == null ? null : courseService.selectCourse(chapter.getCourseId());
+
+        if (!canManageCourse(loginUser, course)) {
+            mv.addObject("errorMsg", "과제를 등록할 권한이 없습니다.")
+              .setViewName("common/errorPage");
+            return mv;
+        }
+
+        mv.addObject("chapter", chapter)
+          .setViewName("assignment/assignmentAdd");
+
+        return mv;
+    }
+
+    @GetMapping("updateView")
+    public ModelAndView updateAssignmentView(@RequestParam("assignmentId") int assignmentId, ModelAndView mv, HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        Assignment assignment = assignmentService.selectAssignment(assignmentId);
+        if (assignment == null) {
+                mv.addObject("errorMsg", "존재하지 않는 과제입니다.")
+                    .setViewName("common/errorPage");
+                return mv;
+        }
+
+        Chapter chapter = courseService.selectChapter(assignment.getChapterId());
+        Course course = chapter == null ? null : courseService.selectCourse(chapter.getCourseId());
+
+        if (!canManageCourse(loginUser, course)) {
+                mv.addObject("errorMsg", "과제를 수정할 권한이 없습니다.")
+                    .setViewName("common/errorPage");
+                return mv;
+        }
+
+        mv.addObject("assignment", assignment)
+        .addObject("chapter", chapter)
+        .setViewName("assignment/assignmentUpdate");
+
+        return mv;
+    }
+
+    @PostMapping("add")
+    public String addAssignment(Assignment assignment, Model model, HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            model.addAttribute("errorMsg", "로그인이 필요합니다.");
+            return "common/errorPage";
+        }
+
+        Chapter chapter = courseService.selectChapter(assignment.getChapterId());
+        if (chapter == null) {
+            model.addAttribute("errorMsg", "존재하지 않는 챕터입니다.");
+            return "common/errorPage";
+        }
+
+        Course course = courseService.selectCourse(chapter.getCourseId());
+        if (!canManageCourse(loginUser, course)) {
+            model.addAttribute("errorMsg", "과제를 등록할 권한이 없습니다.");
+            return "common/errorPage";
+        }
+
+        assignment.setCourseId(chapter.getCourseId());
+        assignment.setAssignmentTitle(XssDefencePolicy.defence(assignment.getAssignmentTitle()));
+        assignment.setDescription(XssDefencePolicy.defence(assignment.getDescription()));
+
+        int result = assignmentService.insertAssignment(assignment);
+        if (result > 0) {
+            session.setAttribute("alertMsg", "과제 등록 완료");
+            return "redirect:/course/chapterDetailView?chapterId=" + assignment.getChapterId();
+        }
+
+        model.addAttribute("errorMsg", "과제 등록에 실패했습니다.");
+        return "common/errorPage";
+    }
+
+    @PostMapping("update")
+    public String updateAssignment(Assignment assignment, Model model, HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            model.addAttribute("errorMsg", "로그인이 필요합니다.");
+            return "common/errorPage";
+        }
+
+        Assignment origin = assignmentService.selectAssignment(assignment.getAssignmentId());
+        if (origin == null) {
+            model.addAttribute("errorMsg", "존재하지 않는 과제입니다.");
+            return "common/errorPage";
+        }
+
+        Chapter chapter = courseService.selectChapter(origin.getChapterId());
+        Course course = chapter == null ? null : courseService.selectCourse(chapter.getCourseId());
+        if (!canManageCourse(loginUser, course)) {
+            model.addAttribute("errorMsg", "과제를 수정할 권한이 없습니다.");
+            return "common/errorPage";
+        }
+
+        assignment.setChapterId(origin.getChapterId());
+        assignment.setCourseId(origin.getCourseId());
+        assignment.setAssignmentTitle(XssDefencePolicy.defence(assignment.getAssignmentTitle()));
+        assignment.setDescription(XssDefencePolicy.defence(assignment.getDescription()));
+
+        int result = assignmentService.updateAssignment(assignment);
+        if (result > 0) {
+            session.setAttribute("alertMsg", "과제 수정 완료");
+            return "redirect:/course/chapterDetailView?chapterId=" + origin.getChapterId();
+        }
+
+        model.addAttribute("errorMsg", "과제 수정에 실패했습니다.");
+        return "common/errorPage";
+    }
+
+    @PostMapping("delete")
+    public String deleteAssignment(@RequestParam("assignmentId") int assignmentId,
+                                   @RequestParam("chapterId") int chapterId,
+                                   Model model,
+                                   HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            model.addAttribute("errorMsg", "로그인이 필요합니다.");
+            return "common/errorPage";
+        }
+
+        Chapter chapter = courseService.selectChapter(chapterId);
+        Course course = chapter == null ? null : courseService.selectCourse(chapter.getCourseId());
+        if (!canManageCourse(loginUser, course)) {
+            model.addAttribute("errorMsg", "과제를 삭제할 권한이 없습니다.");
+            return "common/errorPage";
+        }
+
+        int result = assignmentService.deleteAssignment(assignmentId);
+        if (result > 0) {
+            session.setAttribute("alertMsg", "과제 삭제 완료");
+            return "redirect:/course/chapterDetailView?chapterId=" + chapterId;
+        }
+
+        model.addAttribute("errorMsg", "과제 삭제에 실패했습니다.");
+        return "common/errorPage";
     }
 
     @ResponseBody
@@ -50,6 +207,7 @@ public class AssignmentController {
             @RequestParam(value = "limit", defaultValue = "8") int assignmentLimit,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "targetType", defaultValue = "cName") String targetType,
+            @RequestParam(value = "mineOnly", defaultValue = "false") boolean mineOnly,
             HttpSession session) {
 
         if (currentPage < 1) {
@@ -69,6 +227,7 @@ public class AssignmentController {
         String departmentId = (loginUser != null) ? loginUser.getDepartmentId() : null;
         String positionId = (loginUser != null) ? loginUser.getPositionId() : null;
         boolean isAdmin = loginUser != null && "S".equals(loginUser.getRole());
+        boolean mineOnlyFilter = mineOnly && loginUser != null;
 
         return assignmentService.selectAssignmentList(currentPage,
                                                       assignmentLimit,
@@ -76,8 +235,9 @@ public class AssignmentController {
                                                       targetType,
                                                       memberId,
                                                       departmentId,
-                                  positionId,
-                                  isAdmin);
+                                                      positionId,
+                                                      isAdmin,
+                                                      mineOnlyFilter);
     }
 
     @ResponseBody

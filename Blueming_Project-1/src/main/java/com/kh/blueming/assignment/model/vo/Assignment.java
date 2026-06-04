@@ -16,6 +16,7 @@ import lombok.ToString;
 public class Assignment {
 
     private int assignmentId;       // ASSIGNMENT_ID
+    private int chapterId;          // CHAPTER_ID
     private int courseId;           // COURSE_ID
     private String assignmentTitle; // ASSIGNMENT_TITLE
     private String description;     // DESCRIPTION
