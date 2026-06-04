@@ -36,7 +36,8 @@ public class AssignmentService {
                                                       Integer memberId,
                                                       String departmentId,
                                                       String positionId,
-                                                      boolean isAdmin) {
+                                                      boolean isAdmin,
+                                                      boolean mineOnly) {
         return assignmentDao.selectAssignmentList(sqlSession,
                                                   currentPage,
                                                   assignmentLimit,
@@ -45,7 +46,46 @@ public class AssignmentService {
                                                   memberId,
                                                   departmentId,
                                                   positionId,
-                                                  isAdmin);
+                                                  isAdmin,
+                                                  mineOnly);
+    }
+
+    public ArrayList<Assignment> selectAssignmentListByChapterId(int chapterId) {
+        return assignmentDao.selectAssignmentListByChapterId(sqlSession, chapterId);
+    }
+
+    public Assignment selectAssignment(int assignmentId) {
+        return assignmentDao.selectAssignment(sqlSession, assignmentId);
+    }
+
+    @Transactional
+    public int insertAssignment(Assignment assignment) {
+        return assignmentDao.insertAssignment(sqlSession, assignment);
+    }
+
+    @Transactional
+    public int updateAssignment(Assignment assignment) {
+        return assignmentDao.updateAssignment(sqlSession, assignment);
+    }
+
+    @Transactional
+    public int deleteAssignment(int assignmentId) {
+        assignmentDao.deleteAssignmentSubmissionByAssignmentId(sqlSession, assignmentId);
+        return assignmentDao.deleteAssignment(sqlSession, assignmentId);
+    }
+
+    @Transactional
+    public int deleteAssignmentsByChapterId(int chapterId) {
+        assignmentDao.deleteAssignmentSubmissionByChapterId(sqlSession, chapterId);
+        assignmentDao.deleteAssignmentByChapterId(sqlSession, chapterId);
+        return 1;
+    }
+
+    @Transactional
+    public int deleteAssignmentsByCourseId(int courseId) {
+        assignmentDao.deleteAssignmentSubmissionByCourseId(sqlSession, courseId);
+        assignmentDao.deleteAssignmentByCourseId(sqlSession, courseId);
+        return 1;
     }
 
     @Transactional
@@ -58,25 +98,23 @@ public class AssignmentService {
         lookupMap.put("assignmentId", assignmentId);
         lookupMap.put("memberId", memberId);
 
-        Map<String, Object> latestSubmission = assignmentDao.selectLatestSubmissionInfo(sqlSession, lookupMap);
+        Assignment latestSubmission = assignmentDao.selectLatestSubmissionInfo(sqlSession, lookupMap);
 
         Integer submissionId = null;
         Integer currentFileId = null;
         if (latestSubmission != null) {
-            Object submissionObj = latestSubmission.get("submissionId");
-            Object fileObj = latestSubmission.get("fileId");
-
-            if (submissionObj instanceof Number) {
-                submissionId = ((Number) submissionObj).intValue();
-            }
-            if (fileObj instanceof Number) {
-                currentFileId = ((Number) fileObj).intValue();
-            }
+            submissionId = latestSubmission.getSubmissionId();
+            currentFileId = latestSubmission.getSubmittedFileId();
         }
 
         Integer fileId = currentFileId;
+        Attachment oldAttachment = null;
 
         if (upfile != null && !upfile.isEmpty()) {
+            if (currentFileId != null) {
+                oldAttachment = assignmentDao.selectAttachmentByFileId(sqlSession, currentFileId);
+            }
+
             Attachment attachment = new Attachment();
             String changedName = FileRenamePolicy.saveFile(upfile, session, "/resources/upload-submission/");
 
@@ -106,10 +144,6 @@ public class AssignmentService {
                 return 0;
             }
             fileId = attachment.getFileId();
-
-            if (currentFileId != null) {
-                assignmentDao.updateAttachmentStatusToN(sqlSession, currentFileId);
-            }
         }
 
         Map<String, Object> paramMap = new HashMap<>();
@@ -118,12 +152,48 @@ public class AssignmentService {
         paramMap.put("content", content);
         paramMap.put("fileId", fileId);
 
+        int result;
         if (submissionId != null) {
             paramMap.put("submissionId", submissionId);
-            return assignmentDao.updateAssignmentSubmission(sqlSession, paramMap);
+            result = assignmentDao.updateAssignmentSubmission(sqlSession, paramMap);
+        } else {
+            result = assignmentDao.insertAssignmentSubmission(sqlSession, paramMap);
         }
 
-        return assignmentDao.insertAssignmentSubmission(sqlSession, paramMap);
+        if (result < 1) {
+            return 0;
+        }
+
+        if (upfile != null && !upfile.isEmpty() && currentFileId != null) {
+            int deletedRows = assignmentDao.deleteAttachment(sqlSession, currentFileId);
+            if (deletedRows < 1) {
+                return 0;
+            }
+
+            if (oldAttachment != null && oldAttachment.getChangedName() != null && !oldAttachment.getChangedName().isBlank()) {
+                String oldFilePath = oldAttachment.getFilePath();
+                if (oldFilePath == null || oldFilePath.isBlank()) {
+                    oldFilePath = "/resources/upload-submission/";
+                }
+
+                String normalizedPath = oldFilePath.startsWith("/") ? oldFilePath : "/" + oldFilePath;
+                String oldRealPath = session.getServletContext().getRealPath(normalizedPath);
+                if (oldRealPath == null || oldRealPath.isBlank()) {
+                    oldRealPath = session.getServletContext().getRealPath("/resources/upload-submission/");
+                }
+                if (oldRealPath == null || oldRealPath.isBlank()) {
+                    return 0;
+                }
+
+                File oldFile = new File(oldRealPath, oldAttachment.getChangedName());
+
+                if (oldFile.exists() && !oldFile.delete()) {
+                    return 0;
+                }
+            }
+        }
+
+        return result;
     }
 
 }

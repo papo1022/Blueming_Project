@@ -87,6 +87,30 @@
         padding: 4px;
     }
 
+    .mine-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: auto;
+        margin-right: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid #d6dfec;
+        background: #ffffff;
+        color: #44556c;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .mine-toggle input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        accent-color: var(--brand-500);
+    }
+
     .sort-btn {
         border: 0;
         background: transparent;
@@ -432,26 +456,24 @@
                     <form action="/blueming/assignment/list" method="get">
                         <input type="search" name="keyword" value="${keyword}" id = "keyword-input">
                         <input type="hidden" name="targetType" value="${targetType}" id="targetType-hidden-input">
+                        <input type="hidden" name="mineOnly" value="${mineOnly}" id="mineOnly-hidden-input">
                         <button type="submit" class="btn btn-primary">검색</button>
                     </form>
                 </div>
 
                 <!-- 강의명 순 / 마감일 가까운 순 -->
                 <div class="assignment-toolbar">
+                    <c:if test="${sessionScope.loginUser.role eq 'S'}">
+                        <label class="mine-toggle" for="mine-only-checkbox">
+                            <input type="checkbox" id="mine-only-checkbox" value="true" ${mineOnly ? 'checked' : ''}>
+                            내 강의만 보기
+                        </label>
+                    </c:if>
                     <button type="button" class="sort-btn" data-sort="cName" id="sort-latest">강의명순</button>
                     <span class="sort-divider">/</span>
                     <button type="button" class="sort-btn" data-sort="deadline" id="sort-deadline">마감일 가까운순</button>
                 </div>
             </div>
-
-            <!-- todo -->
-            <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                <div style="margin-bottom:12px;">
-                    <a href="/blueming/assignment/enrollForm" class="btn btn-primary">
-                        과제 등록
-                    </a>
-                </div>
-            </c:if>
 
             <div id="assignment-grid"></div>
             <div id="empty-message">검색 결과가 없습니다.</div>
@@ -501,16 +523,25 @@
         let isLoading = false;
         let hasMore = true;
         let loadedCount = 0;
+        let activeRequest = null;
         const keyword = ($('#keyword-input').val() || '').trim();
         let targetType = "${empty targetType ? 'cName' : targetType}";
+        let mineOnly = "${mineOnly}" === "true";
 
         function applySortButtonState() {
             $(".sort-btn").removeClass("active");
             $(".sort-btn[data-sort='" + targetType + "']").addClass("active");
             $("#targetType-hidden-input").val(targetType);
+            $("#mineOnly-hidden-input").val(mineOnly);
         }
 
         function resetAndReload() {
+            if (activeRequest) {
+                const pendingRequest = activeRequest;
+                activeRequest = null;
+                pendingRequest.abort();
+            }
+
             currentPage = 1;
             isLoading = false;
             hasMore = true;
@@ -654,16 +685,22 @@
             isLoading = true;
             $("#loading-area").show();
 
-            $.ajax({
+            let request = null;
+            request = $.ajax({
                 url: "/blueming/assignment/ajaxList",
                 method: "get",
                 data: {
                     page: currentPage,
                     limit: limit,
                     keyword: keyword,
-                    targetType: targetType
+                    targetType: targetType,
+                    mineOnly: mineOnly
                 },
                 success : function(result) {
+                    if (activeRequest !== request) {
+                        return;
+                    }
+
                     if (result.length > 0) {
                         appendAssignmentCards(result);
                         loadedCount += result.length;
@@ -677,10 +714,21 @@
                         }
                     }
                 },
-                error : function() {
-                    console.log("과제 목록 ajax 통신 실패");
+                error : function(xhr, textStatus) {
+                    if (activeRequest !== request) {
+                        return;
+                    }
+
+                    if (textStatus !== "abort") {
+                        console.log("과제 목록 ajax 통신 실패");
+                    }
                 },
                 complete : function() {
+                    if (activeRequest !== request) {
+                        return;
+                    }
+
+                    activeRequest = null;
                     isLoading = false;
                     $("#loading-area").hide();
 
@@ -689,11 +737,21 @@
                     }
                 }
             });
+
+            activeRequest = request;
         }
 
         $(function() {
             if (targetType !== "deadline") {
                 targetType = "cName";
+            }
+
+            const $mineOnlyCheckbox = $("#mine-only-checkbox");
+            if ($mineOnlyCheckbox.length > 0) {
+                // Browser history navigation can restore checkbox UI state after render.
+                // Prefer the actual checkbox state so UI and ajax filter stay consistent.
+                mineOnly = $mineOnlyCheckbox.is(":checked");
+                $mineOnlyCheckbox.prop("checked", mineOnly);
             }
 
             applySortButtonState();
@@ -707,6 +765,27 @@
                 }
 
                 targetType = selectedTargetType;
+                applySortButtonState();
+                resetAndReload();
+            });
+
+            $("#mine-only-checkbox").on("change", function() {
+                mineOnly = $(this).is(":checked");
+                applySortButtonState();
+                resetAndReload();
+            });
+
+            $(window).on("pageshow", function() {
+                if ($mineOnlyCheckbox.length === 0) {
+                    return;
+                }
+
+                const restoredMineOnly = $mineOnlyCheckbox.is(":checked");
+                if (mineOnly === restoredMineOnly) {
+                    return;
+                }
+
+                mineOnly = restoredMineOnly;
                 applySortButtonState();
                 resetAndReload();
             });

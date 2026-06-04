@@ -31,30 +31,61 @@
 
 <!-- Latest compiled JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    #user-info {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    #user-info a {
+        text-decoration: none;
+        color: black;
+        font-size: 12px;
+        margin: 0 10px;
+    }
+
+    .nav-area {
+        background-color: black;
+        display: flex;
+        justify-content: center;
+    }
+
+    .menu {
+        width: 150px;
+        height: 50px;
+    }
+
+    .menu a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        line-height: 50px;
+        text-align: center;
+        text-decoration: none;
+        color: white;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    .menu a:hover {
+        color: white;
+        font-size: 18px;
+        text-decoration: none;
+    }
+</style>
 </head>
 <body>
+
+
     <c:choose>
         <c:when test="${ not empty sessionScope.loginUser }">
-            <div class="nav-area" align="center">
-                <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-                <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-                <div class="menu"><a href="<c:url value='/memberlist'/>">사원정보관리</a></div>
-                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
-            </div>
+            <jsp:include page="mainMenubar.jsp" />
+
         </c:when>
         <c:otherwise>
-            <div class="nav-area" align="center">
-                <div class="menu"><a href="<c:url value='/member/login'/>">로그인</a></div>
-                <!-- 임시로 로그인 기능이 없어서 비로그인 상태로도 확인용 -->
-                <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-                <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-                <div class="menu"><a href="<c:url value='/memberlist'/>">사원정보관리</a></div>
-                <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-                <!-- ASSIGNMENT는 주소 변경 필요 -->
-                <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
+           <jsp:include page="/WEB-INF/views/login.jsp" />
                 
-            </div>
+            
         </c:otherwise>
     </c:choose>
 </body>
