@@ -134,15 +134,20 @@
 	
 	<!-- 챕터 하나를 불러오기 -->
 	<select id="selectChapter" resultType="chapter" parameterType="map">
-		SELECT CHAPTER_ID AS chapterId,
-				COURSE_ID AS courseId,
-				CHAPTER_TITLE AS chapterTitle,
-				CHAPTER_ORDER AS chapterOrder,
-				VIDEO_FILE_ID AS videoFileId,
-				CREATE_DATE AS createDate,
-				UPDATED_DATE AS updatedDate
-		FROM CHAPTER 
-		WHERE CHAPTER_ID = #{chapterId}
+		SELECT CH.CHAPTER_ID AS chapterId,
+				CH.COURSE_ID AS courseId,
+				CH.CHAPTER_TITLE AS chapterTitle,
+				CH.CHAPTER_ORDER AS chapterOrder,
+				CH.VIDEO_FILE_ID AS videoFileId,
+				CH.CREATE_DATE AS createDate,
+				CH.UPDATED_DATE AS updatedDate,
+				
+				A.ORIGINAL_NAME AS originalName,
+				A.CHANGED_NAME AS changedName,
+				A.FILE_PATH AS filePath
+		FROM CHAPTER CH
+		LEFT JOIN ATTACHMENT A ON CH.VIDEO_FILE_ID = A.FILE_ID
+		WHERE CH.CHAPTER_ID = #{chapterId}
 	</select>
 	
 	<!-- 챕터의 번호를 자동으로 지정해주는 코드 -->
@@ -291,6 +296,44 @@
 		FROM ATTACHMENT
 		WHERE FILE_ID = #{videoFileId}
 	</select>
+	
+	<update id="updateAttachment">
+		UPDATE ATTACHMENT
+		SET ORIGINAL_NAME = #{originalName},
+			CHANGED_NAME = #{changedName},
+			FILE_PATH = #{filePath},
+			FILE_SIZE = #{fileSize},
+			TYPE = #{type},
+			VIDEO_DURATION = #{videoDuration},
+			UPLOAD_DATE = SYSDATE
+		WHERE STATUS = 'Y'
+		AND FILE_ID = #{fileId}
+	</update>
+	
+	
+	<update id="updateChapterVideo">
+		UPDATE CHAPTER 
+		SET CHAPTER_TITLE = #{chapterTitle},
+			VIDEO_FILE_ID = #{videoFileId},
+			UPDATED_DATE = SYSDATE
+		WHERE CHAPTER_ID = #{chapterId}
+	</update>
+	
+	
+	<update id="updateChapter">
+		UPDATE CHAPTER 
+		SET CHAPTER_TITLE = #{chapterTitle},
+			UPDATED_DATE = SYSDATE
+		WHERE CHAPTER_ID = #{chapterId}
+	</update>
+	
+	<update id="deleteChapterVideo">
+		UPDATE CHAPTER 
+		SET CHAPTER_TITLE = #{chapterTitle},
+			VIDEO_FILE_ID = NULL,
+			UPDATED_DATE = SYSDATE
+		WHERE CHAPTER_ID = #{chapterId}
+	</update>
 	
 </mapper>
 

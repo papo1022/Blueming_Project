@@ -125,4 +125,49 @@ public class CourseService {
 		
 		return result1 * result2;
 	}
+
+	@Transactional
+	public int updateChapter(Chapter ch, Attachment at, int cnt) {
+		int result1 = 1;
+		int result2 = 1;
+		int result3 = 1;
+		
+		//신규추가
+		if (cnt == 0) {
+			result1 = courseDao.addAttachment(sqlSession, at);
+			ch.setVideoFileId(at.getFileId());
+			result2 = courseDao.updateChapterVideo(sqlSession, ch);
+			result3 = courseDao.updateTotalHoursInMinutes(sqlSession, ch.getCourseId());
+			
+			System.out.printf("%d %d %d", result1, result2, result3);
+		}
+		
+		//업데이트
+		if(cnt == 1) {
+			result1 = courseDao.updateAttachment(sqlSession, at);
+			ch.setVideoFileId(at.getFileId());
+			result2 = courseDao.updateChapterVideo(sqlSession, ch);
+			result3 = courseDao.updateTotalHoursInMinutes(sqlSession, ch.getCourseId());
+			
+			System.out.printf("%d %d %d", result1, result2, result3);
+		}
+		
+		//그대로
+		if (cnt == 2) {
+			result1 = courseDao.updateChapter(sqlSession, ch);
+		}
+		
+		if (cnt == 3) {
+			result1 = courseDao.deleteChapterVideo(sqlSession, ch);
+		}
+		
+		return result1 * result2 * result3;
+	}
+
+	
+	@Transactional
+	public int deleteAttachment(Chapter ch) {
+		return courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
+	}
+
 }
