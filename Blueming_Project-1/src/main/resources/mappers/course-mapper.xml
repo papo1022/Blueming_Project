@@ -26,37 +26,16 @@
 			UPDATED_DATE AS updatedDate
 		FROM COURSE
 		<where>
-			<if test="isAdmin == null or isAdmin == false">
-				(
-					EXISTS (
-						SELECT 1
-						FROM COURSE_TARGET CT_MATCH
-						WHERE CT_MATCH.COURSE_ID = COURSE.COURSE_ID
-						  AND (
-							(
-								UPPER(CT_MATCH.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서')
-								AND CT_MATCH.TARGET_VALUE = #{departmentId}
-							)
-							OR (
-								UPPER(CT_MATCH.TARGET_TYPE) IN ('POS', 'POSITION', '직급')
-								AND CT_MATCH.TARGET_VALUE = #{positionId}
-							)
-						  )
-					)
-					OR (
-						NOT EXISTS (
-							SELECT 1
-							FROM COURSE_TARGET CT_SPEC
-							WHERE CT_SPEC.COURSE_ID = COURSE.COURSE_ID
-							  AND UPPER(CT_SPEC.TARGET_TYPE) IN ('DEPT', 'DEPARTMENT', '부서', 'POS', 'POSITION', '직급')
-						)
-						AND EXISTS (
-							SELECT 1
-							FROM COURSE_TARGET CT_ALL
-							WHERE CT_ALL.COURSE_ID = COURSE.COURSE_ID
-							  AND UPPER(CT_ALL.TARGET_TYPE) IN ('ALL', '전체')
-						)
-					)
+			<if test="mineOnly == true and memberId != null and isAdmin == true">
+				MEMBER_ID = #{memberId}
+			</if>
+			<if test="(isAdmin == null or isAdmin == false) and memberId != null">
+				AND EXISTS (
+					SELECT 1
+					FROM ENROLLMENT E
+					WHERE E.COURSE_ID = COURSE.COURSE_ID
+					  AND E.MEMBER_ID = #{memberId}
+					  AND E.STATUS = 'Y'
 				)
 			</if>
 			<if test="keyword != null and keyword != ''">
@@ -78,6 +57,13 @@
 	
 	<!-- 코스 추가하기 -->
 	<insert id="addCourse" >
+		<selectKey resultType="int" keyProperty="courseId" order="BEFORE">
+			SELECT GREATEST(
+					   NVL((SELECT MAX(COURSE_ID) + 1 FROM COURSE), 1),
+					   SEQ_CNO.NEXTVAL + 80
+				   )
+			FROM DUAL
+		</selectKey>
 		INSERT INTO COURSE(COURSE_ID,
 							COURSE_TITLE,
 							DESCRIPTION,
@@ -88,7 +74,7 @@
 							TOTAL_HOURS,
 							CREATE_DATE,
 							UPDATED_DATE)
-					VALUES (SEQ_CNO.NEXTVAL + 80,
+					VALUES (#{courseId},
 							#{courseTitle},
 							#{description},
 							#{memberId},
@@ -99,6 +85,59 @@
 							SYSDATE,
 							NULL)
 			
+	</insert>
+
+	<insert id="insertCourseTarget" parameterType="map">
+		INSERT INTO COURSE_TARGET (
+			TARGET_ID,
+			COURSE_ID,
+			TARGET_TYPE,
+			TARGET_VALUE
+		)
+		VALUES (
+			'T' || LPAD(NVL((SELECT MAX(TO_NUMBER(SUBSTR(TARGET_ID, 2))) + 1 FROM COURSE_TARGET), 1), 4, '0'),
+			#{courseId},
+			#{targetType},
+			#{targetValue}
+		)
+	</insert>
+
+	<insert id="insertEnrollmentByCourseTarget" parameterType="map">
+		INSERT INTO ENROLLMENT (
+			ENROLLMENT_ID,
+			MEMBER_ID,
+			COURSE_ID,
+			STATUS,
+			START_DATE,
+			COMPLETED_DATE
+		)
+		SELECT
+			SEQ_ENO.NEXTVAL,
+			M.MEMBER_ID,
+			#{courseId},
+			'Y',
+			SYSDATE,
+			NULL
+		FROM MEMBER M
+		WHERE M.STATUS = 'Y'
+		  AND M.ROLE = 'N'
+		  <choose>
+			  <when test="targetType == '부서' or targetType == 'DEPT' or targetType == 'DEPARTMENT'">
+				AND M.DEPARTMENT_ID = #{targetValue}
+			  </when>
+			  <when test="targetType == '직급' or targetType == 'POS' or targetType == 'POSITION'">
+				AND M.POSITION_ID = #{targetValue}
+			  </when>
+			  <otherwise>
+				AND 1 = 1
+			  </otherwise>
+		  </choose>
+		  AND NOT EXISTS (
+				SELECT 1
+				FROM ENROLLMENT E
+				WHERE E.MEMBER_ID = M.MEMBER_ID
+				  AND E.COURSE_ID = #{courseId}
+		  )
 	</insert>
 	
 	<!-- 코스를 조회해서 상세정보 표기 -->
@@ -291,7 +330,68 @@
 		FROM ATTACHMENT
 		WHERE FILE_ID = #{videoFileId}
 	</select>
-	
+
+	<!-- 챕터 영상 첨부파일 조회 (챕터 VIDEO_FILE_ID 기준) -->
+	<select id="selectVideoAttachmentByChapterId" resultType="Attachment" parameterType="_int">
+		SELECT A.FILE_ID AS fileId,
+			   A.ORIGINAL_NAME AS originalName,
+			   A.CHANGED_NAME AS changedName,
+			   A.FILE_PATH AS filePath,
+			   A.FILE_SIZE AS fileSize,
+			   A.TYPE AS type,
+			   A.VIDEO_DURATION AS videoDuration,
+			   A.MEMBER_ID AS memberId,
+			   A.STATUS AS status,
+			   A.UPLOAD_DATE AS uploadDate
+		FROM ATTACHMENT A
+		JOIN CHAPTER C ON A.FILE_ID = C.VIDEO_FILE_ID
+		WHERE C.CHAPTER_ID = #{chapterId}
+	</select>
+
+	<!-- 수강 enrollment ID 조회 (memberId + courseId) -->
+	<select id="selectEnrollmentId" resultType="_int" parameterType="map">
+		SELECT ENROLLMENT_ID
+		FROM ENROLLMENT
+		WHERE MEMBER_ID = #{memberId}
+		  AND COURSE_ID = #{courseId}
+		  AND STATUS = 'Y'
+		  AND ROWNUM = 1
+	</select>
+
+	<!-- 챕터 진도 조회 -->
+	<select id="selectChapterProgress" resultType="chapterProgress" parameterType="map">
+		SELECT PROGRESS_ID AS progressId,
+			   ENROLLMENT_ID AS enrollmentId,
+			   CHAPTER_ID AS chapterId,
+			   WATCHED_SECONDS AS watchedSeconds,
+			   LAST_POSITION_SECONDS AS lastPositionSeconds,
+			   CHAP_COMP_RATE AS chapCompRate,
+			   IS_COMPLETED AS isCompleted
+		FROM CHAPTER_PROGRESS
+		WHERE ENROLLMENT_ID = #{enrollmentId}
+		  AND CHAPTER_ID = #{chapterId}
+	</select>
+
+	<!-- 챕터 진도 저장 (없으면 INSERT, 있으면 UPDATE) -->
+	<update id="upsertChapterProgress" parameterType="map">
+		MERGE INTO CHAPTER_PROGRESS CP
+		USING (
+		    SELECT #{enrollmentId} AS ENROLLMENT_ID, #{chapterId} AS CHAPTER_ID FROM DUAL
+		) SRC ON (CP.ENROLLMENT_ID = SRC.ENROLLMENT_ID AND CP.CHAPTER_ID = SRC.CHAPTER_ID)
+		WHEN MATCHED THEN
+		    UPDATE SET
+		        CP.WATCHED_SECONDS = #{watchedSeconds},
+		        CP.LAST_POSITION_SECONDS = #{lastPositionSeconds},
+		        CP.CHAP_COMP_RATE = #{chapCompRate},
+		        CP.IS_COMPLETED = #{isCompleted}
+		WHEN NOT MATCHED THEN
+		    INSERT (PROGRESS_ID, ENROLLMENT_ID, CHAPTER_ID, WATCHED_SECONDS, LAST_POSITION_SECONDS, CHAP_COMP_RATE, IS_COMPLETED)
+		    VALUES (
+		        (SELECT NVL(MAX(PROGRESS_ID), 0) + 1 FROM CHAPTER_PROGRESS),
+		        #{enrollmentId}, #{chapterId}, #{watchedSeconds}, #{lastPositionSeconds}, #{chapCompRate}, #{isCompleted}
+		    )
+	</update>
+
 </mapper>
 
 
