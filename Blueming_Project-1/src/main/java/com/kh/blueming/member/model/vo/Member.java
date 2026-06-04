@@ -31,8 +31,4 @@ public class Member {
 	private Integer leaveStartDate;				//	LEAVE_START_DATE	NUMBER
 	private Integer leaveEndDate;					//	LEAVE_END_DATE	NUMBER
 	
-	
-	
-	
-	
 }
