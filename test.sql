@@ -2,7 +2,7 @@
 -- Blueming Project 통합 더미 데이터 (Oracle)
 -- 대상: DEPARTMENT, POSITION, MEMBER, ATTACHMENT, COURSE,
 --      COURSE_TARGET, ENROLLMENT, CHAPTER, CHAPTER_PROGRESS,
---      ASSIGNMENT, ASSIGNMENT_SUBMISSION, QNA, REPLY, NOTICE
+--      ASSIGNMENT, ASSIGNMENT_SUBMISSION, REPLY, NOTICE
 -- 특징: FK 순서 보장, 상태값 다양화, 충분한 테스트 데이터량
 -- ============================================================
 
@@ -11,7 +11,6 @@
 -- ------------------------------------------------------------
 DELETE FROM ASSIGNMENT_SUBMISSION;
 DELETE FROM REPLY;
-DELETE FROM QNA;
 DELETE FROM NOTICE;
 DELETE FROM CHAPTER_PROGRESS;
 DELETE FROM CHAPTER;
@@ -186,7 +185,7 @@ FROM (
 -- ------------------------------------------------------------
 INSERT INTO COURSE (
     COURSE_ID, COURSE_TITLE, DESCRIPTION, MEMBER_ID, STATUS,
-    START_DATE, END_DATE, TOTAL_HOURS, CREATE_DATE, UPDATED_DATE
+    START_DATE, END_DATE, TOTAL_HOURS, FILE_ID, CREATE_DATE, UPDATED_DATE
 )
 SELECT
     id,
@@ -201,6 +200,7 @@ SELECT
     DATE '2026-01-01' + (id * 3),
     DATE '2026-01-01' + (id * 3) + 30,
     8 + MOD(id * 3, 36),
+    NULL,
     SYSDATE - MOD(id, 250),
     SYSDATE - MOD(id, 120)
 FROM (
@@ -304,11 +304,12 @@ CROSS JOIN (
 -- 9) 과제 240건 (강의당 3개)
 -- ------------------------------------------------------------
 INSERT INTO ASSIGNMENT (
-    ASSIGNMENT_ID, COURSE_ID, ASSIGNMENT_TITLE, DESCRIPTION,
+    ASSIGNMENT_ID, CHAPTER_ID, COURSE_ID, ASSIGNMENT_TITLE, DESCRIPTION,
     START_DATE, DUE_DATE, MAX_SCORE
 )
 SELECT
     ((c.course_id - 1) * 3) + n.seq AS assignment_id,
+    ((c.course_id - 1) * 5) + n.seq AS chapter_id,
     c.course_id,
     '강의 ' || LPAD(c.course_id, 3, '0') || ' 과제 ' || n.seq,
     '과제 안내: 실습 결과물 제출',
@@ -340,42 +341,21 @@ FROM (
 );
 
 -- ------------------------------------------------------------
--- 11) QNA 320건
--- ------------------------------------------------------------
-INSERT INTO QNA (
-    QNA_ID, COURSE_ID, FILE_ID, MEMBER_ID,
-    QNA_TITLE, CONTENT, IS_PRIVATE,
-    CREATED_DATE, UPDATED_DATE, STATUS
-)
-SELECT
-    id,
-    MOD(id * 7, 80) + 1,
-    CASE WHEN MOD(id, 4) = 0 THEN MOD(id, 300) + 1 ELSE NULL END,
-    MOD(id * 9, 148) + 13,
-    'QNA 제목 ' || LPAD(id, 4, '0'),
-    'QNA 내용 ' || id || ' - 학습 관련 질문입니다.',
-    CASE WHEN MOD(id, 5) = 0 THEN 'Y' ELSE 'N' END,
-    SYSDATE - MOD(id, 120),
-    SYSDATE - MOD(id, 80),
-    CASE WHEN MOD(id, 17) = 0 THEN 'N' ELSE 'Y' END
-FROM (
-    SELECT LEVEL AS id FROM dual CONNECT BY LEVEL <= 320
-);
-
--- ------------------------------------------------------------
--- 12) 답글 700건
+-- 11) 챕터 댓글 질문 700건
 -- 1~450: 원댓글, 451~700: 대댓글(PARENT_REPLY_ID 참조)
 -- ------------------------------------------------------------
 INSERT INTO REPLY (
-    REPLY_ID, QNA_ID, MEMBER_ID, PARENT_REPLY_ID,
-    CONTENT, CREATED_DATE, UPDATED_DATE, STATE
+    REPLY_ID, CHAPTER_ID, MEMBER_ID, PARENT_REPLY_ID,
+    FILE_ID, CONTENT, IS_PRIVATE, CREATED_DATE, UPDATED_DATE, STATUS
 )
 SELECT
     id,
-    MOD(id * 3, 320) + 1,
+    MOD(id * 3, 400) + 1,
     MOD(id * 13, 148) + 13,
     NULL,
-    '답글 내용(원댓글) #' || id,
+    CASE WHEN MOD(id, 4) = 0 THEN MOD(id, 300) + 1 ELSE NULL END,
+    '챕터 질문(원댓글) #' || id,
+    CASE WHEN MOD(id, 5) = 0 THEN 'Y' ELSE 'N' END,
     SYSDATE - MOD(id, 90),
     SYSDATE - MOD(id, 45),
     CASE WHEN MOD(id, 19) = 0 THEN 'N' ELSE 'Y' END
@@ -384,15 +364,17 @@ FROM (
 );
 
 INSERT INTO REPLY (
-    REPLY_ID, QNA_ID, MEMBER_ID, PARENT_REPLY_ID,
-    CONTENT, CREATED_DATE, UPDATED_DATE, STATE
+    REPLY_ID, CHAPTER_ID, MEMBER_ID, PARENT_REPLY_ID,
+    FILE_ID, CONTENT, IS_PRIVATE, CREATED_DATE, UPDATED_DATE, STATUS
 )
 SELECT
     id,
-    MOD(id * 3, 320) + 1,
+    MOD(id * 3, 400) + 1,
     MOD(id * 7, 148) + 13,
     MOD(id, 450) + 1,
-    '답글 내용(대댓글) #' || id,
+    CASE WHEN MOD(id, 6) = 0 THEN MOD(id, 300) + 1 ELSE NULL END,
+    '챕터 질문(대댓글) #' || id,
+    'N',
     SYSDATE - MOD(id, 60),
     SYSDATE - MOD(id, 20),
     'Y'
@@ -437,7 +419,6 @@ UNION ALL SELECT 'CHAPTER', COUNT(*) FROM CHAPTER
 UNION ALL SELECT 'CHAPTER_PROGRESS', COUNT(*) FROM CHAPTER_PROGRESS
 UNION ALL SELECT 'ASSIGNMENT', COUNT(*) FROM ASSIGNMENT
 UNION ALL SELECT 'ASSIGNMENT_SUBMISSION', COUNT(*) FROM ASSIGNMENT_SUBMISSION
-UNION ALL SELECT 'QNA', COUNT(*) FROM QNA
 UNION ALL SELECT 'REPLY', COUNT(*) FROM REPLY
 UNION ALL SELECT 'NOTICE', COUNT(*) FROM NOTICE
 ORDER BY 1;

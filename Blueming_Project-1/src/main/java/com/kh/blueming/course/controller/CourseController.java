@@ -2,6 +2,8 @@ package com.kh.blueming.course.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.blueming.attachment.model.vo.Attachment;
+import com.kh.blueming.assignment.model.service.AssignmentService;
+import com.kh.blueming.assignment.model.vo.Assignment;
 import com.kh.blueming.chapter.model.vo.Chapter;
+import com.kh.blueming.chapter.model.vo.ChapterProgress;
 import com.kh.blueming.common.template.FileRenamePolicy;
 import com.kh.blueming.common.template.VideoDurationPolicy;
 import com.kh.blueming.common.template.XssDefencePolicy;
@@ -31,11 +36,21 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
+
+	@Autowired
+	private AssignmentService assignmentService;
+
+	private boolean canManageCourse(Member loginUser, Course course) {
+		return loginUser != null
+			&& course != null
+			&& ("S".equals(loginUser.getRole()) || loginUser.getMemberId() == course.getMemberId());
+	}
     
     //리스트들을 띄우는 코드
     @GetMapping("list")
     public ModelAndView selectCourseList(@RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "sort", defaultValue = "latest") String sort,
+						 				 @RequestParam(value = "mineOnly", defaultValue = "false") boolean mineOnly,
                                          ModelAndView mv) {
         if (!"oldest".equals(sort)) {
                 sort = "latest";
@@ -43,6 +58,7 @@ public class CourseController {
 
         mv.addObject("keyword", keyword)
           .addObject("sort", sort)
+		  .addObject("mineOnly", mineOnly)
           .setViewName("course/courseListView");
 
         return mv;
@@ -56,6 +72,7 @@ public class CourseController {
             @RequestParam(value = "limit", defaultValue = "4") int courseLimit,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
+		    @RequestParam(value = "mineOnly", defaultValue = "false") boolean mineOnly,
             HttpSession session) {
 
         if (currentPage < 1) {
@@ -73,15 +90,19 @@ public class CourseController {
         Member loginUser = (Member) session.getAttribute("loginUser");
         String departmentId = (loginUser != null) ? loginUser.getDepartmentId() : null;
         String positionId = (loginUser != null) ? loginUser.getPositionId() : null;
+		Integer memberId = (loginUser != null) ? loginUser.getMemberId() : null;
         boolean isAdmin = loginUser != null && "S".equals(loginUser.getRole());
+		boolean mineOnlyFilter = mineOnly && loginUser != null;
 
         return courseService.selectCourseList(currentPage,
                                               courseLimit,
                                               keyword,
                                               sort,
+						      memberId,
                                               departmentId,
                                               positionId,
-                                              isAdmin);
+											  isAdmin,
+											  mineOnlyFilter);
     }
     
     //카드를 누르면 상세설명 페이지로 이동
@@ -101,12 +122,33 @@ public class CourseController {
     
     //챕터 상세 페이지로 이동
     @GetMapping("chapterDetailView")
-    public ModelAndView selectChapter(@RequestParam("chapterId") int chapterId, ModelAndView mv) {
+    public ModelAndView selectChapter(@RequestParam("chapterId") int chapterId, ModelAndView mv, HttpSession session) {
     	Chapter chapter = courseService.selectChapter(chapterId);
-    	
-    	
+		ArrayList<Assignment> assignmentList = assignmentService.selectAssignmentListByChapterId(chapterId);
+
+		// 영상 첨부파일 조회
+		Attachment videoAttachment = null;
+		if (chapter != null && chapter.getVideoFileId() > 0) {
+			videoAttachment = courseService.selectVideoAttachmentByChapterId(chapterId);
+		}
+
+		// 수강자의 기존 진도 조회 (로그인 + 수강 중인 경우)
+		ChapterProgress existingProgress = null;
+		int enrollmentId = 0;
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (loginUser != null && chapter != null) {
+			enrollmentId = courseService.selectEnrollmentId(loginUser.getMemberId(), chapter.getCourseId());
+			if (enrollmentId > 0) {
+				existingProgress = courseService.selectChapterProgress(enrollmentId, chapterId);
+			}
+		}
+
     	mv.addObject("chapter", chapter)
-    		.setViewName("course/chapterDetailView");
+		  .addObject("assignmentList", assignmentList)
+		  .addObject("videoAttachment", videoAttachment)
+		  .addObject("existingProgress", existingProgress)
+		  .addObject("enrollmentId", enrollmentId)
+    	  .setViewName("course/chapterDetailView");
     	
     	return mv;
     }
@@ -119,7 +161,11 @@ public class CourseController {
     
     //코스를 데이터베이스에 추가하는 코드 (완료)
     @PostMapping("addCourse")
-    public String addCourse(Course c, Model model, HttpSession session) {
+	public String addCourse(Course c,
+						@RequestParam(value = "targetType", defaultValue = "전체") String targetType,
+						@RequestParam(value = "targetValue", required = false) String targetValue,
+						Model model,
+						HttpSession session) {
     	
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
@@ -127,7 +173,7 @@ public class CourseController {
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
     	
-    	int result = courseService.addCourse(c);
+		int result = courseService.addCourse(c, targetType, targetValue);
     	
     	if(result > 0) {
 			session.setAttribute("alertMsg", "강의 등록 완료");
@@ -140,7 +186,15 @@ public class CourseController {
     
     //챕터 추가 페이지로 이동
     @GetMapping("addChapterView")
-    public ModelAndView addChapterForm(int courseId, ModelAndView mv) {
+    public ModelAndView addChapterForm(int courseId, ModelAndView mv, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		Course course = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, course)) {
+			mv.addObject("errorMsg", "챕터를 등록할 권한이 없습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
+
         int nextOrder = courseService.nextOrder(courseId);
 
     	mv.addObject("courseId", courseId)
@@ -152,6 +206,17 @@ public class CourseController {
     //챕터를 데이터베이스에 추가하는 코드
     @PostMapping("addChapter")
     public String addChapter(Chapter ch, @RequestParam(value="video", required=false) MultipartFile video, Model model, HttpSession session) {
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		if (loginUser == null) {
+			model.addAttribute("errorMsg", "로그인이 필요합니다.");
+			return "common/errorPage";
+		}
+
+		Course course = courseService.selectCourse(ch.getCourseId());
+		if (!canManageCourse(loginUser, course)) {
+			model.addAttribute("errorMsg", "챕터를 등록할 권한이 없습니다.");
+			return "common/errorPage";
+		}
     	
     	Attachment at = new Attachment();
     	int cnt = 0;
@@ -173,9 +238,6 @@ public class CourseController {
 					new File(realPath, changeName),
 					originalName,
 					contentType);
-
-			//멤버 ID 가져오기
-			Member loginUser = (Member)session.getAttribute("loginUser");
 					
 			at.setOriginalName(originalName);
 			at.setChangedName(changeName);
@@ -202,9 +264,15 @@ public class CourseController {
     
     //코스 수정 페이지로 이동
 	@GetMapping("updateCourseView")
-	public ModelAndView updateForm(ModelAndView mv, @RequestParam("courseId") int courseId) {
-		
+	public ModelAndView updateForm(ModelAndView mv, @RequestParam("courseId") int courseId, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
 		Course c = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, c)) {
+			mv.addObject("errorMsg", "강의를 수정할 권한이 없습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
+		
 		mv.addObject("c", c).setViewName("course/courseUpdate");
 		return mv;
 	}
@@ -215,6 +283,10 @@ public class CourseController {
     	
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Course c = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, c)) {
+			model.addAttribute("errorMsg", "강의를 수정할 권한이 없습니다.");
+			return "common/errorPage";
+		}
 		
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
@@ -225,11 +297,7 @@ public class CourseController {
     	System.out.println("loginUser = " + loginUser.getMemberId());
     	System.out.println("writer = " + c.getMemberId());
     	
-    	if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 수정할 수 없습니다.");
-			return "common/errorPage";
-		}
-    	
+	    
     	int result = courseService.updateCourse(c);
     	
     	if(result > 0) {
@@ -248,8 +316,8 @@ public class CourseController {
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Course c = courseService.selectCourse(courseId);
 		
-		if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
+		if(!canManageCourse(loginUser, c)) {
+			model.addAttribute("errorMsg", "강의를 삭제할 권한이 없습니다.");
 			return "common/errorPage";
 		}
 		
@@ -270,10 +338,10 @@ public class CourseController {
 		
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Chapter ch = courseService.selectChapter(chapterId);
-		Course c = courseService.selectCourse(ch.getCourseId());
+		Course c = (ch == null) ? null : courseService.selectCourse(ch.getCourseId());
 		
-		if(loginUser.getMemberId() != c.getMemberId()) {
-			model.addAttribute("errorMsg", "본인이 작성하지 않은 게시물은 삭제할 수 없습니다.");
+		if(!canManageCourse(loginUser, c)) {
+			model.addAttribute("errorMsg", "챕터를 삭제할 권한이 없습니다.");
 			return "common/errorPage";
 		}
 		
@@ -290,10 +358,75 @@ public class CourseController {
 	
 	//챕터를 수정하는 화면으로 이동
 	@GetMapping("updateChapterView")
-	public ModelAndView updateChapterForm(ModelAndView mv, @RequestParam("chapterId") int chapterId) {
-		
+	public ModelAndView updateChapterForm(ModelAndView mv, @RequestParam("chapterId") int chapterId, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
 		Chapter ch = courseService.selectChapter(chapterId);
+		Course c = (ch == null) ? null : courseService.selectCourse(ch.getCourseId());
+		if (!canManageCourse(loginUser, c)) {
+			mv.addObject("errorMsg", "챕터를 수정할 권한이 없습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
+		
 		mv.addObject("ch", ch).setViewName("course/chapterUpdate");
 		return mv;
+	}
+
+	// 챕터 시청 진도 저장 (Ajax)
+	@ResponseBody
+	@PostMapping("saveProgress")
+	public Map<String, Object> saveProgress(
+			@RequestParam("chapterId") int chapterId,
+			@RequestParam(value = "enrollmentId", defaultValue = "0") int enrollmentId,
+			@RequestParam("watchedSeconds") int watchedSeconds,
+			@RequestParam("lastPositionSeconds") int lastPositionSeconds,
+			@RequestParam("videoDuration") int videoDuration,
+			HttpSession session) {
+
+		Map<String, Object> result = new HashMap<>();
+		Member loginUser = (Member) session.getAttribute("loginUser");
+
+		if (loginUser == null) {
+			result.put("success", false);
+			result.put("message", "로그인이 필요합니다.");
+			return result;
+		}
+
+		if ("S".equals(loginUser.getRole())) {
+			result.put("success", false);
+			result.put("message", "관리자 계정은 진도 저장 대상이 아닙니다.");
+			return result;
+		}
+
+		Chapter chapter = courseService.selectChapter(chapterId);
+		if (chapter == null) {
+			result.put("success", false);
+			result.put("message", "챕터 정보를 찾을 수 없습니다.");
+			return result;
+		}
+
+		if (enrollmentId <= 0) {
+			enrollmentId = courseService.selectEnrollmentId(loginUser.getMemberId(), chapter.getCourseId());
+		}
+
+		if (enrollmentId <= 0) {
+			result.put("success", false);
+			result.put("message", "수강 정보가 없어 진도를 저장할 수 없습니다.");
+			return result;
+		}
+
+		double chapCompRate = (videoDuration > 0)
+				? Math.min(((double) watchedSeconds / videoDuration) * 100, 100.0)
+				: 0.0;
+		chapCompRate = Math.round(chapCompRate * 100.0) / 100.0;
+		String isCompleted = chapCompRate >= 90.0 ? "Y" : "N";
+
+		int rows = courseService.upsertChapterProgress(enrollmentId, chapterId,
+				watchedSeconds, lastPositionSeconds, chapCompRate, isCompleted);
+
+		result.put("success", rows > 0);
+		result.put("chapCompRate", chapCompRate);
+		result.put("isCompleted", isCompleted);
+		return result;
 	}
 }
