@@ -1,5 +1,11 @@
 package com.kh.blueming.memberlist.controller;
 
+
+
+
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
+import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.memberlist.model.service.MemberListService;
 import com.kh.blueming.memberlist.model.vo.MemberList;
 
@@ -28,136 +35,119 @@ public class MemberListController {
     @Autowired
     private MemberListService memlistService;
 
-    // 1. 목록 조회
-    @GetMapping
+    // 공통 권한 체크 로직: 로그인 여부와 ROLE이 'R'인지 확인
+    private boolean isNotAuthorized(HttpSession session) {
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        return loginUser == null || !"R".equals(loginUser.getRole());
+    }
+
+    // 1. 사원 관리 목록 페이지
+    @RequestMapping(value = "", method = {RequestMethod.GET, RequestMethod.POST})
     public String memberList(
             @RequestParam(value="cpage", defaultValue="1") int currentPage,
             @RequestParam(value="sortColumn", defaultValue="MEMBER_ID") String sortColumn,
             @RequestParam(value="sortOrder", defaultValue="DESC") String sortOrder,
-            Model model) { // ModelAndView 대신 Model 사용 권장
+            @RequestParam(value="condition", required=false) String condition, // 검색 조건
+            @RequestParam(value="keyword", required=false) String keyword,     // 검색어
+            HttpSession session, Model model) {
         
+        // 1. 권한 체크
+        if (isNotAuthorized(session)) {
+            session.setAttribute("alertMsg", "접근 권한이 없습니다.");
+            return "redirect:/";
+        }
+        
+        // 2. 검색/정렬 데이터 맵핑
         HashMap<String, String> map = new HashMap<>();
         map.put("sortColumn", sortColumn);
         map.put("sortOrder", sortOrder);
+        map.put("condition", condition);
+        map.put("keyword", keyword);
         
-        int listCount = memlistService.selectListCount();
+        // 3. 검색 여부 판단 (키워드가 비어있지 않으면 검색 모드)
+        boolean isSearch = (keyword != null && !keyword.trim().isEmpty());
+        
+        // 4. 리스트 총 개수 조회 (검색 모드인지 일반 모드인지에 따라 호출)
+        int listCount = isSearch ? memlistService.selectSearchCount(map) 
+                                 : memlistService.selectListCount();
+        
+        // 5. 페이징 처리
         PageInfo pi = Pageination.getPageInfo(listCount, currentPage, 10, 10);
         
-        ArrayList<MemberList> list = memlistService.selectMemberList(pi, map); 
+        // 6. 리스트 조회
+        ArrayList<MemberList> list = isSearch ? memlistService.searchMemberList(map, pi) 
+                                              : memlistService.selectMemberList(pi, map); 
         
-        model.addAttribute("list", list);
-        model.addAttribute("pi", pi);
-        model.addAttribute("sortColumn", sortColumn);
-        model.addAttribute("sortOrder", sortOrder);
+        // 7. 화면으로 데이터 전달
+        model.addAttribute("list", list)
+             .addAttribute("pi", pi)
+             .addAttribute("sortColumn", sortColumn)
+             .addAttribute("sortOrder", sortOrder)
+             .addAttribute("condition", condition)
+             .addAttribute("keyword", keyword);
         
         return "member/memberListView";
     }
 
-    // 2. 검색 기능
-    @PostMapping("/search")
-    public ModelAndView searchMemberList(@RequestParam(value="condition", required=false) String condition,
-                                          @RequestParam(value="keyword", required=false) String keyword,
-                                          @RequestParam(value="cpage", defaultValue="1") int currentPage,
-                                          ModelAndView mv, HttpSession session) {
+    // 2. 상세 조회
+    @GetMapping("/detail")
+    public ModelAndView memberDetail(@RequestParam("memberId") int memberId, HttpSession session, ModelAndView mv) {
+        // 1. 권한 체크
+        if (isNotAuthorized(session)) return new ModelAndView("redirect:/");
         
-        session.setAttribute("accessTicket", "OK"); 
-
-        HashMap<String, String> map = new HashMap<>();
-        map.put("condition", condition);
-        map.put("keyword", keyword);
-        
-        int searchCount = memlistService.selectSearchCount(map);
-        PageInfo pi = Pageination.getPageInfo(searchCount, currentPage, 10, 10);
-        ArrayList<MemberList> list = memlistService.searchMemberList(map, pi);
-        
-        mv.addObject("list", list).addObject("pi", pi).addObject("condition", condition)
-          .addObject("keyword", keyword).setViewName("member/memberListView");
-        return mv;
-    }
-
-    
- // 3. 상세 조회 (보안 제거)
-    @RequestMapping(value = "/detail", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView memberDetail(@RequestParam("memberId") int memberId, ModelAndView mv) {
-
-        // 바로 서비스를 호출하여 데이터를 조회합니다.
+        // 2. 서비스 호출 시, 단순히 ID만 넘기지 말고 
+        //    관리자가 조회 가능한 데이터인지 검증하는 로직을 서비스단에서 수행
         MemberList member = memlistService.selectMemberDetail(memberId);
-        System.out.println("조회된 사원 객체: " + member);
         
-        mv.addObject("member", member).setViewName("member/memberListDetail");
-        return mv;
-    }
-    
- // 5. 수정 화면으로 이동
- // 수정: Get과 Post 둘 다 받을 수 있도록 설정
-    @RequestMapping(value = "/updateForm", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView updateForm(@RequestParam("memberId") int memberId, ModelAndView mv) {
-        
-        MemberList member = memlistService.selectMemberDetail(memberId);
-        mv.addObject("member", member).setViewName("member/memberListUpdateForm");
-        
-        return mv;
-    }
-    
-    @PostMapping("/update")
-    public String updateMember(MemberList m, RedirectAttributes ra) {
-        
-        int result = memlistService.updateMember(m);
-        
-        if(result > 0) {
-            ra.addFlashAttribute("alertMsg", "성공적으로 수정되었습니다.");
-            return "redirect:/memberlist"; // 수정 성공 후 목록 페이지로 이동
-        } else {
-            ra.addFlashAttribute("alertMsg", "수정에 실패했습니다.");
-            return "redirect:/memberlist";
-        }
-    }
-    /*
- // 3. 보안 체크 로직 (타입 안전성 확보)
-    private boolean isAccessAllowed(HttpSession session) {
-        String ticket = (String) session.getAttribute("accessTicket");
-        Object loginUser = session.getAttribute("loginUser"); // Object로 받아서 타입을 체크
-        
-        System.out.println("보안 티켓 확인: " + ticket);
-        System.out.println("로그인 유저 객체: " + loginUser);
-        
-        if (ticket == null || loginUser == null) {
-            return false;
-        }
-
-        // 로그인 유저의 role을 가져오기 위한 변수
-        String role = null;
-
-        // 1. 로그인 객체가 MemberList 타입인 경우
-        if (loginUser instanceof com.kh.blueming.memberlist.model.vo.MemberList) {
-            role = ((com.kh.blueming.memberlist.model.vo.MemberList) loginUser).getRole();
-        } 
-        // 2. 로그인 객체가 일반 Member 타입인 경우
-        else if (loginUser instanceof com.kh.blueming.member.model.vo.Member) {
-            role = ((com.kh.blueming.member.model.vo.Member) loginUser).getRole();
-        }
-
-        // 역할이 "A"(관리자)인지 확인
-        return "R".equals(role);
-    }
-
-    // 4. 상세 조회
-    @RequestMapping(value = "/detail", method = {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView memberDetail(@RequestParam("memberId") int memberId, 
-                                     HttpSession session, ModelAndView mv) {
-
-        // 보안 체크 통과 못하면 목록으로 튕겨냄
-        if (!isAccessAllowed(session)) {
-            System.out.println("보안 체크 실패! 목록으로 리다이렉트.");
+        // 3. 존재하지 않는 사원이거나 관리 불가 사원일 경우 차단
+        if (member == null) {
+            session.setAttribute("alertMsg", "유효하지 않은 사원 정보입니다.");
             mv.setViewName("redirect:/memberlist");
             return mv;
         }
         
-        // 티켓을 지우지 않습니다 (목록 버튼 클릭 시에도 필요하기 때문)
-        MemberList member = memlistService.selectMemberDetail(memberId);
-        System.out.println("조회된 사원 객체: " + member);
-        
         mv.addObject("member", member).setViewName("member/memberListDetail");
         return mv;
-    }*/
+    }
+    
+    // 3. 수정 화면 이동
+    @PostMapping("/updateForm")
+    public ModelAndView updateForm(@RequestParam("memberId") int memberId, HttpSession session, ModelAndView mv) {
+        if (isNotAuthorized(session)) {
+            mv.setViewName("redirect:/");
+            return mv;
+        }
+        MemberList member = memlistService.selectMemberDetail(memberId);
+        mv.addObject("member", member).setViewName("member/memberListUpdateForm");
+        return mv;
+    }
+    
+    // 4. 수정 처리
+    @PostMapping("/update")
+    public String updateMember(MemberList m, HttpSession session, RedirectAttributes ra) {
+        if (isNotAuthorized(session)) {
+            return "redirect:/";
+        }
+        
+     // 2. [데이터 검증] 수정을 요청한 대상(m.getMemberId())이 
+        //    실제로 수정 가능한 대상인지 한 번 더 확인 (핵심)
+        MemberList existingMember = memlistService.selectMemberDetail(m.getMemberId());
+        if (existingMember == null) {
+            ra.addFlashAttribute("alertMsg", "수정할 수 없는 대상입니다.");
+            return "redirect:/memberlist";
+        }
+
+        // 3. [로직 수행]
+    
+        
+        int result = memlistService.updateMember(m);
+        if(result > 0) {
+            ra.addFlashAttribute("alertMsg", "성공적으로 수정되었습니다.");
+        } else {
+            ra.addFlashAttribute("alertMsg", "수정에 실패했습니다.");
+        }
+        return "redirect:/memberlist";
+    }
+    
+ 
 }

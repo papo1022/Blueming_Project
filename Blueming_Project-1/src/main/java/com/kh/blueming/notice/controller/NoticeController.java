@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kh.blueming.notice.model.vo.Notice;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
 import com.kh.blueming.common.template.XssDefencePolicy;
 import com.kh.blueming.notice.model.service.NoticeService;
+import com.kh.blueming.notice.model.vo.Notice;
 
 import jakarta.servlet.http.HttpSession;
 

@@ -42,7 +42,7 @@
             <table class="table">
                 <tr>
                     <td>* 강의명</td>
-                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.ch.courseTitle}" required></td>
+                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.c.courseTitle}" required></td>
                 </tr>
                 <tr>
                     <td>* 강의 설명</td>

@@ -18,8 +18,19 @@ public class MemberService {
 	@Autowired
 	private MemberDao memberDao;
 	
-	
+	public String findIdByEmail(Member m) {
+		return memberDao.findIdByEmail(sqlSession, m);
+	}
 
+	public int checkMemberExist(Member m) {
+		return memberDao.checkMemberExist(sqlSession, m);
+	}
+
+	@Transactional
+	public int resetPassword(Member m) {
+		return memberDao.resetPassword(sqlSession, m);
+	}
+	
 
 
 	public Member loginMember(Member m) {
