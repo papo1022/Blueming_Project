@@ -117,6 +117,20 @@ public class CourseDao {
 		return sqlSession.delete("courseMapper.deleteAttachment", videoFileId);
 	}
 
+	public int updateAttachment(SqlSessionTemplate sqlSession, Attachment at) {
+		return sqlSession.update("courseMapper.updateAttachment", at);
+	}
+
+	public int updateChapterVideo(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.update("courseMapper.updateChapterVideo", ch);
+	}
+
+	public int updateChapter(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.update("courseMapper.updateChapter", ch);
+	}
+
+	public int deleteChapterVideo(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.update("courseMapper.deleteChapterVideo", ch);
 	public Attachment selectVideoAttachmentByChapterId(SqlSessionTemplate sqlSession, int chapterId) {
 		return sqlSession.selectOne("courseMapper.selectVideoAttachmentByChapterId", chapterId);
 	}
