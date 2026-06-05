@@ -73,44 +73,54 @@
     <jsp:include page="../common/mainMenubar.jsp" />
 
     <div class="outer">
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">챕터 상세조회</h2>
+                <!-- 관리자에게만 보이는 버튼-->
+                <c:choose>
+                    <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                        <div align="center" class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-warning mr-1" onclick="updateChapter();">
+                                챕터 수정
+                            </button>
+                            <form id="deleteForm" action="deleteChapter" method="post">
+                                <input type="hidden" name="chapterId" value="${chapter.chapterId}">
+                                <input type="hidden" name="videoFileId" value="${chapter.videoFileId}">
+                                <button type="button" class="btn btn-danger mr-1" onclick="chapterDelete();">
+                                    챕터 삭제
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-primary mr-1" onclick="addAssignment();">
+                                과제 추가
+                            </button>
+                            </div>
+                        </c:when>
+                    <c:otherwise>
+                    <style>
+                        .d-flex {
+                            display: none;
+                        }
+                    </style>
+                </c:otherwise>
+            </c:choose>
+            </div>
 
-        <br>
-        <h2 align="center">챕터 상세조회</h2>
-        <br>
-
-        <table id="detail-area" class="table">
-            <tr>
-                <th>챕터명</th>
-                <td>${ requestScope.chapter.chapterTitle }</td>
-            </tr>
-            <tr>
-                <th>올린 날짜</th>
-                <td>${ requestScope.chapter.createDate }</td>
-            </tr>
-            <tr>
-                <th>업데이트 날짜</th>
-                <td>${ requestScope.chapter.updatedDate}</td>
-            </tr>
-        </table>
-
-        <!-- 관리자에게만 보이는 버튼-->
-        <div align="center">
-            <button class="btn btn-warning" onclick="updateChapter();">
-                챕터 수정
-            </button>
-            <form id="deleteForm" action="deleteChapter" method="post">
-                <input type="hidden" name="chapterId" value="${chapter.chapterId}">
-                <input type="hidden" name="videoFileId" value="${chapter.videoFileId}">
-                <button type="button" class="btn btn-danger" onclick="chapterDelete();">
-                    챕터 삭제
-                </button>
-            </form>
-            <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                <button type="button" class="btn btn-primary" onclick="addAssignment();">
-                    과제 추가
-                </button>
-            </c:if>
-            <br><br>
+            <div class="card-body">
+                <table id="detail-area" class="table">
+                    <tr>
+                        <th>챕터명</th>
+                        <td>${ requestScope.chapter.chapterTitle }</td>
+                    </tr>
+                    <tr>
+                        <th>올린 날짜</th>
+                        <td>${ requestScope.chapter.createDate }</td>
+                    </tr>
+                    <tr>
+                        <th>업데이트 날짜</th>
+                        <td>${ requestScope.chapter.updatedDate}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         <!-- ====== 영상 플레이어 ====== -->
