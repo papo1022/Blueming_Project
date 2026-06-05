@@ -5,10 +5,31 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
+
+<!-- 부트스트랩 -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+<!-- 간단한 동작들을 정의해둔 JS 파일 -->
+<!-- 온라인 방식 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-	<!-- 상단에 menubar 부터 넣기 -->
-	<jsp:include page="../common/mainMenubar.jsp" />
+
 	
 	<div class="outer">
 	
@@ -39,8 +60,8 @@
 				<tr>
 					<th>* 아이디</th>
 					<td>
-						<input type="text" name="userId" maxlength="12" readonly
-							  			   value="${ loginUser.loginId }" required>
+						<input type="text" name="loginId" maxlength="12" readonly
+							  			   value="${ sessionScope.loginUser.loginId }" required>
 					</td>
 					<td>
 					</td>
@@ -49,7 +70,7 @@
 					<th>* 이름</th>
 					<td>
 						<input type="text" name="name" maxlength="6" 
-										   value="${ loginUser.name }" required>
+										   value="${ sessionScope.loginUser.name }" required>
 					</td>
 					<td></td>
 				</tr>
@@ -57,7 +78,7 @@
 					<th>&nbsp;&nbsp;&nbsp;전화번호</th>
 					<td>
 						<input type="text" name="phone" 
-										   value="${ loginUser.phone }" placeholder="- 포함해서 입력">
+										   value="${ sessionScope.loginUser.phone }" placeholder="- 포함해서 입력">
 					</td>
 					<td></td>
 				</tr>
@@ -65,7 +86,7 @@
 					<th>&nbsp;&nbsp;&nbsp;이메일</th>
 					<td>
 						<input type="email" name="email"
-											value="${ loginUser.email }">
+											value="${ sessionScope.loginUser.email }">
 					</td>
 					<td></td>
 				</tr>
@@ -73,7 +94,7 @@
 					<th>&nbsp;&nbsp;&nbsp;주소</th>
 					<td>
 						<input type="text" name="address"
-										   value="${ loginUser.address }">
+										   value="${ sessionScope.loginUser.address }">
 					</td>
 					<td></td>
 				</tr>
@@ -138,7 +159,7 @@
 					<tr>
 						<th>비밀번호</th>
 						<td>
-							<input type="password" name="userPwd" required>
+							<input type="password" name="loginPwd" required>
 						</td>
 					</tr>
 				</table>

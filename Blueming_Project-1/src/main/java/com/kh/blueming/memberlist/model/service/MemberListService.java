@@ -3,6 +3,7 @@ package com.kh.blueming.memberlist.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.jspecify.annotations.Nullable;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,11 +61,15 @@ public class MemberListService {
 	        // 2. DAO로 전달
 	        return memlistDao.insertMember(sqlSession, member);
 	    }
-	    
-	    public int deleteMember(int memberId) {
-	        return memlistDao.deleteMember(sqlSession, memberId);
+	 // MemberListService.java 파일 내에 추가
+	    public ArrayList<MemberList> selectDeptList() {
+	        return memlistDao.selectDeptList(sqlSession);
 	    }
-    	
-    
+	    
+	    public ArrayList<MemberList> selectPosList() {
+	        return memlistDao.selectPosList(sqlSession);
+	    }
+	    
+
      	
 }

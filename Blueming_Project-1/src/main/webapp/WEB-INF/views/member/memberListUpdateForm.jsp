@@ -78,27 +78,27 @@
 			    <div class="update-label">부서</div>
 			    <div class="update-value">
 			    	<select name="deptId" id="deptSelect">
-			            <option value="D01" ${member.deptId == 'D01' ? 'selected' : ''}>인사팀</option>
-			            <option value="D02" ${member.deptId == 'D02' ? 'selected' : ''}>개발팀</option>
-			            <option value="D03" ${member.deptId == 'D03' ? 'selected' : ''}>디자인팀</option>
-			            <option value="D04" ${member.deptId == 'D04' ? 'selected' : ''}>영업팀</option>
-			            <option value="D05" ${member.deptId == 'D05' ? 'selected' : ''}>마케팅팀</option>
-			            <option value="D06" ${member.deptId == 'D06' ? 'selected' : ''}>운영팀</option>
-			            <option value="D07" ${member.deptId == 'D07' ? 'selected' : ''}>품질관리팀</option>
+						 <c:forEach var="dept" items="${deptList}">
+					            <option value="${dept.deptId}" 
+					                    ${member.deptId == dept.deptId ? 'selected' : ''}>
+					                ${dept.deptName}
+					            </option>
+       					 </c:forEach>
 			        </select>
 			    </div>
 			</div>
 		
 			<div class="update-row">
 			    <div class="update-label">직급</div>
-			    <div class="update-value">
-			    	<select name="positionId" id="positionSelect">
-			            <option value="P01" ${member.positionId == 'P01' ? 'selected' : ''}>사원</option>
-			            <option value="P02" ${member.positionId == 'P02' ? 'selected' : ''}>주임</option>
-			            <option value="P03" ${member.positionId == 'P03' ? 'selected' : ''}>대리</option>
-			            <option value="P04" ${member.positionId == 'P04' ? 'selected' : ''}>과장</option>
-			            <option value="P05" ${member.positionId == 'P05' ? 'selected' : ''}>차장</option>
-			        </select>
+			   	 <div class="update-value">
+			    	 <select name="positionId" id="positionSelect">
+					        <c:forEach var="pos" items="${posList}">
+					            <option value="${pos.positionId}" 
+					                    ${member.positionId == pos.positionId ? 'selected' : ''}>
+					                ${pos.positionName}
+					            </option>
+					        </c:forEach>
+   					 </select>
 			    </div>
 			</div>
 			
@@ -178,57 +178,62 @@
 
 		// 전송 전 유효성 검사 및 하이픈 제거 후 정수형 변환 처리
 		function submitUpdateForm() {
-			const form = document.getElementById("updateForm");
-			const currentStatus = document.getElementById("statusSelect").value;
-			
-			// 1. 상태별 필드 비활성화 처리 (전송되지 않게 하기 위함)
-			const leaveInputStart = document.getElementById("viewLeaveStartDate");
-			const leaveInputEnd = document.getElementById("viewLeaveEndDate");
-			const retireInput = document.getElementById("retireDateInput");
-			
-			// 전송 전 모두 잠시 활성화하여 값 체크
-			leaveInputStart.disabled = false;
-			leaveInputEnd.disabled = false;
-			retireInput.disabled = false;
+    const form = document.getElementById("updateForm");
+    const currentStatus = document.getElementById("statusSelect").value;
+    
+    // 1. 먼저 요소들을 찾습니다.
+    const retireInput = document.getElementById("retireDateInput");
+    const leaveInputStart = document.getElementById("viewLeaveStartDate");
+    const leaveInputEnd = document.getElementById("viewLeaveEndDate");
+    
+    // 2. 검증 전에 잠시 활성화하여 값을 읽을 수 있게 합니다.
+    retireInput.disabled = false;
+    leaveInputStart.disabled = false;
+    leaveInputEnd.disabled = false;
 
-			// 상태에 따라 불필요한 필드 비활성화 (disabled = true인 요소는 서버로 전송되지 않음)
-			if (currentStatus !== 'R') {
-				leaveInputStart.disabled = true;
-				leaveInputEnd.disabled = true;
-			}
-			if (currentStatus !== 'N') {
-				retireInput.disabled = true;
-			}
+    // --- [퇴사일 검증] ---
+    if (currentStatus === 'N' && retireInput.value === "") {
+        alert("퇴사 처리 시 퇴사일을 반드시 입력해야 합니다.");
+        retireInput.focus();
+        return; 
+    }
 
-			// 2. 기존 휴직 날짜 처리 로직
-			const startDateVal = document.getElementById("viewLeaveStartDate").value; 
-			const endDateVal = document.getElementById("viewLeaveEndDate").value;
-			const cleanStart = startDateVal.replace(/-/g, "");
-			const cleanEnd = endDateVal.replace(/-/g, "");
-			
-			const realStartInput = document.getElementById("realLeaveStartDate");
-			const realEndInput = document.getElementById("realLeaveEndDate");
+    // 3. 이후 기존의 상태에 따른 필드 비활성화 로직 수행
+    if (currentStatus !== 'R') {
+        leaveInputStart.disabled = true;
+        leaveInputEnd.disabled = true;
+    }
+    if (currentStatus !== 'N') {
+        retireInput.disabled = true;
+    }
 
-			if (currentStatus === 'R') {
-				if(!cleanStart || !cleanEnd) {
-					alert("휴직 상태일 경우 휴직 기간을 입력해야 합니다.");
-					leaveInputStart.disabled = false; // 다시 활성화
-					leaveInputEnd.disabled = false;
-					return;
-				}
-				realStartInput.value = parseInt(cleanStart);
-				realEndInput.value = parseInt(cleanEnd);
-			} else {
-				realStartInput.value = "";
-				realEndInput.value = "";
-			}
+    // 4. 휴직 날짜 처리 로직
+    const startDateVal = leaveInputStart.value; 
+    const endDateVal = leaveInputEnd.value;
+    const cleanStart = startDateVal.replace(/-/g, "");
+    const cleanEnd = endDateVal.replace(/-/g, "");
+    
+    const realStartInput = document.getElementById("realLeaveStartDate");
+    const realEndInput = document.getElementById("realLeaveEndDate");
 
-			if(form.checkValidity()) {
-				form.submit();
-			} else {
-				form.reportValidity(); 
-			}
-		}
+    if (currentStatus === 'R') {
+        if(!cleanStart || !cleanEnd) {
+            alert("휴직 상태일 경우 휴직 기간을 입력해야 합니다.");
+            return;
+        }
+        realStartInput.value = parseInt(cleanStart);
+        realEndInput.value = parseInt(cleanEnd);
+    } else {
+        realStartInput.value = "";
+        realEndInput.value = "";
+    }
+
+    if(form.checkValidity()) {
+        form.submit();
+    } else {
+        form.reportValidity(); 
+    }
+}
 	</script>
 </body>
 </html>

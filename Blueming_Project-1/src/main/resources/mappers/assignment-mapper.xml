@@ -10,6 +10,7 @@
     <select id="selectAssignmentList" parameterType="map" resultType="assignment">
         SELECT
             A.ASSIGNMENT_ID AS assignmentId,
+            A.CHAPTER_ID AS chapterId,
             A.COURSE_ID AS courseId,
             A.ASSIGNMENT_TITLE AS assignmentTitle,
             A.DESCRIPTION AS description,
@@ -17,7 +18,7 @@
             A.DUE_DATE AS dueDate,
             A.MAX_SCORE AS maxScore,
             C.COURSE_TITLE AS courseTitle,
-            NVL(CH.CHAPTER_TITLE, '미지정') AS chapterTitle,
+            CH.CHAPTER_TITLE AS chapterTitle,
             S.SUBMISSION_ID AS submissionId,
             S.SCORE AS score,
             S.CONTENT AS submittedContent,
@@ -25,13 +26,7 @@
             AT.ORIGINAL_NAME AS submittedFileName
         FROM ASSIGNMENT A
         JOIN COURSE C ON A.COURSE_ID = C.COURSE_ID
-        LEFT JOIN (
-            SELECT
-                COURSE_ID,
-                MIN(CHAPTER_TITLE) KEEP (DENSE_RANK FIRST ORDER BY CHAPTER_ORDER ASC, CHAPTER_ID ASC) AS CHAPTER_TITLE
-            FROM CHAPTER
-            GROUP BY COURSE_ID
-        ) CH ON CH.COURSE_ID = A.COURSE_ID
+        JOIN CHAPTER CH ON A.CHAPTER_ID = CH.CHAPTER_ID
         LEFT JOIN (
             SELECT ASSIGNMENT_ID, SUBMISSION_ID, SCORE, CONTENT, FILE_ID
             FROM (
@@ -52,6 +47,9 @@
         ) S ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
         LEFT JOIN ATTACHMENT AT ON AT.FILE_ID = S.FILE_ID
         <where>
+        <if test="mineOnly == true and memberId != null">
+            C.MEMBER_ID = #{memberId}
+        </if>
         <if test="isAdmin == null or isAdmin == false">
             (
                 EXISTS (
@@ -89,6 +87,7 @@
             AND (
                 A.ASSIGNMENT_TITLE LIKE '%' || #{keyword} || '%'
                 OR C.COURSE_TITLE LIKE '%' || #{keyword} || '%'
+                OR CH.CHAPTER_TITLE LIKE '%' || #{keyword} || '%'
             )
         </if>
         </where>
@@ -101,6 +100,115 @@
             </otherwise>
         </choose>
     </select>
+
+    <select id="selectAssignmentListByChapterId" parameterType="_int" resultType="assignment">
+        SELECT A.ASSIGNMENT_ID AS assignmentId,
+               A.CHAPTER_ID AS chapterId,
+               A.COURSE_ID AS courseId,
+               A.ASSIGNMENT_TITLE AS assignmentTitle,
+               A.DESCRIPTION AS description,
+               A.START_DATE AS startDate,
+               A.DUE_DATE AS dueDate,
+               A.MAX_SCORE AS maxScore,
+               C.COURSE_TITLE AS courseTitle,
+               CH.CHAPTER_TITLE AS chapterTitle
+        FROM ASSIGNMENT A
+        JOIN COURSE C ON A.COURSE_ID = C.COURSE_ID
+        JOIN CHAPTER CH ON A.CHAPTER_ID = CH.CHAPTER_ID
+        WHERE A.CHAPTER_ID = #{value}
+        ORDER BY A.START_DATE ASC, A.ASSIGNMENT_ID ASC
+    </select>
+
+    <select id="selectAssignment" parameterType="_int" resultType="assignment">
+        SELECT A.ASSIGNMENT_ID AS assignmentId,
+               A.CHAPTER_ID AS chapterId,
+               A.COURSE_ID AS courseId,
+               A.ASSIGNMENT_TITLE AS assignmentTitle,
+               A.DESCRIPTION AS description,
+               A.START_DATE AS startDate,
+               A.DUE_DATE AS dueDate,
+               A.MAX_SCORE AS maxScore,
+               C.COURSE_TITLE AS courseTitle,
+               CH.CHAPTER_TITLE AS chapterTitle
+        FROM ASSIGNMENT A
+        JOIN COURSE C ON A.COURSE_ID = C.COURSE_ID
+        JOIN CHAPTER CH ON A.CHAPTER_ID = CH.CHAPTER_ID
+        WHERE A.ASSIGNMENT_ID = #{value}
+    </select>
+
+    <insert id="insertAssignment" parameterType="assignment">
+        <selectKey keyProperty="assignmentId" resultType="_int" order="BEFORE">
+            SELECT NVL(MAX(ASSIGNMENT_ID) + 1, 1)
+            FROM ASSIGNMENT
+        </selectKey>
+        INSERT INTO ASSIGNMENT (
+            ASSIGNMENT_ID,
+            CHAPTER_ID,
+            COURSE_ID,
+            ASSIGNMENT_TITLE,
+            DESCRIPTION,
+            START_DATE,
+            DUE_DATE,
+            MAX_SCORE
+        ) VALUES (
+            #{assignmentId},
+            #{chapterId},
+            #{courseId},
+            #{assignmentTitle},
+            #{description},
+            #{startDate},
+            #{dueDate},
+            #{maxScore}
+        )
+    </insert>
+
+    <update id="updateAssignment" parameterType="assignment">
+        UPDATE ASSIGNMENT
+        SET ASSIGNMENT_TITLE = #{assignmentTitle},
+            DESCRIPTION = #{description},
+            START_DATE = #{startDate},
+            DUE_DATE = #{dueDate},
+            MAX_SCORE = #{maxScore}
+        WHERE ASSIGNMENT_ID = #{assignmentId}
+    </update>
+
+    <delete id="deleteAssignmentSubmissionByAssignmentId" parameterType="_int">
+        DELETE FROM ASSIGNMENT_SUBMISSION
+        WHERE ASSIGNMENT_ID = #{value}
+    </delete>
+
+    <delete id="deleteAssignment" parameterType="_int">
+        DELETE FROM ASSIGNMENT
+        WHERE ASSIGNMENT_ID = #{value}
+    </delete>
+
+    <delete id="deleteAssignmentSubmissionByChapterId" parameterType="_int">
+        DELETE FROM ASSIGNMENT_SUBMISSION
+        WHERE ASSIGNMENT_ID IN (
+            SELECT ASSIGNMENT_ID
+            FROM ASSIGNMENT
+            WHERE CHAPTER_ID = #{value}
+        )
+    </delete>
+
+    <delete id="deleteAssignmentByChapterId" parameterType="_int">
+        DELETE FROM ASSIGNMENT
+        WHERE CHAPTER_ID = #{value}
+    </delete>
+
+    <delete id="deleteAssignmentSubmissionByCourseId" parameterType="_int">
+        DELETE FROM ASSIGNMENT_SUBMISSION
+        WHERE ASSIGNMENT_ID IN (
+            SELECT ASSIGNMENT_ID
+            FROM ASSIGNMENT
+            WHERE COURSE_ID = #{value}
+        )
+    </delete>
+
+    <delete id="deleteAssignmentByCourseId" parameterType="_int">
+        DELETE FROM ASSIGNMENT
+        WHERE COURSE_ID = #{value}
+    </delete>
 
     <!-- 첨부파일 삽입 -->
     <insert id="insertAttachment" parameterType="Attachment">
@@ -136,9 +244,9 @@
         )
     </insert>
 
-    <select id="selectLatestSubmissionInfo" parameterType="map" resultType="map">
+    <select id="selectLatestSubmissionInfo" parameterType="map" resultType="assignment">
         SELECT SUBMISSION_ID AS submissionId,
-               FILE_ID AS fileId
+               FILE_ID AS submittedFileId
         FROM (
             SELECT SUBMISSION_ID,
                    FILE_ID,
@@ -150,11 +258,31 @@
         WHERE RN = 1
     </select>
 
+    <select id="selectAttachmentByFileId" parameterType="_int" resultType="Attachment">
+        SELECT FILE_ID AS fileId,
+               ORIGINAL_NAME AS originalName,
+               CHANGED_NAME AS changedName,
+               FILE_PATH AS filePath,
+               FILE_SIZE AS fileSize,
+               TYPE AS type,
+               VIDEO_DURATION AS videoDuration,
+               MEMBER_ID AS memberId,
+               STATUS AS status,
+               UPLOAD_DATE AS uploadDate
+        FROM ATTACHMENT
+        WHERE FILE_ID = #{value}
+    </select>
+
     <update id="updateAttachmentStatusToN" parameterType="_int">
         UPDATE ATTACHMENT
         SET STATUS = 'N'
         WHERE FILE_ID = #{fileId}
     </update>
+
+    <delete id="deleteAttachment" parameterType="_int">
+        DELETE FROM ATTACHMENT
+        WHERE FILE_ID = #{value}
+    </delete>
 
     <insert id="insertAssignmentSubmission" parameterType="map">
         <selectKey keyProperty="submissionId" resultType="_int" order="BEFORE">

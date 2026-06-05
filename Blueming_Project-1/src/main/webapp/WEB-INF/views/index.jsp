@@ -6,14 +6,6 @@
 <meta charset="UTF-8">
 <title>blueming</title>
 <style>
-	body {
-		margin: 0;
-		height: 100vh;
-
-		display: flex;
-		justify-content: center; /* 가로 가운데 */
-		align-items: center;     /* 세로 가운데 */
-	}
 
 
 </style>
