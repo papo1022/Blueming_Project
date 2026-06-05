@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.blueming.admindashboard.model.dao.AdminDashboardDao;
 import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
+import com.kh.blueming.notice.model.vo.Notice;
 
 @Service
 public class AdminDashboardService {
@@ -18,5 +19,11 @@ public class AdminDashboardService {
 	public List<AdminDashboardCourse> selectAdminCourseList() {
 		
 		return adminDashboardDao.selectAdminCourseList();
+	}
+	
+	// 최근 공지사항 3개 조회
+	public List<Notice> selectRecentNoticeList() {
+		
+		return adminDashboardDao.selectRecentNoticeList();
 	}
 }

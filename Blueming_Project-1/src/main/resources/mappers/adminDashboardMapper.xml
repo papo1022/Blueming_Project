@@ -20,5 +20,16 @@
         WHERE C.STATUS != 'N'
         ORDER BY C.CREATE_DATE DESC
     </select>
+    
+        <!-- 최근 공지사항 3개 조회 -->
+	<select id="selectRecentNoticeList" resultType="notice">
+	    SELECT NOTICE_ID AS noticeId,
+	           NOTICE_TITLE AS noticeTitle,
+	           CREATED_DATE AS createdDate
+	    FROM NOTICE
+	    WHERE STATUS = 'Y'
+	    ORDER BY CREATED_DATE DESC
+	    FETCH FIRST 3 ROWS ONLY
+	</select>
 	
 </mapper>

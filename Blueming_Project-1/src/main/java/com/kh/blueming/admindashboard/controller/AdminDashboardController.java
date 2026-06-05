@@ -14,7 +14,6 @@ import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.member.model.service.MemberDashboardService;
 import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.member.model.vo.MemberProfile;
-import com.kh.blueming.notice.model.service.NoticeService;
 import com.kh.blueming.notice.model.vo.Notice;
 
 import jakarta.servlet.http.HttpSession;
@@ -28,9 +27,6 @@ public class AdminDashboardController {
 	
 	@Autowired
 	private MemberDashboardService memberDashboardService; // 프로필은 재사용
-	
-	@Autowired
-	private NoticeService noticeService; // 공지사항도 재사용
 	
 	@GetMapping("main")
 	public String adminDashboard(HttpSession session, Model model) {
@@ -55,7 +51,7 @@ public class AdminDashboardController {
 		// 4. 데이터 조회
 		MemberProfile profile = memberDashboardService.selectMemberProfile(memberId);
 		List<AdminDashboardCourse> courseList = adminDashboardService.selectAdminCourseList();
-		ArrayList<Notice> noticeList = noticeService.selectNoticeList();
+		List<Notice> noticeList = adminDashboardService.selectRecentNoticeList();
 		
 		// 5. Model에 담기
 		model.addAttribute("profile", profile);
