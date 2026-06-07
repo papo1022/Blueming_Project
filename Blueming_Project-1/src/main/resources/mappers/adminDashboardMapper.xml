@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminDashboardMapper">
+	
+	<!-- 관리자 대시보드 강의 목록 조회 -->
+    <select id="selectAdminCourseList" resultType="adminDashboardCourse">
+        SELECT C.COURSE_ID AS courseId,
+               C.COURSE_TITLE AS courseTitle,
+               C.START_DATE AS startDate,
+               C.END_DATE AS endDate,
+               CEIL(C.END_DATE - SYSDATE) AS dDay,
+               CASE
+                   WHEN C.END_DATE &lt; SYSDATE THEN 'CLOSED'
+                   WHEN C.STATUS = 'W' THEN 'WAITING'
+                   ELSE 'IN_PROGRESS'
+               END AS courseStatus
+        FROM COURSE C
+        WHERE C.STATUS != 'N'
+        ORDER BY C.CREATE_DATE DESC
+    </select>
+    
+        <!-- 최근 공지사항 3개 조회 -->
+	<select id="selectRecentNoticeList" resultType="notice">
+	    SELECT NOTICE_ID AS noticeId,
+	           NOTICE_TITLE AS noticeTitle,
+	           CREATED_DATE AS createdDate
+	    FROM NOTICE
+	    WHERE STATUS = 'Y'
+	    ORDER BY CREATED_DATE DESC
+	    FETCH FIRST 3 ROWS ONLY
+	</select>
+	
+</mapper>
