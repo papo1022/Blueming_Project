@@ -24,14 +24,16 @@
     <div class="outer">
         <h2>수강 정보 관리</h2>
         
-        <form action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post" style="margin-bottom: 20px;">
-            <select name="condition">
-                <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
-            </select>
-            <input type="text" name="keyword" value="${keyword}">
-            <button type="submit">검색</button>
-            <button type="button" onclick="resetSearch()">초기화</button>
-        </form>
+        <form action="${pageContext.request.contextPath}/enrollment/enrollMemList"
+      method="post">
+    <select name="condition">
+        <option value="course">강의명</option>
+    </select>
+
+    <input type="text" name="keyword" value="${keyword}" id="searchKeyword">
+
+    <button type="submit">검색</button>
+</form>
 
         <div class="table-container">
             <table class="table table-bordered">
@@ -105,13 +107,14 @@
         </div>
     </div>
 
-    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post" style="display:none;">
+    <form id="pagingForm"
+      action="${pageContext.request.contextPath}/enrollment/enrollMemList"
+      method="post">
+
     <input type="hidden" name="condition" value="${condition}">
     <input type="hidden" name="keyword" value="${keyword}">
-    
-    <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
-    <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
-    
+    <input type="hidden" name="sortCol" value="${sortCol}">
+    <input type="hidden" name="sortOrder" value="${sortOrder}">
     <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
 </form>
 
@@ -137,17 +140,34 @@
             document.getElementById("pagingForm").submit();
         }
         function goDetail(cId) {
+
             let f = document.createElement("form");
-            f.setAttribute("method", "post");
-            f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/detail");
-            let i = document.createElement("input");
-            i.setAttribute("type", "hidden");
-            i.setAttribute("name", "courseId");
-            i.setAttribute("value", cId);
-            f.appendChild(i);
+            f.method = "post";
+            f.action = "${pageContext.request.contextPath}/enrollment/detail";
+
+            let params = {
+                courseId : cId,
+                condition : "${condition}",
+                keyword : "${keyword}",
+                sortCol : "${sortCol}",
+                sortOrder : "${sortOrder}",
+                cpage : "${pi.currentPage}"
+            };
+            
+            
+
+            for(let key in params){
+                let input = document.createElement("input");
+                input.type = "hidden";
+                input.name = key;
+                input.value = params[key];
+                f.appendChild(input);
+            }
+
             document.body.appendChild(f);
             f.submit();
         }
+      
         function resetSearch() {
             location.href = "${pageContext.request.contextPath}/enrollment/enrollMemList";
         }

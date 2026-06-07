@@ -77,13 +77,21 @@ public class EnrollMemListController {
     public ModelAndView detail(
             @RequestParam("courseId") int courseId,
             @RequestParam(value="cpage", defaultValue="1") int currentPage,
-            @RequestParam(value="sortCol", defaultValue="ENROLLMENT_ID") String sortCol,
+            @RequestParam(value="sortCol", defaultValue="DEPARTMENT_NAME") String sortCol,
             @RequestParam(value="sortOrder", defaultValue="DESC") String sortOrder,
             @RequestParam(value="deptFilter", defaultValue="") String deptFilter,
             @RequestParam(value="condition", required=false) String condition, // 추가
             @RequestParam(value="keyword", required=false) String keyword,// 필터 파라미터 추가
             HttpSession session, ModelAndView mv) {
-    	System.out.println("목록으로 돌아옴 - 검색조건: " + condition + ", 키워드: " + keyword);
+   
+    	
+    	System.out.println("===== DETAIL =====");
+    	System.out.println("condition = " + condition);
+    	System.out.println("keyword = " + keyword);
+    	    
+    	    // ... 이후 로직
+    	
+    	
         if (isNotAuthorized(session)) {
             session.setAttribute("alertMsg", "접근 권한이 없습니다.");
             mv.setViewName("redirect:/");
@@ -91,22 +99,38 @@ public class EnrollMemListController {
         }
         
         HashMap<String, Object> map = new HashMap<>();
-        map.put("condition", condition); // map에도 넣어줘야 검색/정렬 유지가 가능함
-        map.put("keyword", keyword);
+        
+   
         map.put("courseId", courseId);
         map.put("sortCol", sortCol);
         map.put("sortOrder", sortOrder);
         map.put("deptFilter", deptFilter); // map에 필터 추가
+        
+        
 
         // 부서 필터를 적용하여 카운트 조회 (중요: Service/DAO/Mapper도 수정 필요)
-        int listCount = emlService.selectEnrollmentCountByCourse(map); 
+        int listCount = emlService.selectEnrollmentCountByCourse(map);
+
         PageInfo pi = Pageination.getPageInfo(listCount, currentPage, 10, 10);
+
+        if(currentPage > pi.getMaxPage()){
+            currentPage = 1;
+            pi = Pageination.getPageInfo(listCount, currentPage, 10, 10);
+        }
         
+        System.out.println("condition = " + condition);
+        System.out.println("keyword = " + keyword);
+        System.out.println("sortCol = " + sortCol);
+        System.out.println("sortOrder = " + sortOrder);
+        System.out.println("cpage = " + currentPage);
+        
+        
+        System.out.println("===== LIST =====");
+        System.out.println("condition = " + condition);
+        System.out.println("keyword = " + keyword);
         // 특정 강의에 대한 수강생 목록 조회 (필터 및 정렬 조건 map 사용)
         ArrayList<Map<String, Object>> enrollList = emlService.selectEnrollmentListByCourse(map, pi);
-        
-        
-        
+     
         mv.addObject("c", emlService.selectCourseDetail(courseId))
           .addObject("enrollList", enrollList)
           .addObject("pi", pi)
