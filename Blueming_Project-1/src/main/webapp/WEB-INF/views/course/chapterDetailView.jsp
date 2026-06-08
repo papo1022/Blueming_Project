@@ -365,19 +365,47 @@
 
                 // 시청한 구간을 Set으로 추적 (1초 단위)
                 const watchedSet = new Set();
-                let lastSaveTime = 0;
+                const savedWatchedSeconds = parseInt("${not empty existingProgress ? existingProgress.watchedSeconds : 0}") || 0;
+                let maxWatchedSeconds = Math.max(savedWatchedSeconds, Math.floor(lastPos));
+                let lastSentWatchedSeconds = savedWatchedSeconds;
+                let saveTimer = null;
+                let hasShownRateLimitNotice = false;
+
+                // 2배속 초과 재생은 인정하지 않으므로 즉시 제한
+                video.addEventListener("ratechange", function() {
+                    if (video.playbackRate > 2) {
+                        video.playbackRate = 2;
+                        if (!hasShownRateLimitNotice) {
+                            alert("수강 인정은 최대 2배속까지 가능합니다.");
+                            hasShownRateLimitNotice = true;
+                        }
+                    }
+                });
+
+                // 본인이 시청한 범위를 넘어서는 점프 탐색은 차단
+                video.addEventListener("seeking", function() {
+                    const allowedSeek = Math.min(maxWatchedSeconds + 1, Math.floor(video.duration) || 0);
+                    if (video.currentTime > allowedSeek) {
+                        video.currentTime = allowedSeek;
+                    }
+                });
 
                 video.addEventListener("timeupdate", function() {
+                    if (video.playbackRate > 2) {
+                        return;
+                    }
+
                     const cur = Math.floor(video.currentTime);
                     watchedSet.add(cur);
 
-                    const now = Date.now();
-                    // 5초마다 저장
-                    if (now - lastSaveTime >= 5000) {
-                        lastSaveTime = now;
-                        saveProgress(false);
-                    }
+                    // 과거 구간으로 이동해도 누적 시청 시간은 감소하지 않도록 유지
+                    maxWatchedSeconds = Math.max(maxWatchedSeconds, watchedSet.size);
                 });
+
+                // checkpoint 저장 주기 (부하를 줄이기 위해 10초)
+                saveTimer = window.setInterval(function() {
+                    saveProgress(false);
+                }, 10000);
 
                 // 영상 종료 시 즉시 저장
                 video.addEventListener("ended", function() {
@@ -386,15 +414,23 @@
 
                 // 페이지 떠날 때 저장
                 window.addEventListener("beforeunload", function() {
+                    if (saveTimer) {
+                        clearInterval(saveTimer);
+                        saveTimer = null;
+                    }
                     saveProgress(false);
                 });
 
                 function saveProgress(onEnded) {
                     const duration = Math.floor(video.duration) || 0;
                     const lastPos  = Math.floor(video.currentTime);
-                    const watched  = onEnded ? duration : watchedSet.size;
+                    const watched  = onEnded ? duration : Math.max(maxWatchedSeconds, savedWatchedSeconds);
 
                     if (duration <= 0) return;
+                    if (!onEnded && watched <= lastSentWatchedSeconds) return;
+
+                    const prevSentWatchedSeconds = lastSentWatchedSeconds;
+                    lastSentWatchedSeconds = watched;
 
                     $.ajax({
                         url: "${pageContext.request.contextPath}/course/saveProgress",
@@ -411,9 +447,18 @@
                                 const rate = parseFloat(res.chapCompRate).toFixed(2);
                                 $("#compRateDisplay").text(rate);
                                 $("#compRateBar").css("width", rate + "%");
+
+                                if (typeof res.watchedSeconds !== "undefined") {
+                                    maxWatchedSeconds = Math.max(maxWatchedSeconds, parseInt(res.watchedSeconds) || 0);
+                                    lastSentWatchedSeconds = Math.max(lastSentWatchedSeconds, maxWatchedSeconds);
+                                }
                             } else if (res.message) {
                                 console.warn("progress save skipped:", res.message);
                             }
+                        },
+                        error: function() {
+                            // 실패 시 재전송 기회를 위해 마지막 전송값 롤백
+                            lastSentWatchedSeconds = prevSentWatchedSeconds;
                         }
                     });
                 }

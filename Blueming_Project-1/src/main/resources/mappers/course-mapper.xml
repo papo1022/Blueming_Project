@@ -25,43 +25,51 @@
 	<!-- 강좌 전체 목록 조회 -->
 	<select id="selectCourseList" parameterType="map" resultType="course">
 		SELECT
-			COURSE_ID AS courseId,
-			COURSE_TITLE AS courseTitle,
-			DESCRIPTION AS description,
-			MEMBER_ID AS memberId,
-			STATUS AS status,
-			START_DATE AS startDate,
-			END_DATE AS endDate,
-			TOTAL_HOURS AS totalHours,
-			CREATE_DATE AS createDate,
-			UPDATED_DATE AS updatedDate
-		FROM COURSE
+			C.COURSE_ID AS courseId,
+			C.COURSE_TITLE AS courseTitle,
+			C.DESCRIPTION AS description,
+			C.MEMBER_ID AS memberId,
+			C.FILE_ID AS fileId,
+			C.STATUS AS status,
+			C.START_DATE AS startDate,
+			C.END_DATE AS endDate,
+			C.TOTAL_HOURS AS totalHours,
+			C.CREATE_DATE AS createDate,
+			C.UPDATED_DATE AS updatedDate,
+			CASE
+				WHEN A.FILE_PATH IS NOT NULL AND A.CHANGED_NAME IS NOT NULL
+				THEN A.FILE_PATH || A.CHANGED_NAME
+				ELSE NULL
+			END AS thumbnailUrl
+		FROM COURSE C
+		LEFT JOIN ATTACHMENT A
+		  ON A.FILE_ID = C.FILE_ID
 		<where>
 			<if test="mineOnly == true and memberId != null and isAdmin == true">
-				MEMBER_ID = #{memberId}
+				C.MEMBER_ID = #{memberId}
 			</if>
 			<if test="(isAdmin == null or isAdmin == false) and memberId != null">
 				AND EXISTS (
 					SELECT 1
 					FROM ENROLLMENT E
-					WHERE E.COURSE_ID = COURSE.COURSE_ID
+					WHERE E.COURSE_ID = C.COURSE_ID
 					  AND E.MEMBER_ID = #{memberId}
 					  AND E.STATUS = 'Y'
 				)
 			</if>
 			<if test="keyword != null and keyword != ''">
 				AND (
-					COURSE_TITLE LIKE '%' || #{keyword} || '%'
-					OR DESCRIPTION LIKE '%' || #{keyword} || '%'
+					C.COURSE_TITLE LIKE '%' || #{keyword} || '%'
+					OR C.DESCRIPTION LIKE '%' || #{keyword} || '%'
 				)
 			</if>
 		</where>
 		<choose>
 			<when test="sort == 'oldest'">
-				ORDER BY STATUS DESC, CREATE_DATE ASC
+				ORDER BY C.STATUS DESC, C.CREATE_DATE ASC
 			</when>
 			<otherwise>
-				ORDER BY STATUS DESC, CREATE_DATE DESC
+				ORDER BY C.STATUS DESC, C.CREATE_DATE DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -79,6 +87,7 @@
 							COURSE_TITLE,
 							DESCRIPTION,
 							MEMBER_ID,
+							FILE_ID,
 							STATUS,
 							START_DATE,
 							END_DATE,
@@ -89,6 +98,10 @@
 							#{courseTitle},
 							#{description},
 							#{memberId},
+							<choose>
+								<when test="fileId > 0">#{fileId}</when>
+								<otherwise>NULL</otherwise>
+							</choose>,
 							'W',
 							#{startDate},
 							#{endDate},
@@ -97,6 +110,26 @@
 							NULL)
 			
 	</insert>
+
+	<select id="selectDepartmentOptions" resultType="map">
+		SELECT DEPARTMENT_ID, DEPARTMENT_NAME
+		FROM DEPARTMENT
+		ORDER BY DEPARTMENT_ID
+	</select>
+
+	<select id="selectPositionOptions" resultType="map">
+		SELECT POSITION_ID, POSITION_NAME
+		FROM POSITION
+		ORDER BY POSITION_ID
+	</select>
+
+	<select id="selectCourseTargetRules" parameterType="_int" resultType="map">
+		SELECT TARGET_TYPE AS targetType,
+		       TARGET_VALUE AS targetValue
+		FROM COURSE_TARGET
+		WHERE COURSE_ID = #{value}
+		ORDER BY TARGET_ID
+	</select>
 
 	<insert id="insertCourseTarget" parameterType="map">
 		INSERT INTO COURSE_TARGET (
@@ -113,6 +146,29 @@
 		)
 	</insert>
 
+	<update id="upsertCourseTarget" parameterType="map">
+		MERGE INTO COURSE_TARGET CT
+		USING (SELECT #{courseId} AS COURSE_ID FROM DUAL) SRC
+		ON (CT.COURSE_ID = SRC.COURSE_ID)
+		WHEN MATCHED THEN
+			UPDATE SET
+				CT.TARGET_TYPE = #{targetType},
+				CT.TARGET_VALUE = #{targetValue}
+		WHEN NOT MATCHED THEN
+			INSERT (TARGET_ID, COURSE_ID, TARGET_TYPE, TARGET_VALUE)
+			VALUES (
+				'T' || LPAD(NVL((SELECT MAX(TO_NUMBER(SUBSTR(TARGET_ID, 2))) + 1 FROM COURSE_TARGET), 1), 4, '0'),
+				#{courseId},
+				#{targetType},
+				#{targetValue}
+			)
+	</update>
+
+	<delete id="deleteCourseTargetsByCourseId" parameterType="_int">
+		DELETE FROM COURSE_TARGET
+		WHERE COURSE_ID = #{value}
+	</delete>
+
 	<insert id="insertEnrollmentByCourseTarget" parameterType="map">
 		INSERT INTO ENROLLMENT (
 			ENROLLMENT_ID,
@@ -123,7 +179,7 @@
 			COMPLETED_DATE
 		)
 		SELECT
-			SEQ_ENO.NEXTVAL,
+			(SELECT NVL(MAX(ENROLLMENT_ID), 0) FROM ENROLLMENT) + ROW_NUMBER() OVER (ORDER BY M.MEMBER_ID),
 			M.MEMBER_ID,
 			#{courseId},
 			'Y',
@@ -150,6 +206,80 @@
 				  AND E.COURSE_ID = #{courseId}
 		  )
 	</insert>
+
+	<insert id="insertEnrollmentByCourseTargets" parameterType="_int">
+		INSERT INTO ENROLLMENT (
+			ENROLLMENT_ID,
+			MEMBER_ID,
+			COURSE_ID,
+			STATUS,
+			START_DATE,
+			COMPLETED_DATE
+		)
+		SELECT
+			(SELECT NVL(MAX(ENROLLMENT_ID), 0) FROM ENROLLMENT) + ROW_NUMBER() OVER (ORDER BY M.MEMBER_ID),
+			M.MEMBER_ID,
+			#{courseId},
+			'Y',
+			SYSDATE,
+			NULL
+		FROM MEMBER M
+		WHERE M.STATUS = 'Y'
+		  AND M.ROLE = 'N'
+		  AND EXISTS (
+				SELECT 1
+				FROM COURSE_TARGET CT
+				WHERE CT.COURSE_ID = #{courseId}
+				  AND (
+						CT.TARGET_TYPE = '전체'
+						OR (CT.TARGET_TYPE = '부서' AND CT.TARGET_VALUE = M.DEPARTMENT_ID)
+						OR (CT.TARGET_TYPE = '직급' AND CT.TARGET_VALUE = M.POSITION_ID)
+				  )
+		  )
+		  AND NOT EXISTS (
+				SELECT 1
+				FROM ENROLLMENT E
+				WHERE E.MEMBER_ID = M.MEMBER_ID
+				  AND E.COURSE_ID = #{courseId}
+		  )
+	</insert>
+
+	<insert id="syncEnrollmentByMember" parameterType="_int">
+		INSERT INTO ENROLLMENT (
+			ENROLLMENT_ID,
+			MEMBER_ID,
+			COURSE_ID,
+			STATUS,
+			START_DATE,
+			COMPLETED_DATE
+		)
+		SELECT
+			(SELECT NVL(MAX(ENROLLMENT_ID), 0) FROM ENROLLMENT) + ROW_NUMBER() OVER (ORDER BY CT.COURSE_ID),
+			M.MEMBER_ID,
+			CT.COURSE_ID,
+			'Y',
+			SYSDATE,
+			NULL
+		FROM MEMBER M
+		JOIN COURSE_TARGET CT
+		  ON (
+				CT.TARGET_TYPE = '전체'
+				OR (CT.TARGET_TYPE = '부서' AND CT.TARGET_VALUE = M.DEPARTMENT_ID)
+				OR (CT.TARGET_TYPE = '직급' AND CT.TARGET_VALUE = M.POSITION_ID)
+		     )
+		JOIN COURSE C
+		  ON C.COURSE_ID = CT.COURSE_ID
+		WHERE M.MEMBER_ID = #{memberId}
+		  AND M.STATUS = 'Y'
+		  AND M.ROLE = 'N'
+		  AND C.STATUS = 'Y'
+		  AND NOT EXISTS (
+				SELECT 1
+				FROM ENROLLMENT E
+				WHERE E.MEMBER_ID = M.MEMBER_ID
+				  AND E.COURSE_ID = CT.COURSE_ID
+		  )
+	</insert>
 	
 	<!-- 코스를 조회해서 상세정보 표기 -->
 	<select id="selectCourse" resultType="course" parameterType="map">
@@ -163,7 +293,9 @@
 				C.TOTAL_HOURS AS totalHours,
 				C.CREATE_DATE AS createDate,
 				C.UPDATED_DATE AS updatedDate,
-				M.MEMBER_ID AS memberId
+				M.MEMBER_ID AS memberId,
+				(SELECT CT.TARGET_TYPE FROM COURSE_TARGET CT WHERE CT.COURSE_ID = C.COURSE_ID AND ROWNUM = 1) AS targetType,
+				(SELECT CT.TARGET_VALUE FROM COURSE_TARGET CT WHERE CT.COURSE_ID = C.COURSE_ID AND ROWNUM = 1) AS targetValue
 		FROM COURSE C, MEMBER M
 		WHERE C.MEMBER_ID = M.MEMBER_ID
 		AND COURSE_ID = #{courseId}
@@ -299,12 +431,30 @@
 		UPDATE COURSE
 		SET COURSE_TITLE = #{courseTitle},
 			DESCRIPTION = #{description},
+			FILE_ID = <choose>
+				<when test="fileId > 0">#{fileId}</when>
+				<otherwise>NULL</otherwise>
+			</choose>,
 			START_DATE = #{startDate},
 			END_DATE = #{endDate},
 			UPDATED_DATE = SYSDATE
 		WHERE MEMBER_ID = #{memberId}
 		AND COURSE_ID = #{courseId}
 	</update>
+
+	<delete id="deleteEnrollmentByCourseId" parameterType="_int">
+		DELETE FROM ENROLLMENT
+		WHERE COURSE_ID = #{value}
+	</delete>
+
+	<delete id="deleteChapterProgressByCourseId" parameterType="_int">
+		DELETE FROM CHAPTER_PROGRESS
+		WHERE CHAPTER_ID IN (
+			SELECT CHAPTER_ID
+			FROM CHAPTER
+			WHERE COURSE_ID = #{value}
+		)
+	</delete>
 
 	<update id="updateTotalHoursInMinutes" parameterType="_int">
 		UPDATE COURSE C
@@ -339,10 +489,11 @@
 		WHERE FILE_ID = #{videoFileId}
 	</delete>
 	
-	<select id="selectAttachment" resultType="attachment">
+	<select id="selectAttachment" parameterType="_int" resultType="attachment">
 		SELECT FILE_ID AS fileId,
 				ORIGINAL_NAME AS originalName,
 				CHANGED_NAME AS changedName,
+				FILE_PATH AS filePath,
 				FILE_SIZE AS fileSize,
 				TYPE AS type,
 				VIDEO_DURATION AS videoDuration,
@@ -350,7 +501,7 @@
 				STATUS AS status,
 				UPLOAD_DATE AS uploadDate
 		FROM ATTACHMENT
-		WHERE FILE_ID = #{videoFileId}
+		WHERE FILE_ID = #{value}
 	</select>
 	
 	<update id="updateAttachment">
@@ -441,10 +592,13 @@
 		) SRC ON (CP.ENROLLMENT_ID = SRC.ENROLLMENT_ID AND CP.CHAPTER_ID = SRC.CHAPTER_ID)
 		WHEN MATCHED THEN
 		    UPDATE SET
-		        CP.WATCHED_SECONDS = #{watchedSeconds},
+		        CP.WATCHED_SECONDS = GREATEST(CP.WATCHED_SECONDS, #{watchedSeconds}),
 		        CP.LAST_POSITION_SECONDS = #{lastPositionSeconds},
-		        CP.CHAP_COMP_RATE = #{chapCompRate},
-		        CP.IS_COMPLETED = #{isCompleted}
+		        CP.CHAP_COMP_RATE = GREATEST(CP.CHAP_COMP_RATE, #{chapCompRate}),
+		        CP.IS_COMPLETED = CASE
+		            WHEN CP.IS_COMPLETED = 'Y' OR #{isCompleted} = 'Y' THEN 'Y'
+		            ELSE 'N'
+		        END
 		WHEN NOT MATCHED THEN
 		    INSERT (PROGRESS_ID, ENROLLMENT_ID, CHAPTER_ID, WATCHED_SECONDS, LAST_POSITION_SECONDS, CHAP_COMP_RATE, IS_COMPLETED)
 		    VALUES (

@@ -446,7 +446,7 @@
 </head>
 <body>
 
-    <jsp:include page="../common/menubar.jsp" />
+    <jsp:include page="../common/mainMenubar.jsp" />
     <jsp:include page="../common/dateFormatUtil.jsp" />
 
     <div class="outer">
