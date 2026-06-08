@@ -158,7 +158,7 @@ h2{
 
 <div class="container">
 
-    <h2>📚 과제 제출 현황</h2>
+    <h2>📚 과제 채점 현황</h2>
 
     <div class="search-box">
 

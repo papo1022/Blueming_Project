@@ -80,6 +80,7 @@
     <c:choose>
         <c:when test="${ not empty sessionScope.loginUser }">
             <jsp:include page="mainMenubar.jsp" />
+            
 
         </c:when>
         <c:otherwise>
