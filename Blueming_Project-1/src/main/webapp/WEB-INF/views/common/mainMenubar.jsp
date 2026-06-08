@@ -85,6 +85,7 @@
 	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
 	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
 	            <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
+              <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
 	        </div>
 	    </c:when>
 	

@@ -142,5 +142,21 @@
     INSERT INTO MEMBER (MEMBER_ID, LOGIN_ID, LOGIN_PWD, NAME, DEPARTMENT_ID, POSITION_ID, HIRE_DATE, STATUS, EMAIL, PHONE, ADDRESS, ROLE) 
     VALUES (#{memberId}, #{loginId}, #{loginPwd}, #{name}, #{deptId}, #{positionId}, #{hireDate}, 'Y', #{email}, #{phone}, #{address}, #{role})
   </insert>
+  
+  
+  <select id="selectDeptList" resultMap="memberListResultSet">
+    SELECT DISTINCT M.DEPARTMENT_ID, D.DEPARTMENT_NAME
+      FROM MEMBER M
+      LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
+     WHERE M.DEPARTMENT_ID IS NOT NULL
+     ORDER BY M.DEPARTMENT_ID
+</select>
+
+
+<select id="selectPosList" resultType="memberlist">
+    SELECT DISTINCT POSITION_ID AS "positionId", POSITION_NAME AS "positionName"
+      FROM POSITION
+     ORDER BY POSITION_ID
+</select>
  
 </mapper>

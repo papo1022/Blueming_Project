@@ -24,6 +24,7 @@
             상태: <span style="color: ${c.STATUS == 'Y' ? 'green' : 'gray'}; font-weight: bold;">${c.STATUS_NAME}</span>
         </div>
         
+        <br>
         <div style="margin: 20px 0;" align="left">
             <select id="deptFilter" onchange="filterByDept()">
 			    <option value="">전체 부서</option>
@@ -44,10 +45,10 @@
             <thead>
 <thead>
     <tr>
-        <th><a href="javascript:void(0);" onclick="sortDetail('DEPT_NAME')" class="sort-link">부서 ↓</a></th>
-        <th><a href="javascript:void(0);" onclick="sortDetail('POSITION_NAME')" class="sort-link">직급 ↓</a></th>
-        <th><a href="javascript:void(0);" onclick="sortDetail('NAME')" class="sort-link">이름 ↓</a></th>
-        <th><a href="javascript:void(0);" onclick="sortDetail('PROGRESS')" class="sort-link">수강률 ↓</a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('DEPT_NAME')" class="sort-link">부서 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('POSITION_NAME')" class="sort-link">직급 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('NAME')" class="sort-link">이름 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('PROGRESS')" class="sort-link">이수율 </a></th>
     </tr>
 </thead>
 
@@ -100,9 +101,24 @@
             <button <c:if test="${pi.currentPage eq pi.maxPage}">disabled</c:if> 
                     onclick="pagingSubmit(${pi.currentPage + 1})">다음</button>
                     
-                   <br><br> <button onclick="location.href='/blueming/enrollment/enrollMemList'">목록으로</button>
+
         </div>
     </div>
+    
+    <form action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
+    <c:if test="${not empty condition}">
+        <input type="hidden" name="condition" value="${condition}">
+    </c:if>
+    <c:if test="${not empty keyword}">
+        <input type="hidden" name="keyword" value="${keyword}">
+    </c:if>
+    <input type="hidden" name="sortCol" value="${sortCol}">
+    <input type="hidden" name="sortOrder" value="${sortOrder}">
+    
+    <button type="submit" align="center">목록으로</button>
+</form>
+
+
     
    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/detail" method="post" style="display:none;">
     <input type="hidden" name="courseId" value="${courseId}">
@@ -136,7 +152,7 @@ function sortDetail(colName) {
     
     function filterByDept() {
         let deptId = document.getElementById('deptFilter').value;
-        console.log("선택된 부서 ID: " + deptId); // 브라우저 개발자 도구(F12) 콘솔에서 확인 가능
+ 
         
         // hidden 필드에 값 할당
         document.getElementById('deptFilterHidden').value = deptId;
@@ -144,6 +160,61 @@ function sortDetail(colName) {
         // 폼 제출
         document.getElementById('pagingForm').submit();
     }
+    
+    
+ // 목록 페이지(enrollMemList.jsp)의 goDetail 함수
+    function goDetail(cId) {
+        let f = document.createElement("form");
+        f.setAttribute("method", "post");
+        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/detail");
+        
+        // 기존 코드에 아래를 추가해서 검색 조건도 같이 보내야 합니다.
+        let inputs = {
+            "courseId": cId,
+            "condition": "${condition}", // 검색 조건 추가
+            "keyword": "${keyword}"     // 검색어 추가
+        };
+        
+        for (let key in inputs) {
+            let i = document.createElement("input");
+            i.setAttribute("type", "hidden");
+            i.setAttribute("name", key);
+            i.setAttribute("value", inputs[key]);
+            f.appendChild(i);
+        }
+        document.body.appendChild(f);
+        f.submit();
+    }
+    function goList() {
+        let f = document.createElement("form");
+        f.setAttribute("method", "post");
+        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemList");
+        
+        // 1. 필요한 모든 데이터를 params 객체에 담습니다.
+        // JSP에서 전달받은 모델값(${condition}, ${keyword} 등)이 여기에 들어갑니다.
+        let params = {
+            "condition": "${condition}",
+            "keyword": "${keyword}",
+            "sortCol": "${sortCol}",
+            "sortOrder": "${sortOrder}"
+        };
+        
+        // 2. params 객체를 돌면서 form에 input을 하나씩 추가합니다.
+        for (let key in params) {
+            // 값이 존재할 때만 보냅니다.
+            if (params[key] && params[key] !== 'null' && params[key] !== '') {
+                let i = document.createElement("input");
+                i.setAttribute("type", "hidden");
+                i.setAttribute("name", key);
+                i.setAttribute("value", params[key]);
+                f.appendChild(i);
+            }
+        }
+        
+        document.body.appendChild(f);
+        f.submit();
+    }
+    
 </script>
 </body>
 </html>

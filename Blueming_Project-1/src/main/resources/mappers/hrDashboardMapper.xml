@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hrDashboardMapper">
+
+    <!-- 전체 사원 강의 평균 이수율 목록 조회 -->
+    <select id="selectHrMemberList" resultType="hrDashboardMember">
+        SELECT M.NAME AS name,
+               D.DEPARTMENT_NAME AS departmentName,
+               P.POSITION_NAME AS positionName,
+               M.EMAIL AS email,
+               NVL(ROUND(AVG(PROG.PROGRESS_RATE)), 0) AS avgProgressRate
+        FROM MEMBER M
+        LEFT JOIN DEPARTMENT D ON D.DEPARTMENT_ID = M.DEPARTMENT_ID
+        LEFT JOIN POSITION   P ON P.POSITION_ID = M.POSITION_ID
+        LEFT JOIN ENROLLMENT E ON E.MEMBER_ID = M.MEMBER_ID
+                              AND E.STATUS = 'Y'
+        LEFT JOIN (
+            SELECT CP.ENROLLMENT_ID,
+                   ROUND(
+                       COUNT(CASE WHEN CP.IS_COMPLETED = 'Y' THEN 1 END)
+                       / NULLIF(COUNT(*), 0) * 100
+                   ) AS PROGRESS_RATE
+            FROM CHAPTER_PROGRESS CP
+            GROUP BY CP.ENROLLMENT_ID
+        ) PROG ON PROG.ENROLLMENT_ID = E.ENROLLMENT_ID
+        WHERE M.STATUS = 'Y'
+          AND M.ROLE = 'N'
+        GROUP BY M.MEMBER_ID,
+                 M.NAME,
+                 D.DEPARTMENT_NAME,
+                 P.POSITION_NAME,
+                 M.EMAIL
+        ORDER BY avgProgressRate ASC
+    </select>
+
+</mapper>

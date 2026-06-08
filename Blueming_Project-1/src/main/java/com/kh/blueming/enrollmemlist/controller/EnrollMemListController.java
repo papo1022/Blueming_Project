@@ -79,9 +79,11 @@ public class EnrollMemListController {
             @RequestParam(value="cpage", defaultValue="1") int currentPage,
             @RequestParam(value="sortCol", defaultValue="ENROLLMENT_ID") String sortCol,
             @RequestParam(value="sortOrder", defaultValue="DESC") String sortOrder,
-            @RequestParam(value="deptFilter", defaultValue="") String deptFilter, // 필터 파라미터 추가
+            @RequestParam(value="deptFilter", defaultValue="") String deptFilter,
+            @RequestParam(value="condition", required=false) String condition, // 추가
+            @RequestParam(value="keyword", required=false) String keyword,// 필터 파라미터 추가
             HttpSession session, ModelAndView mv) {
-        
+    	System.out.println("목록으로 돌아옴 - 검색조건: " + condition + ", 키워드: " + keyword);
         if (isNotAuthorized(session)) {
             session.setAttribute("alertMsg", "접근 권한이 없습니다.");
             mv.setViewName("redirect:/");
@@ -89,6 +91,8 @@ public class EnrollMemListController {
         }
         
         HashMap<String, Object> map = new HashMap<>();
+        map.put("condition", condition); // map에도 넣어줘야 검색/정렬 유지가 가능함
+        map.put("keyword", keyword);
         map.put("courseId", courseId);
         map.put("sortCol", sortCol);
         map.put("sortOrder", sortOrder);
@@ -111,6 +115,8 @@ public class EnrollMemListController {
           .addObject("sortOrder", sortOrder)
           .addObject("deptFilter", deptFilter) // JSP에서 선택 상태 유지용
           .addObject("deptList", emlService.selectDeptList())
+          .addObject("condition", condition) 
+          .addObject("keyword", keyword)
           .setViewName("enrollment/enrollMemListDetail");
         
         return mv;
