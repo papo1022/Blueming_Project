@@ -120,8 +120,16 @@
 
     <a href="<c:url value='/member/myPage'/>">마이페이지</a>
     <a href="<c:url value='/member/logout'/>">로그아웃</a>
+	    </c:when>
+	
+	
+	    <c:otherwise>
+	        <a href="<c:url value='/member/logout'/>">되돌아가기</a>
+	    </c:otherwise>
 
-</div>
+	</c:choose>
+
+
 
 </body>
 </html>

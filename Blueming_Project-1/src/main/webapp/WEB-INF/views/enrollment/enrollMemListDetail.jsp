@@ -21,7 +21,17 @@
         
         <div>
             기간: ${c.START_DATE} ~ ${c.END_DATE} | 
-            상태: <span style="color: ${c.STATUS == 'Y' ? 'green' : 'gray'}; font-weight: bold;">${c.STATUS_NAME}</span>
+           <td>상태 : </td>
+<td>
+    <c:choose>
+        <c:when test="${c.status == 'W' || c.STATUS == 'W'}"><span >예정</span></c:when>
+        <c:when test="${c.status == 'Y' || c.STATUS == 'Y'}"><span >진행중</span></c:when>
+        <c:when test="${c.status == 'N' || c.STATUS == 'N'}"><span >종료</span></c:when>
+        <c:otherwise>
+            ${not empty c.status ? c.status : c.STATUS}
+        </c:otherwise>
+    </c:choose>
+</td>
         </div>
         
         <br>
@@ -45,10 +55,10 @@
             <thead>
 <thead>
     <tr>
-        <th><a href="javascript:void(0);" onclick="sortDetail('DEPT_NAME')" class="sort-link">부서 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('DEPARTMENT_NAME')" class="sort-link">부서 </a></th>
         <th><a href="javascript:void(0);" onclick="sortDetail('POSITION_NAME')" class="sort-link">직급 </a></th>
         <th><a href="javascript:void(0);" onclick="sortDetail('NAME')" class="sort-link">이름 </a></th>
-        <th><a href="javascript:void(0);" onclick="sortDetail('PROGRESS')" class="sort-link">이수율 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('CHAP_COMP_RATE')" class="sort-link">이수율 </a></th>
     </tr>
 </thead>
 
@@ -66,19 +76,37 @@
         <c:otherwise>
             <c:forEach var="item" items="${enrollList}">
                 <tr>
-                    <td>${item.DEPT_NAME}</td>
-                    <td>${item.POSITION_NAME}</td>
-                    <td>${item.NAME}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span>${item.PROGRESS}%</span>
-                            <div style="width: 100px; height: 10px; background: #eee; border-radius: 5px; overflow: hidden;">
-                                <div style="width: ${item.PROGRESS}%; height: 100%; 
-                                     background: ${item.PROGRESS == 100 ? '#28a745' : '#007bff'};">
-                                </div>
-                            </div>
-                        </div>
-                    </td>
+                    <td>${item.deptName}</td>
+					<td>${item.positionName}</td>
+					<td>${item.name}</td>
+					<td>
+    <div style="display:flex; align-items:center; gap:8px;">
+
+        <span style="width:45px;">
+            ${item.chapCompRate}%
+        </span>
+
+        <div style="
+            width:80px;
+            height:10px;
+            background:#e9ecef;
+            border-radius:5px;
+            overflow:hidden;">
+
+            <div style="
+                width:${item.chapCompRate}%;
+                height:100%;
+                background:
+				${item.chapCompRate < 30 ? '#dc3545'
+				 : item.chapCompRate < 70 ? '#ffc107'
+				 : '#28a745'};
+                transition:width .3s;">
+            </div>
+
+        </div>
+
+    </div>
+</td>
                 </tr>
             </c:forEach>
         </c:otherwise>
@@ -86,55 +114,73 @@
 </tbody>
         </table>
 
-        <c:if test="${not empty enrollList}">
-	   		 <div class="paging-area" align="center" style="margin-top: 30px;">
-	        </div>
-		</c:if>
-            <button <c:if test="${pi.currentPage eq 1}">disabled</c:if> 
-                    onclick="pagingSubmit(${pi.currentPage - 1})">이전</button>
+        <c:choose>
+        <c:when test="${pi.currentPage <= 1}">
+            <button disabled>이전</button>
+        </c:when>
+        <c:otherwise>
+            <button onclick="pagingSubmit(${pi.currentPage - 1})">
+                이전
+            </button>
+        </c:otherwise>
+    </c:choose>
 
-            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-                <button <c:if test="${p eq pi.currentPage}">disabled "</c:if> 
-                        onclick="pagingSubmit(${p})">${p}</button>
-            </c:forEach>
+    <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+        <c:choose>
+            <c:when test="${p eq pi.currentPage}">
+                <button disabled>${p}</button>
+            </c:when>
+            <c:otherwise>
+                <button onclick="pagingSubmit(${p})">${p}</button>
+            </c:otherwise>
+        </c:choose>
+    </c:forEach>
 
-            <button <c:if test="${pi.currentPage eq pi.maxPage}">disabled</c:if> 
-                    onclick="pagingSubmit(${pi.currentPage + 1})">다음</button>
-                    
+    <c:choose>
+        <c:when test="${pi.currentPage >= pi.maxPage}">
+            <button disabled>다음</button>
+        </c:when>
+        <c:otherwise>
+            <button onclick="pagingSubmit(${pi.currentPage + 1})">
+                다음
+            </button>
+        </c:otherwise>
+    </c:choose>
 
         </div>
     </div>
+    <br>
     
-    <form action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
-    <c:if test="${not empty condition}">
-        <input type="hidden" name="condition" value="${condition}">
-    </c:if>
-    <c:if test="${not empty keyword}">
-        <input type="hidden" name="keyword" value="${keyword}">
-    </c:if>
-    <input type="hidden" name="sortCol" value="${sortCol}">
-    <input type="hidden" name="sortOrder" value="${sortOrder}">
-    
-    <button type="submit" align="center">목록으로</button>
-</form>
+  <div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+    <button type="button" class="btn btn-secondary" onclick="goList();">목록으로</button>
+</div>
 
 
     
-   <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/detail" method="post" style="display:none;">
+   <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemDetail" method="post" style="display:none;">
     <input type="hidden" name="courseId" value="${courseId}">
-    <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
+    
+    <input type="hidden" name="detailCpage" id="cpage" value="${pi.currentPage}">
+    
     <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
     <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
     <input type="hidden" name="deptFilter" id="deptFilterHidden" value="${deptFilter}">
+    
+    <input type="hidden" name="cpage" value="${cpage}"> 
+    <input type="hidden" name="condition" value="${listCondition}">
+    <input type="hidden" name="keyword" value="${listKeyword}">
 </form>
 
 <script>
     // 2. 정렬 함수 추가
    // 페이징 함수 수정
+
+// 페이징 함수 수정
 function pagingSubmit(page) {
     document.getElementById('cpage').value = page;
-    // 필터 값을 유지하기 위해 hidden 필드에 현재 선택된 값을 담아둠
-    // 이미 폼에 deptFilterHidden이 있으므로 그대로 제출하면 됨
+    
+    // 상세 페이지의 pagingForm은 이제 condition과 keyword를 input으로 가지고 있어야 합니다.
+    // 폼이 제출될 때 이 값들이 함께 서버로 갑니다.
     document.getElementById('pagingForm').submit();
 }
 
@@ -149,28 +195,27 @@ function sortDetail(colName) {
     document.getElementById('cpage').value = 1;
     document.getElementById('pagingForm').submit();
 }
-    
-    function filterByDept() {
-        let deptId = document.getElementById('deptFilter').value;
- 
-        
-        // hidden 필드에 값 할당
-        document.getElementById('deptFilterHidden').value = deptId;
-        
-        // 폼 제출
-        document.getElementById('pagingForm').submit();
-    }
+
+// 부서 필터 함수
+function filterByDept() {
+    let deptId = document.getElementById('deptFilter').value;
+    document.getElementById('deptFilterHidden').value = deptId;
+    document.getElementById('cpage').value = 1; // 필터 변경 시 1페이지로
+    document.getElementById('pagingForm').submit();
+}
+
     
     
  // 목록 페이지(enrollMemList.jsp)의 goDetail 함수
     function goDetail(cId) {
         let f = document.createElement("form");
         f.setAttribute("method", "post");
-        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/detail");
+        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemDetail");
         
         // 기존 코드에 아래를 추가해서 검색 조건도 같이 보내야 합니다.
         let inputs = {
             "courseId": cId,
+          
             "condition": "${condition}", // 검색 조건 추가
             "keyword": "${keyword}"     // 검색어 추가
         };
@@ -190,29 +235,30 @@ function sortDetail(colName) {
         f.setAttribute("method", "post");
         f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemList");
         
-        // 1. 필요한 모든 데이터를 params 객체에 담습니다.
-        // JSP에서 전달받은 모델값(${condition}, ${keyword} 등)이 여기에 들어갑니다.
         let params = {
-            "condition": "${condition}",
-            "keyword": "${keyword}",
-            "sortCol": "${sortCol}",
-            "sortOrder": "${sortOrder}"
+            "condition": "${listCondition}",
+            "keyword": "${listKeyword}",
+            "sortCol": "${listSortCol}",
+            "sortOrder": "${listSortOrder}",
+            "cpage": "${cpage}",
+            "fromDetail": "Y" // 🌟 [핵심 추가] 상세페이지에서 온 진짜 요청임을 증명하는 토큰
         };
         
-        // 2. params 객체를 돌면서 form에 input을 하나씩 추가합니다.
         for (let key in params) {
-            // 값이 존재할 때만 보냅니다.
-            if (params[key] && params[key] !== 'null' && params[key] !== '') {
+            let val = params[key] ? params[key].trim() : "";
+            if (val !== undefined && val !== null && val !== 'null' && val !== '') {
                 let i = document.createElement("input");
                 i.setAttribute("type", "hidden");
                 i.setAttribute("name", key);
-                i.setAttribute("value", params[key]);
+                i.setAttribute("value", val);
                 f.appendChild(i);
             }
         }
         
         document.body.appendChild(f);
         f.submit();
+        
+        return false;
     }
     
 </script>

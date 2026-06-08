@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="replyMapper">
+
+    <select id="selectReplyList" parameterType="_int" resultType="com.kh.blueming.reply.model.vo.Reply">
+        SELECT 
+            R.REPLY_ID AS "replyId",
+            R.CHAPTER_ID AS "chapterId",
+            R.MEMBER_ID AS "memberId",
+            R.PARENT_REPLY_ID AS "parentReplyId",
+            R.FILE_ID AS "fileId",
+            R.CONTENT AS "content",
+            R.IS_PRIVATE AS "isPrivate",
+            TO_CHAR(R.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS "createdDate",
+            M.NAME AS "name",
+            D.DEPARTMENT_NAME AS "deptName",
+            P.POSITION_NAME AS "positionName"
+        FROM REPLY R
+        JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
+        LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
+        WHERE R.CHAPTER_ID = #{chapterId} 
+          AND R.STATUS = 'Y'
+        START WITH R.PARENT_REPLY_ID IS NULL
+        CONNECT BY PRIOR R.REPLY_ID = R.PARENT_REPLY_ID
+        ORDER SIBLINGS BY R.REPLY_ID ASC
+    </select>
+
+    <insert id="insertReply" parameterType="com.kh.blueming.reply.model.vo.Reply">
+        INSERT INTO REPLY (
+            REPLY_ID,
+            CHAPTER_ID,
+            MEMBER_ID,
+            PARENT_REPLY_ID,
+            FILE_ID,
+            CONTENT,
+            IS_PRIVATE
+        ) VALUES (
+            SEQ_RNO.NEXTVAL,
+            #{chapterId},
+            #{memberId},
+            #{parentReplyId, jdbcType=INTEGER},
+            #{fileId, jdbcType=INTEGER},
+            #{content},
+            NVL(#{isPrivate}, 'N')
+        )
+    </insert>
+
+    <update id="deleteReply" parameterType="_int">
+        UPDATE REPLY 
+           SET STATUS = 'N',
+               UPDATED_DATE = SYSDATE
+         WHERE REPLY_ID = #{replyId}
+    </update>
+
+</mapper>

@@ -16,34 +16,40 @@
 		align-items: center;     /* 세로 가운데 */
 	}
 
-
+	/* Caps Lock 경고 메시지 스타일 */
+	.caps-warning {
+		color: #e74c3c;
+		font-size: 12px;
+		font-weight: bold;
+		text-align: left;
+		padding-top: 3px;
+		display: none; /* 기본적으로 숨김 */
+	}
 </style>
 
 </head>
 <body>
-		<!-- 로그인 관련 영역 -->
 		<div class="login-area" align="center">
 	
 					<form id="login-form" action="/blueming/member/login" method="post"> 
 			
 						<table>
 							<tr>
-								<th>아이디</th>
-								<td>
-									<input type="text" name="loginId" required value="${ cookie.saveId.value }">
-									
-								</td>
+							    <th>아이디</th>
+							    <td>
+							        <input type="text" id="loginId" name="loginId" required value="${ cookie.saveId.value }">
+							        
+							    </td>
 							</tr>
 							<tr>
-								<th>비밀번호</th>
-								<td>
-									<input type="password" name="loginPwd" required>
-								</td>
+							    <th>비밀번호</th>
+							    <td>
+							        <input type="password" id="loginPwd" name="loginPwd" required>
+							        <div id="capslock-warning" class="caps-warning">⚠️ Caps Lock이 켜져 있습니다.</div>
+							    </td>
 							</tr>
-							<!-- 아이디 저장 -->
 							<tr align="right">
 								<th colspan="2">
-									<!-- 1. 로그인 요청 시 아이디 저장 여부를 서버로 같이 넘기기 -->
 									<input type="checkbox" id="saveId" name="saveId" value="y">
 									<label for="saveId">아이디 저장</label>
 								</th>
@@ -53,7 +59,6 @@
 									<button type="submit" class="btn btn-secondary btn-sm">로그인</button>
 								</th>
 							</tr>
-								</tr>
 							<tr align="center">
 								<th colspan="2">
 									<button type="button" class="btn btn-secondary btn-sm" 
@@ -68,46 +73,70 @@
 					</form>	
 					<script>
 					function enrollPage1() {
-						
-						// 사원ID 찾기 
 						location.href = "/blueming/member/enrollForm1";
-						
 					}
 				</script>
 				<script>
 					function enrollPage2() {
-						
-						// 사원PWD 찾기
 						location.href = "/blueming/member/enrollForm2";
-						
 					}
 				</script>	
 			
 		</div>
 	
-		<br clear="both"> <!-- float 속성 해제 -->
-		<br>
+		<br clear="both"> <br>
 	
-		
-		
 		<script>
-			$(function() {
-				
-				// 3. 쿠키가 있다면 요소에 아이디 저장을 표현해주기
-				
-				// 쿠키값들 중에서 saveId 에 대한 밸류값을 불러오기
-				// > 쿠키에 담긴 값 또한 EL 구문 형식으로 불러올 수 있다!!
-				let saveId = "${ cookie.saveId.value }"; 
-				
-				// console.log(saveId); // "admin" / ""
-				
-				if(saveId != "") {
-					// > 쿠키에 저장된 아이디가 있다면
-					
-					$("#saveId").prop("checked", true);
-				}
-				
-			});
+		$(function() {
+		    
+		    // 3. 쿠키가 있다면 요소에 아이디 저장을 표현해주기
+		    let saveId = "${ cookie.saveId.value }"; 
+		    if(saveId != "") {
+		        $("#saveId").prop("checked", true);
+		    }
+		    
+		    // ==========================================
+		    // 4. 전역(Window) Caps Lock 감지 및 입력 전 알림 처리
+		    // ==========================================
+		    
+		    const $idInput = $("#loginId");
+		    const $pwdInput = $("#loginPwd");
+		    
+		    const $idWarning = $("#id-capslock-warning");
+		    const $pwdWarning = $("#capslock-warning");
+
+		    // 현재 Caps Lock의 전역 상태를 저장할 변수
+		    let isCapsLockOn = false;
+
+		    // 윈도우 전체에서 키보드나 마우스 조작이 일어날 때 Caps Lock 상태를 계속 업데이트
+		    $(window).on("keydown keyup click", function(e) {
+		        if (e.originalEvent && e.originalEvent.getModifierState) {
+		            isCapsLockOn = e.originalEvent.getModifierState("CapsLock");
+		            
+		            // 사용자가 다른 곳을 누르다가도 현재 포커스된 창이 있다면 실시간 갱신
+		            if (isCapsLockOn) {
+		                if ($idInput.is(":focus")) $idWarning.show();
+		                if ($pwdInput.is(":focus")) $pwdWarning.show();
+		            } else {
+		                $idWarning.hide();
+		                $pwdWarning.hide();
+		            }
+		        }
+		    });
+
+		   
+
+		    // [비밀번호 입력창 포커스 이벤트]
+		    $pwdInput.on("focus", function() {
+		        // 입력하기 전(포커스된 순간)에 이미 윈도우가 감지한 상태가 true라면 바로 표시
+		        if (isCapsLockOn) {
+		            $pwdWarning.show();
+		        }
+		    }).on("blur", function() {
+		        $pwdWarning.hide();
+		    });
+		    
+		});
 		</script>
 </body>
 </html>
