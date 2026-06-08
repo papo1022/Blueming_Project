@@ -279,6 +279,38 @@
                 </div>
             </div>
         </div>
+        
+        
+        <br><br><br><br>
+        
+       <br><br>
+
+<h2 align="center">댓글</h2>
+
+<input type="hidden"
+       id="chapterId"
+       value="${chapter.chapterId}">
+
+<div id="replyList"></div>
+
+<div style="margin-top:20px;">
+    <textarea id="replyContent"
+              class="form-control"
+              rows="3"></textarea>
+
+    <br>
+
+    <button type="button"
+            id="insertReplyBtn"
+            class="btn btn-primary">
+        댓글 등록
+    </button>
+</div>
+
+<br><br>
+        
+        <br><br><br><br>
+        
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -289,6 +321,9 @@
             </div>
 
     </div>
+    
+    
+    
 
     <script>
         function chapterDelete(){
@@ -409,6 +444,102 @@
                 e.stopPropagation();
             });
         });
+        
+        // 댓글 추가기능
+        
+        $(function(){
+
+            loadReplyList();
+
+        });
+        
+        
+        function loadReplyList(){
+
+            $.ajax({
+
+                url : "${pageContext.request.contextPath}/reply/list",
+
+                type : "get",
+
+                data : {
+                    chapterId : $("#chapterId").val()
+                },
+
+                success : function(list){
+
+                    let str = "";
+
+                    for(let i=0; i<list.length; i++){
+
+                        str += "<div class='card mb-2'>";
+                        str += "<div class='card-body'>";
+
+                        str += "<b>" + list[i].name + "</b>";
+
+                        str += " (" +
+                               (list[i].deptName || '') +
+                               " " +
+                               (list[i].positionName || '') +
+                               ")<br>";
+
+                        str += list[i].content + "<br>";
+
+                        str += "<small>"
+                            + list[i].createdDate
+                            + "</small>";
+
+                        str += "</div>";
+                        str += "</div>";
+                    }
+
+                    $("#replyList").html(str);
+
+                }
+
+            });
+
+        }
+        
+        
+        $("#insertReplyBtn").click(function(){
+
+            $.ajax({
+
+                url : "${pageContext.request.contextPath}/reply/insert",
+
+                type : "post",
+
+                data : {
+
+                    chapterId : $("#chapterId").val(),
+
+                    content : $("#replyContent").val()
+
+                },
+
+                success : function(result){
+
+                    if(result == "SUCCESS"){
+
+                        $("#replyContent").val("");
+
+                        loadReplyList();
+
+                    }else{
+
+                        alert("댓글 등록 실패");
+
+                    }
+
+                }
+
+            });
+
+        });
+        
+        
+        
     </script>
 </body>
 </html>

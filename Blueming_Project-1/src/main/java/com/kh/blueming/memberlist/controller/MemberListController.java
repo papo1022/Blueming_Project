@@ -89,14 +89,22 @@ public class MemberListController {
         return "member/memberListView";
     }
 
-    // 2. 상세 조회
+ 
+ // 2. 상세 조회 (수정본)
     @GetMapping("/detail")
-    public ModelAndView memberDetail(@RequestParam("memberId") int memberId, HttpSession session, ModelAndView mv) {
+    public ModelAndView memberDetail(
+            @RequestParam("memberId") int memberId,
+            @RequestParam(value="cpage", defaultValue="1") int listCpage,           // 🌟 추가: 원래 목록 페이지 번호
+            @RequestParam(value="condition", required=false) String condition,     // 🌟 추가: 원래 목록 검색 조건
+            @RequestParam(value="keyword", required=false) String keyword,         // 🌟 추가: 원래 목록 검색어
+            @RequestParam(value="sortColumn", defaultValue="MEMBER_ID") String sortColumn, // 🌟 추가: 원래 목록 정렬 컬럼
+            @RequestParam(value="sortOrder", defaultValue="DESC") String sortOrder,       // 🌟 추가: 원래 목록 정렬 순서
+            HttpSession session, ModelAndView mv) {
+        
         // 1. 권한 체크
         if (isNotAuthorized(session)) return new ModelAndView("redirect:/");
         
-        // 2. 서비스 호출 시, 단순히 ID만 넘기지 말고 
-        //    관리자가 조회 가능한 데이터인지 검증하는 로직을 서비스단에서 수행
+        // 2. 서비스 호출
         MemberList member = memlistService.selectMemberDetail(memberId);
         
         // 3. 존재하지 않는 사원이거나 관리 불가 사원일 경우 차단
@@ -106,7 +114,15 @@ public class MemberListController {
             return mv;
         }
         
-        mv.addObject("member", member).setViewName("member/memberListDetail");
+        // 4. 사원 상세 정보와 함께 '원래 보던 목록의 페이징/검색 상태 정보'를 바구니에 담아 보냅니다.
+        mv.addObject("member", member)
+          .addObject("listCpage", listCpage)
+          .addObject("listCondition", condition)
+          .addObject("listKeyword", keyword)
+          .addObject("listSortColumn", sortColumn)
+          .addObject("listSortOrder", sortOrder)
+          .setViewName("member/memberListDetail");
+          
         return mv;
     }
     

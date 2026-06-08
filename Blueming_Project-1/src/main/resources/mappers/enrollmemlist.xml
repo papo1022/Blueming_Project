@@ -181,7 +181,7 @@ ON E.ENROLLMENT_ID = CP.ENROLLMENT_ID
     ORDER BY
 
 <choose>
-    <when test="sortCol == 'DEPT_NAME'">
+    <when test="sortCol == 'DEPARTMENT_NAME'">
         D.DEPARTMENT_NAME
     </when>
 
