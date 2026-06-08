@@ -21,7 +21,17 @@
         
         <div>
             기간: ${c.START_DATE} ~ ${c.END_DATE} | 
-            상태: <span style="color: ${c.STATUS == 'Y' ? 'green' : 'gray'}; font-weight: bold;">${c.STATUS_NAME}</span>
+           <td>상태 : </td>
+<td>
+    <c:choose>
+        <c:when test="${c.status == 'W' || c.STATUS == 'W'}"><span >예정</span></c:when>
+        <c:when test="${c.status == 'Y' || c.STATUS == 'Y'}"><span >진행중</span></c:when>
+        <c:when test="${c.status == 'N' || c.STATUS == 'N'}"><span >종료</span></c:when>
+        <c:otherwise>
+            ${not empty c.status ? c.status : c.STATUS}
+        </c:otherwise>
+    </c:choose>
+</td>
         </div>
         
         <br>
@@ -141,27 +151,24 @@
     </div>
     <br>
     
-   <form id="goListForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post" align="center">
-    <input type="hidden" name="condition" value="${condition}">
-    <input type="hidden" name="keyword" value="${keyword}">
-    <input type="hidden" name="sortCol" value="${sortCol}">
-    <input type="hidden" name="sortOrder" value="${sortOrder}">
-    <input type="hidden" name="cpage" value="${pi.currentPage}">
-    
-    <button type="submit">목록으로</button>
-</form>
+  <div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+    <button type="button" class="btn btn-secondary" onclick="goList();">목록으로</button>
+</div>
 
 
     
-   <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/detail" method="post" style="display:none;">
+   <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemDetail" method="post" style="display:none;">
     <input type="hidden" name="courseId" value="${courseId}">
-    <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
+    
+    <input type="hidden" name="detailCpage" id="cpage" value="${pi.currentPage}">
+    
     <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
     <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
     <input type="hidden" name="deptFilter" id="deptFilterHidden" value="${deptFilter}">
     
-    <input type="hidden" name="condition" value="${condition}">
-    <input type="hidden" name="keyword" value="${keyword}">
+    <input type="hidden" name="cpage" value="${cpage}"> 
+    <input type="hidden" name="condition" value="${listCondition}">
+    <input type="hidden" name="keyword" value="${listKeyword}">
 </form>
 
 <script>
@@ -203,7 +210,7 @@ function filterByDept() {
     function goDetail(cId) {
         let f = document.createElement("form");
         f.setAttribute("method", "post");
-        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/detail");
+        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemDetail");
         
         // 기존 코드에 아래를 추가해서 검색 조건도 같이 보내야 합니다.
         let inputs = {
@@ -228,29 +235,30 @@ function filterByDept() {
         f.setAttribute("method", "post");
         f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemList");
         
-        // 1. 필요한 모든 데이터를 params 객체에 담습니다.
-        // JSP에서 전달받은 모델값(${condition}, ${keyword} 등)이 여기에 들어갑니다.
         let params = {
-            "condition": "${condition}",
-            "keyword": "${keyword}",
-            "sortCol": "${sortCol}",
-            "sortOrder": "${sortOrder}"
+            "condition": "${listCondition}",
+            "keyword": "${listKeyword}",
+            "sortCol": "${listSortCol}",
+            "sortOrder": "${listSortOrder}",
+            "cpage": "${cpage}",
+            "fromDetail": "Y" // 🌟 [핵심 추가] 상세페이지에서 온 진짜 요청임을 증명하는 토큰
         };
         
-        // 2. params 객체를 돌면서 form에 input을 하나씩 추가합니다.
         for (let key in params) {
-            // 값이 존재할 때만 보냅니다.
-            if (params[key] && params[key] !== 'null' && params[key] !== '') {
+            let val = params[key] ? params[key].trim() : "";
+            if (val !== undefined && val !== null && val !== 'null' && val !== '') {
                 let i = document.createElement("input");
                 i.setAttribute("type", "hidden");
                 i.setAttribute("name", key);
-                i.setAttribute("value", params[key]);
+                i.setAttribute("value", val);
                 f.appendChild(i);
             }
         }
         
         document.body.appendChild(f);
         f.submit();
+        
+        return false;
     }
     
 </script>

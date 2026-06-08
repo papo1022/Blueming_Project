@@ -76,13 +76,45 @@
         </c:choose>
         
         <div class="btn-group">
-            <button class="btn btn-primary" onclick="document.getElementById('editForm').submit()">수정</button>
-            <button class="btn btn-secondary" onclick="location.href='${pageContext.request.contextPath}/memberlist'">목록</button>
-        </div>
+    <button class="btn btn-primary" onclick="document.getElementById('editForm').submit()">수정</button>
+    
+    <button class="btn btn-secondary" onclick="goMemberList();">목록</button>
+</div>
 
         <form id="editForm" action="/blueming/memberlist/updateForm" method="post">
             <input type="hidden" name="memberId" value="${member.memberId}">
         </form>
     </div> 
+    
+    
+    <script>
+function goMemberList() {
+    let f = document.createElement("form");
+    f.setAttribute("method", "post");
+    f.setAttribute("action", "${pageContext.request.contextPath}/memberlist"); 
+    
+    let params = {
+        "cpage": "${listCpage}",         // 컨트롤러가 전달해 준 원래 페이지
+        "condition": "${listCondition}", // 컨트롤러가 전달해 준 원래 검색조건
+        "keyword": "${listKeyword}",     // 컨트롤러가 전달해 준 원래 검색어
+        "sortColumn": "${listSortColumn}",
+        "sortOrder": "${listSortOrder}"
+    };
+    
+    for (let key in params) {
+        let val = params[key] ? params[key].trim() : "";
+        if (val !== undefined && val !== null && val !== 'null' && val !== '') {
+            let i = document.createElement("input");
+            i.setAttribute("type", "hidden");
+            i.setAttribute("name", key);
+            i.setAttribute("value", val);
+            f.appendChild(i);
+        }
+    }
+    
+    document.body.appendChild(f);
+    f.submit();
+}
+</script>
 </body>
 </html>
