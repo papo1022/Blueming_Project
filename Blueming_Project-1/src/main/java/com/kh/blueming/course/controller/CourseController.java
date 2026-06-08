@@ -581,7 +581,7 @@ public class CourseController {
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Chapter originCh = courseService.selectChapter(ch.getChapterId());
 		Course c = courseService.selectCourse(originCh.getCourseId());			
-		Attachment originAt = courseService.selectAttachment(originCh.getVideoFileId());
+		Attachment originAt = courseService.selectAttachmentByFileId(originCh.getVideoFileId());
 		
 		//전역변수
 		int result = 1;
