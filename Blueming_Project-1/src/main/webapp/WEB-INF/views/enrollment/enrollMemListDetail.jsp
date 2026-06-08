@@ -55,7 +55,7 @@
             <thead>
 <thead>
     <tr>
-        <th><a href="javascript:void(0);" onclick="sortDetail('DEPT_NAME')" class="sort-link">부서 </a></th>
+        <th><a href="javascript:void(0);" onclick="sortDetail('DEPARTMENT_NAME')" class="sort-link">부서 </a></th>
         <th><a href="javascript:void(0);" onclick="sortDetail('POSITION_NAME')" class="sort-link">직급 </a></th>
         <th><a href="javascript:void(0);" onclick="sortDetail('NAME')" class="sort-link">이름 </a></th>
         <th><a href="javascript:void(0);" onclick="sortDetail('CHAP_COMP_RATE')" class="sort-link">이수율 </a></th>
