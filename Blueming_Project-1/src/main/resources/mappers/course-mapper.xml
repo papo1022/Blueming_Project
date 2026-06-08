@@ -4,6 +4,17 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="courseMapper">
 
+<resultMap id="chapterMap" type="chapter">
+    <id property="chapterId" column="chapterId"/>
+    <result property="courseId" column="courseId"/>
+    <result property="chapterTitle" column="chapterTitle"/>
+    <result property="chapterOrder" column="chapterOrder"/>
+    <result property="videoFileId" column="videoFileId"/>
+    <result property="createDate" column="createDate"/>
+    <result property="updatedDate" column="updatedDate"/>
+    <result property="avgProgress" column="avgProgress"/>
+</resultMap>
+
 	<!-- 강좌 개수 조회 -->
 	<select id="selectListCount" resultType="_int">
 		SELECT COUNT(*)
@@ -159,16 +170,22 @@
 	</select>
 	
 	<!-- 챕터 리스트를 불러오기 -->
-	<select id="selectChapterList" resultType="chapter" parameterType="_int">
-		SELECT CHAPTER_ID AS chapterId,
-				COURSE_ID AS courseId,
-				CHAPTER_TITLE AS chapterTitle,
-				CHAPTER_ORDER AS chapterOrder,
-				VIDEO_FILE_ID AS videoFileId,
-				CREATE_DATE AS createDate,
-				UPDATED_DATE AS updatedDate
-		FROM CHAPTER 
-		WHERE COURSE_ID = #{courseId}
+	<select id="selectChapterList" resultMap="chapterMap">
+		SELECT C.CHAPTER_ID AS chapterId,
+				C.COURSE_ID AS courseId,
+				C.CHAPTER_TITLE AS chapterTitle,
+				C.CHAPTER_ORDER AS chapterOrder,
+				C.VIDEO_FILE_ID AS videoFileId,
+				C.CREATE_DATE AS createDate,
+				C.UPDATED_DATE AS updatedDate,
+				(
+					SELECT NVL(ROUND(AVG(CHAP_COMP_RATE),2),0)
+			        FROM CHAPTER_PROGRESS CP
+			        WHERE CP.CHAPTER_ID = C.CHAPTER_ID
+			    ) AS avgProgress
+		FROM CHAPTER C
+		WHERE C.COURSE_ID = #{courseId}
+		ORDER BY C.CHAPTER_ORDER
 	</select>
 	
 	<!-- 챕터 하나를 불러오기 -->

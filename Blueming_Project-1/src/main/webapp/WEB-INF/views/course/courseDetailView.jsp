@@ -16,7 +16,19 @@
         background-color: #f8f9fa;
         cursor: pointer;
     }
+    .table {
+        text-align: center;
+    }
+    .text-big {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .text-small {
+        font-size: 13px;
+        font-weight: bold;
+    }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -120,10 +132,11 @@
                     <h5>총 이수율</h5>
 
                     <div class="progress" style="height: 30px;">
-                        <div class="progress-bar bg-success"
+                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
                             role="progressbar"
-                            style="width: 75%;">
-                            75%
+                            style="width: 0%;">
+                            <span align="center" id="totalProgress" class="text-big">0%</span>
+                            
                         </div>
                     </div>
                 </div>
@@ -134,7 +147,7 @@
 
                     <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
                         class="d-flex justify-content-center align-items-center">
-                        그래프 영역
+                        <canvas id="courseChart"></canvas>
                     </div>
                 </div>
 
@@ -170,8 +183,7 @@
                         <tr>
                             <th width="10%">챕터</th>
                             <th width="40%">제목</th>
-                            <th width="30%">그래프</th>
-                            <th width="10%">이수률</th>
+                            <th width="50%">모든 수강생 이수율</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -180,8 +192,15 @@
                                 <td style="display:none;">${ch.chapterId}</td>
                                 <td>${ch.chapterOrder}</td>
                                 <td>${ch.chapterTitle}</td>
-                                <td>이수률 막대그래프</td>
-                                <td>n%</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar progress-bar-striped bg-info progress-bar-animated rounded-pill"
+                                            role="progressbar"
+                                            style="width: ${String.format('%.2f', ch.avgProgress)}%;">
+                                            <span align="center" class="text-small">${String.format("%.2f", ch.avgProgress)}%</span>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -190,6 +209,8 @@
         </div>
         <br><br>
     </div>
+
+</script>
 
     <script>
         function chapterAdd(){
@@ -213,6 +234,43 @@
                 document.getElementById("deleteForm").submit();
             }
         }
+
+        window.$(function() {
+            totalProgress();
+        });
+        
+        function totalProgress(){
+            let totalProgress = 0;
+            let count = 0;
+            <c:forEach var="ch" items="${chapterList}">
+                totalProgress += ${ch.avgProgress};
+                count++;
+            </c:forEach>
+            totalProgress = Math.round(totalProgress / count).toFixed(2);
+            document.getElementById("totalProgress").textContent = totalProgress + "%";
+            document.getElementById("totalProgressBar").style.width = totalProgress + "%";
+        }
+
+        new Chart(document.getElementById('courseChart'), {
+            type: 'line',
+            data: {
+                labels: [
+                    <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                        '${ch.chapterTitle}'
+                        <c:if test="${!status.last}">,</c:if>
+                    </c:forEach>
+                ],
+                datasets: [{
+                    label: '수강률',
+                    data: [
+                        <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                            ${ch.avgProgress}
+                            <c:if test="${!status.last}">,</c:if>
+                        </c:forEach>
+                    ]
+                }]
+            }
+        });
     </script>
 </body>
 </html>
