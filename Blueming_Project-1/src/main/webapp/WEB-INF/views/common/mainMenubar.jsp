@@ -65,10 +65,24 @@
 </head>
 
 <body>
+    <c:url var="homeUrl" value="/"/>
+    <c:if test="${not empty loginUser}">
+        <c:choose>
+            <c:when test="${loginUser.role eq 'S'}">
+                <c:url var="homeUrl" value="/member/admin"/>
+            </c:when>
+            <c:when test="${loginUser.role eq 'R'}">
+                <c:url var="homeUrl" value="/member/hr"/>
+            </c:when>
+            <c:otherwise>
+                <c:url var="homeUrl" value="/member/employee"/>
+            </c:otherwise>
+        </c:choose>
+    </c:if>
 
 <!-- 메뉴바 -->
 	<div class="nav-area" align="center">
-	    <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
+        <div class="menu"><a href="${homeUrl}">Home</a></div>
 	    <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
 	    <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
 	    <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
@@ -81,6 +95,8 @@
 
 <!-- 사용자 정보 -->
 <div id="user-info">
+    <c:choose>
+        <c:when test="${not empty loginUser}">
 
     이름 : <b>${loginUser.name}</b>
 
@@ -128,8 +144,7 @@
 	    </c:otherwise>
 
 	</c:choose>
-
-
+    </div>
 
 </body>
 </html>

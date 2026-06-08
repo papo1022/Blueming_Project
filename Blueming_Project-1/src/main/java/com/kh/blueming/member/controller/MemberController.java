@@ -287,8 +287,8 @@ public class MemberController {
 	        case "N":
 	            return "redirect:/member/employee";
 
-	            default:
-	                return "redirect:/";
+	        default:
+	            return "redirect:/";
 	        }
 
 	    } else {
