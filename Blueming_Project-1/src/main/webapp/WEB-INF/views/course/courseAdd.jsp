@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,8 +22,38 @@
         width : 80%;
     }
 
-    #targetType, #targetValue {
+    #ruleTypeSelector, #deptSelector, #posSelector {
         width : 80%;
+    }
+
+    #target-rule-area {
+        width: 80%;
+        margin: 0 auto;
+        text-align: left;
+    }
+
+    #target-rules-list {
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        min-height: 56px;
+        background: #fafafa;
+    }
+
+    .target-rule-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 8px;
+        margin-bottom: 6px;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+    }
+
+    .target-rule-item:last-child {
+        margin-bottom: 0;
     }
 
 </style>
@@ -33,7 +64,7 @@
 
     <h1 align="center">강의 등록</h1>
 
-    <form action="addCourse" align="center" method="post" onsubmit="return validateForm();">
+    <form action="addCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
         <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
         <table class="table">
             <tr>
@@ -53,20 +84,28 @@
                 <td><input type="date" name="endDate" required></td>
             </tr>
             <tr>
-                <td>* 강좌 대상 유형</td>
+                <td>* 강좌 대상</td>
                 <td>
-                    <select id="targetType" name="targetType" onchange="toggleTargetValue();">
-                        <option value="전체" selected>전체</option>
-                        <option value="부서">부서</option>
-                        <option value="직급">직급</option>
-                    </select>
+                    <div id="target-rule-area">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                            <select id="ruleTypeSelector" onchange="onRuleTypeChange();">
+                                <option value="ALL">전체 인원</option>
+                                <option value="DEPT">특정 부서</option>
+                                <option value="POS">특정 직급</option>
+                                <option value="DEPT_POS">특정 부서 + 특정 직급</option>
+                            </select>
+                            <select id="deptSelector" style="display:none;"></select>
+                            <select id="posSelector" style="display:none;"></select>
+                            <button type="button" class="btn btn-secondary" onclick="addTargetRule();">대상 추가</button>
+                        </div>
+                        <div id="target-rules-list"></div>
+                        <input type="hidden" id="targetRulesJson" name="targetRulesJson">
+                    </div>
                 </td>
             </tr>
             <tr>
-                <td>대상 값</td>
-                <td>
-                    <input type="text" id="targetValue" name="targetValue" placeholder="예: D02 또는 P03" disabled>
-                </td>
+                <td>썸네일 이미지</td>
+                <td><input type="file" name="thumbnail" accept="image/*"></td>
             </tr>
         </table>
 
@@ -78,36 +117,142 @@
     </form>
 
     <script>
+        const deptOptions = [
+            <c:forEach var="d" items="${deptOptions}" varStatus="st">
+            { id: "${d.DEPARTMENT_ID}", name: "${d.DEPARTMENT_NAME}" }<c:if test="${!st.last}">,</c:if>
+            </c:forEach>
+        ];
+
+        const posOptions = [
+            <c:forEach var="p" items="${positionOptions}" varStatus="st">
+            { id: "${p.POSITION_ID}", name: "${p.POSITION_NAME}" }<c:if test="${!st.last}">,</c:if>
+            </c:forEach>
+        ];
+
+        const targetRules = [];
+
+        function populateSelect(selectId, options, placeholder) {
+            const select = document.getElementById(selectId);
+            let html = "<option value=''>" + placeholder + "</option>";
+            for (let i = 0; i < options.length; i++) {
+                html += "<option value='" + options[i].id + "'>" + options[i].name + "</option>";
+            }
+            select.innerHTML = html;
+        }
+
+        function getNameById(options, id) {
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].id === id) return options[i].name;
+            }
+            return id || "";
+        }
+
+        function onRuleTypeChange() {
+            const type = document.getElementById("ruleTypeSelector").value;
+            const dept = document.getElementById("deptSelector");
+            const pos = document.getElementById("posSelector");
+
+            dept.style.display = (type === "DEPT" || type === "DEPT_POS") ? "inline-block" : "none";
+            pos.style.display = (type === "POS" || type === "DEPT_POS") ? "inline-block" : "none";
+        }
+
+        function buildRule(type, value) {
+            if (type === "ALL") return { targetType: "ALL", targetValue: null, label: "전체 인원" };
+            if (type === "DEPT") return { targetType: "DEPT", targetValue: value, label: "부서: " + getNameById(deptOptions, value) };
+            if (type === "POS") return { targetType: "POS", targetValue: value, label: "직급: " + getNameById(posOptions, value) };
+
+            const parts = (value || "").split("|");
+            return {
+                targetType: "DEPT_POS",
+                targetValue: value,
+                label: "부서+직급: " + getNameById(deptOptions, parts[0]) + " / " + getNameById(posOptions, parts[1])
+            };
+        }
+
+        function addTargetRule() {
+            const type = document.getElementById("ruleTypeSelector").value;
+            const deptId = document.getElementById("deptSelector").value;
+            const posId = document.getElementById("posSelector").value;
+            let value = null;
+
+            if (type === "DEPT" && !deptId) {
+                alert("부서를 선택해주세요.");
+                return;
+            }
+            if (type === "POS" && !posId) {
+                alert("직급을 선택해주세요.");
+                return;
+            }
+            if (type === "DEPT_POS") {
+                if (!deptId || !posId) {
+                    alert("부서와 직급을 모두 선택해주세요.");
+                    return;
+                }
+                value = deptId + "|" + posId;
+            }
+            if (type === "DEPT") value = deptId;
+            if (type === "POS") value = posId;
+
+            for (let i = 0; i < targetRules.length; i++) {
+                if (targetRules[i].targetType === type && (targetRules[i].targetValue || "") === (value || "")) {
+                    return;
+                }
+            }
+
+            targetRules.push(buildRule(type, value));
+            renderTargetRules();
+        }
+
+        function removeTargetRule(index) {
+            targetRules.splice(index, 1);
+            renderTargetRules();
+        }
+
+        function renderTargetRules() {
+            const container = document.getElementById("target-rules-list");
+            if (targetRules.length === 0) {
+                container.innerHTML = "<div style='color:#666;'>추가된 대상이 없습니다.</div>";
+            } else {
+                let html = "";
+                for (let i = 0; i < targetRules.length; i++) {
+                    html += "<div class='target-rule-item'>"
+                         + "<span>" + targetRules[i].label + "</span>"
+                         + "<button type='button' class='btn btn-sm btn-outline-danger' onclick='removeTargetRule(" + i + ")'>삭제</button>"
+                         + "</div>";
+                }
+                container.innerHTML = html;
+            }
+
+            const payload = [];
+            for (let i = 0; i < targetRules.length; i++) {
+                payload.push({
+                    targetType: targetRules[i].targetType,
+                    targetValue: targetRules[i].targetValue
+                });
+            }
+            document.getElementById("targetRulesJson").value = JSON.stringify(payload);
+        }
+
         function validateForm() {
             const startDate = new Date(document.querySelector('input[name="startDate"]').value);
             const endDate = new Date(document.querySelector('input[name="endDate"]').value);
-            const targetType = document.getElementById("targetType").value;
-            const targetValue = document.getElementById("targetValue").value.trim();
             
             if (startDate > endDate) {
                 alert("강의 시작 날짜는 마감 날짜보다 이전이어야 합니다.");
                 return false;
             }
 
-            if ((targetType === "부서" || targetType === "직급") && targetValue === "") {
-                alert("대상 값(부서/직급 코드)을 입력해주세요.");
+            if (targetRules.length === 0) {
+                alert("최소 1개 이상의 강좌 대상을 추가해주세요.");
                 return false;
             }
             return true;
         }
 
-        function toggleTargetValue() {
-            const targetType = document.getElementById("targetType").value;
-            const targetValue = document.getElementById("targetValue");
-            if (targetType === "전체") {
-                targetValue.value = "";
-                targetValue.disabled = true;
-            } else {
-                targetValue.disabled = false;
-            }
-        }
-
-        toggleTargetValue();
+        populateSelect("deptSelector", deptOptions, "부서 선택");
+        populateSelect("posSelector", posOptions, "직급 선택");
+        onRuleTypeChange();
+        renderTargetRules();
     </script>
 </body>
 </html>

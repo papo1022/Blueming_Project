@@ -67,39 +67,17 @@
 <body>
 
 <!-- 메뉴바 -->
-	<c:choose>
+	<div class="nav-area" align="center">
+	    <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
+	    <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
+	    <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
+	    <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
 
-    
-	    <c:when test="${loginUser.role eq 'S'}">
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	            <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-	        </div>
-	    </c:when>
-	
-	    
-	    <c:when test="${loginUser.role eq 'R'}">
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
-              <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
-	        </div>
-	    </c:when>
-	
-	
-	    <c:otherwise>
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-	            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	        </div>
-	    </c:otherwise>
-
-	</c:choose>
+	    <c:if test="${loginUser.role eq 'R'}">
+	        <div class="menu"><a href="<c:url value='/memberlist'/>">사원조회</a></div>
+	        <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
+	    </c:if>
+	</div>
 
 <!-- 사용자 정보 -->
 <div id="user-info">

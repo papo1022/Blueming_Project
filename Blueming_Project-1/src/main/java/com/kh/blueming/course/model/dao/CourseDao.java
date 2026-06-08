@@ -45,8 +45,8 @@ public class CourseDao {
 		return sqlSession.selectOne("courseMapper.selectCourse", courseId);
 	}
     
-    public Attachment selectAttachment(SqlSessionTemplate sqlSession, int courseId) {
-    	return sqlSession.selectOne("courseMapper.selectAttachment", courseId);
+	public Attachment selectAttachmentByFileId(SqlSessionTemplate sqlSession, int fileId) {
+	    	return sqlSession.selectOne("courseMapper.selectAttachment", fileId);
 	}
     
     public ArrayList<Chapter> selectChapterList(SqlSessionTemplate sqlSession, int courseId) {
@@ -69,12 +69,52 @@ public class CourseDao {
 		return sqlSession.insert("courseMapper.insertCourseTarget", map);
 	}
 
+	public int deleteCourseTargetsByCourseId(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.delete("courseMapper.deleteCourseTargetsByCourseId", courseId);
+	}
+
+	public int deleteEnrollmentByCourseId(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.delete("courseMapper.deleteEnrollmentByCourseId", courseId);
+	}
+
+	public int deleteChapterProgressByCourseId(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.delete("courseMapper.deleteChapterProgressByCourseId", courseId);
+	}
+
+	public int insertEnrollmentByCourseTargets(SqlSessionTemplate sqlSession, int courseId) {
+		return sqlSession.insert("courseMapper.insertEnrollmentByCourseTargets", courseId);
+	}
+
+	public int upsertCourseTarget(SqlSessionTemplate sqlSession, int courseId, String targetType, String targetValue) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("courseId", courseId);
+		map.put("targetType", targetType);
+		map.put("targetValue", targetValue);
+		return sqlSession.update("courseMapper.upsertCourseTarget", map);
+	}
+
 	public int insertEnrollmentByCourseTarget(SqlSessionTemplate sqlSession, int courseId, String targetType, String targetValue) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("courseId", courseId);
 		map.put("targetType", targetType);
 		map.put("targetValue", targetValue);
 		return sqlSession.insert("courseMapper.insertEnrollmentByCourseTarget", map);
+	}
+
+	public int syncEnrollmentByMember(SqlSessionTemplate sqlSession, int memberId) {
+		return sqlSession.insert("courseMapper.syncEnrollmentByMember", memberId);
+	}
+
+	public ArrayList<Map<String, Object>> selectDepartmentOptions(SqlSessionTemplate sqlSession) {
+		return (ArrayList) sqlSession.selectList("courseMapper.selectDepartmentOptions");
+	}
+
+	public ArrayList<Map<String, Object>> selectPositionOptions(SqlSessionTemplate sqlSession) {
+		return (ArrayList) sqlSession.selectList("courseMapper.selectPositionOptions");
+	}
+
+	public ArrayList<Map<String, Object>> selectCourseTargetRules(SqlSessionTemplate sqlSession, int courseId) {
+		return (ArrayList) sqlSession.selectList("courseMapper.selectCourseTargetRules", courseId);
 	}
 
 	public int nextOrder(SqlSessionTemplate sqlSession, int courseId) {

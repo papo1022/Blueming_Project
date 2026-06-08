@@ -19,7 +19,7 @@
 </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer">
         <h2>사원 인사정보 관리</h2>

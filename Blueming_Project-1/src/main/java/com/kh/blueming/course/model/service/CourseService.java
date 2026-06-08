@@ -55,8 +55,11 @@ public class CourseService {
 		return courseDao.selectCourse(sqlSession, courseId);
 	}
 	
-	public Attachment selectAttachment(int courseId) {
-		return courseDao.selectAttachment(sqlSession, courseId);
+	public Attachment selectAttachmentByFileId(int fileId) {
+		if (fileId <= 0) {
+			return null;
+		}
+		return courseDao.selectAttachmentByFileId(sqlSession, fileId);
 	}
 	
 	public ArrayList<Chapter> selectChapterList(int courseId) {
@@ -66,29 +69,72 @@ public class CourseService {
 	public Chapter selectChapter(int chapterId) {
 		return courseDao.selectChapter(sqlSession, chapterId);
 	}
+
+	public ArrayList<Map<String, Object>> selectDepartmentOptions() {
+		return courseDao.selectDepartmentOptions(sqlSession);
+	}
+
+	public ArrayList<Map<String, Object>> selectPositionOptions() {
+		return courseDao.selectPositionOptions(sqlSession);
+	}
+
+	public ArrayList<Map<String, Object>> selectCourseTargetRules(int courseId) {
+		return courseDao.selectCourseTargetRules(sqlSession, courseId);
+	}
 	
 	@Transactional
 	public int addCourse(Course c, String targetType, String targetValue) {
+		ArrayList<Map<String, String>> rules = new ArrayList<>();
+		Map<String, String> rule = new HashMap<>();
+		rule.put("targetType", targetType);
+		rule.put("targetValue", targetValue);
+		rules.add(rule);
+		return addCourse(c, rules);
+	}
+
+	@Transactional
+	public int addCourse(Course c, List<Map<String, String>> targetRules) {
+		return addCourse(c, targetRules, null);
+	}
+
+	@Transactional
+	public int addCourse(Course c, List<Map<String, String>> targetRules, Attachment thumbnailAttachment) {
+		if (thumbnailAttachment != null) {
+			int attachmentResult = courseDao.addAttachment(sqlSession, thumbnailAttachment);
+			if (attachmentResult <= 0) {
+				return 0;
+			}
+			c.setFileId(thumbnailAttachment.getFileId());
+		}
+
 		int result1 = courseDao.addCourse(sqlSession, c);
 		if (result1 <= 0) {
 			return 0;
 		}
 
-		String normalizedType = (targetType == null || targetType.isBlank()) ? "전체" : targetType;
-		String normalizedValue = (targetValue == null || targetValue.isBlank()) ? null : targetValue;
-
-		if ("전체".equals(normalizedType) || "ALL".equalsIgnoreCase(normalizedType)) {
-			normalizedType = "전체";
-			normalizedValue = null;
+		List<Map<String, String>> normalizedRules = normalizeTargetRules(targetRules);
+		int insertedRules = 0;
+		for (Map<String, String> rule : normalizedRules) {
+			insertedRules += courseDao.insertCourseTarget(sqlSession,
+					c.getCourseId(),
+					rule.get("targetType"),
+					rule.get("targetValue"));
 		}
 
-		int result2 = courseDao.insertCourseTarget(sqlSession, c.getCourseId(), normalizedType, normalizedValue);
-		if (result2 <= 0) {
+		if (insertedRules <= 0) {
 			return 0;
 		}
 
-		courseDao.insertEnrollmentByCourseTarget(sqlSession, c.getCourseId(), normalizedType, normalizedValue);
+		courseDao.insertEnrollmentByCourseTargets(sqlSession, c.getCourseId());
 		return 1;
+	}
+
+	@Transactional
+	public int syncEnrollmentByMember(int memberId) {
+		if (memberId <= 0) {
+			return 0;
+		}
+		return courseDao.syncEnrollmentByMember(sqlSession, memberId);
 	}
 
 	public int nextOrder(int courseId) {
@@ -116,13 +162,157 @@ public class CourseService {
 	}
 
 	@Transactional
-	public int updateCourse(Course c) {
-		return courseDao.updateCourse(sqlSession, c);
+	public int updateCourse(Course c, String targetType, String targetValue) {
+		ArrayList<Map<String, String>> rules = new ArrayList<>();
+		Map<String, String> rule = new HashMap<>();
+		rule.put("targetType", targetType);
+		rule.put("targetValue", targetValue);
+		rules.add(rule);
+		return updateCourse(c, rules);
+	}
+
+	@Transactional
+	public int updateCourse(Course c, List<Map<String, String>> targetRules) {
+		return updateCourse(c, targetRules, null);
+	}
+
+	@Transactional
+	public int updateCourse(Course c, List<Map<String, String>> targetRules, Attachment newThumbnailAttachment) {
+
+		int oldFileId = c.getFileId();
+		if (newThumbnailAttachment != null) {
+			int attachmentResult = courseDao.addAttachment(sqlSession, newThumbnailAttachment);
+			if (attachmentResult <= 0) {
+				return 0;
+			}
+			c.setFileId(newThumbnailAttachment.getFileId());
+		}
+
+		int result1 = courseDao.updateCourse(sqlSession, c);
+		if (result1 <= 0) {
+			return 0;
+		}
+
+		if (newThumbnailAttachment != null && oldFileId > 0) {
+			courseDao.deleteAttachment(sqlSession, oldFileId);
+		}
+
+		courseDao.deleteCourseTargetsByCourseId(sqlSession, c.getCourseId());
+		List<Map<String, String>> normalizedRules = normalizeTargetRules(targetRules);
+		int insertedRules = 0;
+		for (Map<String, String> rule : normalizedRules) {
+			insertedRules += courseDao.insertCourseTarget(sqlSession,
+					c.getCourseId(),
+					rule.get("targetType"),
+					rule.get("targetValue"));
+		}
+
+		if (insertedRules <= 0) {
+			return 0;
+		}
+
+		courseDao.insertEnrollmentByCourseTargets(sqlSession, c.getCourseId());
+		return 1;
+	}
+
+	private List<Map<String, String>> normalizeTargetRules(List<Map<String, String>> targetRules) {
+		ArrayList<Map<String, String>> normalized = new ArrayList<>();
+		if (targetRules == null) {
+			targetRules = new ArrayList<>();
+		}
+
+		for (Map<String, String> rule : targetRules) {
+			if (rule == null) {
+				continue;
+			}
+			String rawType = rule.get("targetType");
+			String type = normalizeTargetType(rawType);
+			String value = rule.get("targetValue");
+			if (value != null) {
+				value = value.trim();
+				if (value.isBlank()) {
+					value = null;
+				}
+			}
+
+			// COURSE_TARGET 제약조건(전체/부서/직급, TARGET_VALUE 길이 3) 범위로 안전 변환
+			if ("DEPT_POS".equalsIgnoreCase(rawType) && value != null && value.contains("|")) {
+				String[] parts = value.split("\\|");
+				if (parts.length == 2) {
+					String deptId = parts[0].trim();
+					String posId = parts[1].trim();
+					if (!deptId.isBlank()) {
+						Map<String, String> deptRule = new HashMap<>();
+						deptRule.put("targetType", "부서");
+						deptRule.put("targetValue", deptId);
+						normalized.add(deptRule);
+					}
+					if (!posId.isBlank()) {
+						Map<String, String> posRule = new HashMap<>();
+						posRule.put("targetType", "직급");
+						posRule.put("targetValue", posId);
+						normalized.add(posRule);
+					}
+					continue;
+				}
+			}
+
+			if (("부서".equals(type) || "직급".equals(type)) && value == null) {
+				continue;
+			}
+			if ("전체".equals(type)) {
+				value = null;
+			}
+
+			Map<String, String> normalizedRule = new HashMap<>();
+			normalizedRule.put("targetType", type);
+			normalizedRule.put("targetValue", value);
+			normalized.add(normalizedRule);
+		}
+
+		if (normalized.isEmpty()) {
+			Map<String, String> defaultRule = new HashMap<>();
+			defaultRule.put("targetType", "전체");
+			defaultRule.put("targetValue", null);
+			normalized.add(defaultRule);
+		}
+
+		return normalized;
+	}
+
+	private String normalizeTargetType(String targetType) {
+		if (targetType == null || targetType.isBlank()) {
+			return "전체";
+		}
+		String type = targetType.trim().toUpperCase();
+		switch (type) {
+			case "전체":
+			case "ALL":
+			case "DEPT_ALL":
+			case "POS_ALL":
+				return "전체";
+			case "부서":
+			case "DEPT":
+			case "DEPARTMENT":
+				return "부서";
+			case "직급":
+			case "POS":
+			case "POSITION":
+				return "직급";
+			case "DEPT_POS":
+				return "DEPT_POS";
+			default:
+				return "전체";
+		}
 	}
 
 	@Transactional
 	public int deleteCourse(int courseId) {
+		Course course = courseDao.selectCourse(sqlSession, courseId);
 		assignmentService.deleteAssignmentsByCourseId(courseId);
+		courseDao.deleteChapterProgressByCourseId(sqlSession, courseId);
+		courseDao.deleteEnrollmentByCourseId(sqlSession, courseId);
+		courseDao.deleteCourseTargetsByCourseId(sqlSession, courseId);
 		
 		ArrayList<Chapter> chapterList = courseDao.selectChapterList(sqlSession, courseId);
 		
@@ -134,6 +324,10 @@ public class CourseService {
 			if(ch.getVideoFileId() > 0) {
 				result1 *= courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
 			}
+		}
+
+		if (course != null && course.getFileId() > 0) {
+			result1 *= courseDao.deleteAttachment(sqlSession, course.getFileId());
 		}
 		
 		int result3 = courseDao.deleteCourse(sqlSession, courseId);
