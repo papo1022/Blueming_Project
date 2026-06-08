@@ -74,7 +74,7 @@
 	        <div class="nav-area" align="center">
 	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
 	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
+	            <div class="menu"><a href="<c:url value='/adminAssignment/list'/>">Assignment</a></div>
 	            <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
 	        </div>
 	    </c:when>
