@@ -21,6 +21,7 @@ public class Chapter {
 	private int videoFileId;
 	private Date createDate;
 	private Date updatedDate;
+	private double avgProgress;
 	
 	private String originalName;
 	private String changedName;

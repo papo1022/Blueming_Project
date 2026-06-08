@@ -566,4 +566,6 @@ public class CourseController {
 		result.put("isCompleted", isCompleted);
 		return result;
 	}
+	
+	/*************************************************/
 }
