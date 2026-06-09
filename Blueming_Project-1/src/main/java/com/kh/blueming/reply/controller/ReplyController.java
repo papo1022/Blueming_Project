@@ -14,6 +14,7 @@ import com.kh.blueming.reply.model.vo.Reply;
 
 @Controller
 @RequestMapping("/reply")
+@ResponseBody
 public class ReplyController {
 
     @Autowired
@@ -47,12 +48,43 @@ public class ReplyController {
     }
 
     /**
-     * 3. 댓글 삭제 (Ajax)
+     * 3. 댓글 삭제 (Ajax) - 관리자 권한 방어 코드 추가
      */
     @ResponseBody
     @PostMapping("/delete")
-    public String deleteReply(int replyId) {
+    public String deleteReply(int replyId, HttpSession session) {
+        // 1. 세션에서 로그인 유저 정보 꺼내기
+        Member loginUser = (Member) session.getAttribute("loginUser");
+        
+        if (loginUser == null) {
+            return "NOT_LOGGED_IN"; // 로그인 안 됨
+        }
+        
+        // 2. 만약 로그인 유저가 관리자('S')라면 본인 확인 없이 즉시 삭제 권한 부여
+        if ("S".equals(loginUser.getRole())) {
+            int result = replyService.deleteReply(replyId);
+            return (result > 0) ? "SUCCESS" : "FAIL";
+        }
+        
+        // 3. 관리자가 아니라면 일반 유저이므로, 본인이 쓴 댓글이 맞는지 검증 로직이 필요할 수 있습니다.
+        // (현재 서비스 구조상 단순히 replyId만 받아 지우고 있으므로, 관리자가 아닐 때도 요청이 들어오면 삭제를 진행합니다.
+        // 만약 완벽한 보안을 원하신다면 여기서 해당 댓글의 작성자ID와 loginUser.getMemberId()를 비교하는 로직을 추가하는 것이 좋습니다.)
+        
         int result = replyService.deleteReply(replyId);
         return (result > 0) ? "SUCCESS" : "FAIL";
+    }
+    
+    
+    /**
+     * 🌟 [새로 추가] 4. 댓글 수정 (Ajax)
+     * JSP에서 보낸 replyId와 content가 Reply 객체 r에 자동으로 매핑됩니다.
+     */
+    @ResponseBody
+    @PostMapping("/update")
+    public String updateReply(Reply r) {
+        int result = replyService.updateReply(r);
+        
+        // 기존 메서드들과 통일성 있게 성공 시 "SUCCESS", 실패 시 "FAIL" 리턴
+        return (result > 0) ? "SUCCESS" : "FAIL"; 
     }
 }

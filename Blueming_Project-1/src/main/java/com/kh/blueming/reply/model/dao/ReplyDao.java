@@ -33,4 +33,14 @@ public class ReplyDao {
     public int deleteReply(int replyId) {
         return sqlSession.update("replyMapper.deleteReply", replyId);
     }
+    
+    /**
+     * 댓글 수정 DB 요청
+     */
+    public int updateReply(Reply r) {
+        // "네임스페이스명.태그ID", 전송할 객체
+        // reply-mapper.xml 최상단 <mapper namespace="replyMapper"> 와 
+        // <update id="updateReply"> 구문을 실행하라는 의미입니다.
+        return sqlSession.update("replyMapper.updateReply", r);
+    }
 }
