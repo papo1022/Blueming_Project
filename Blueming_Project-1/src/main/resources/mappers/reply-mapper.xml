@@ -29,17 +29,19 @@
     </select>
 
     <insert id="insertReply" parameterType="com.kh.blueming.reply.model.vo.Reply">
+        <selectKey keyProperty="replyId" resultType="_int" order="BEFORE">
+            SELECT NVL(MAX(REPLY_ID), 0) + 1 FROM REPLY
+        </selectKey>
+
         INSERT INTO REPLY (
-            REPLY_ID,
-            CHAPTER_ID,
+            REPLY_ID,        CHAPTER_ID,
             MEMBER_ID,
             PARENT_REPLY_ID,
             FILE_ID,
             CONTENT,
             IS_PRIVATE
         ) VALUES (
-            SEQ_RNO.NEXTVAL,
-            #{chapterId},
+            #{replyId},      #{chapterId},
             #{memberId},
             #{parentReplyId, jdbcType=INTEGER},
             #{fileId, jdbcType=INTEGER},
@@ -55,4 +57,11 @@
          WHERE REPLY_ID = #{replyId}
     </update>
 
+
+	<update id="updateReply" parameterType="com.kh.blueming.reply.model.vo.Reply">
+        UPDATE REPLY
+           SET CONTENT = #{content}, 
+            UPDATED_DATE = SYSDATE 
+            WHERE REPLY_ID = #{replyId}       
+    </update>
 </mapper>

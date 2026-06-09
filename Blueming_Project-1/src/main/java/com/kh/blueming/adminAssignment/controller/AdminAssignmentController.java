@@ -80,7 +80,7 @@ public class AdminAssignmentController {
     }
     
     
-   
+    
 
     @GetMapping("/detail")
     public String selectAssignmentDetail(
