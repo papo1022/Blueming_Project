@@ -329,7 +329,42 @@
 				CH.VIDEO_FILE_ID AS videoFileId,
 				CH.CREATE_DATE AS createDate,
 				CH.UPDATED_DATE AS updatedDate,
-				
+				(
+					SELECT NVL(ROUND(AVG(CHAP_COMP_RATE),2),0)
+			        FROM CHAPTER_PROGRESS CP
+			        WHERE CP.CHAPTER_ID = CH.CHAPTER_ID
+			    ) AS avgProgress,
+			    (
+				    SELECT NVL(
+				        ROUND(
+				            (
+				                SELECT COUNT(*)
+				                FROM ASSIGNMENT_SUBMISSION S
+				                JOIN ASSIGNMENT A
+				                    ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+				                WHERE A.CHAPTER_ID = CH.CHAPTER_ID
+				            )
+				            * 100
+				            /
+				            NULLIF(
+				                (
+				                    SELECT COUNT(*)
+				                    FROM ENROLLMENT
+				                    WHERE COURSE_ID = CH.COURSE_ID
+				                    AND STATUS = 'Y'
+				                )
+				                *
+				                (
+				                    SELECT COUNT(*)
+				                    FROM ASSIGNMENT
+				                    WHERE CHAPTER_ID = CH.CHAPTER_ID
+				                )
+				            ,0)
+				        ,2)
+				    ,0)
+				    FROM DUAL
+				) AS avgAssignmentSubmissionRate,
+								
 				A.ORIGINAL_NAME AS originalName,
 				A.CHANGED_NAME AS changedName,
 				A.FILE_PATH AS filePath

@@ -70,6 +70,15 @@
     .table {
         text-align: center;
     }
+
+    .text-big {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .text-small {
+        font-size: 13px;
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
@@ -280,52 +289,114 @@
             </div>
         </div>
         
-        
-        <br><br><br><br>
-        
-       <br><br>
-
-<h2 align="center">댓글</h2>
-
-<input type="hidden"
-       id="chapterId"
-       value="${chapter.chapterId}">
-
-<div id="replyList"></div>
-
-<div style="margin-top:20px;">
-    <textarea id="replyContent"
-              class="form-control"
-              rows="3"></textarea>
-
-    <br>
-
-    <button type="button"
-            id="insertReplyBtn"
-            class="btn btn-primary">
-        댓글 등록
-    </button>
-</div>
-
-<br><br>
-        
-        <br><br><br><br>
-        
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 align="center">통계</h2>   
+                <h2>댓글</h2>
+                <button type="button"
+                        id="insertReplyBtn"
+                        class="btn btn-primary">
+                    댓글 등록
+                </button>
+            </div>
+        <div class="card-body">
+            <input type="hidden"
+                id="chapterId"
+                value="${chapter.chapterId}">
+
+                <div id="replyList"></div>
+
+                <div style="margin-top:20px;">
+                    <textarea id="replyContent"
+                            class="form-control"
+                            rows="3"></textarea>
+                    <br>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">통계</h2>
+                <div class="d-flex justify-content-end gap-2">
+                   <button type="button"
+                        id="sortByDeptBtn"
+                        class="btn btn-primary mr-1">
+                        부서별
+                    </button>
+                    <button type="button"
+                        id="sortByPositionBtn"
+                        class="btn btn-secondary mr-1">
+                        직급별
+                    </button>
+                </div>
             </div>
             <div class="card-body">
-            
+                <!-- 총 이수율 -->
+                <div class="mb-5">
+                    <h5>총 이수율</h5>
+                    <input type="hidden" id="courseId" value="${chapter.courseId}">
+                    <input type="hidden" id="chapterId" value="${chapter.chapterId}">
+                    <div class="progress" style="height: 30px;">
+                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                            role="progressbar"
+                            style="width: ${String.format('%.2f', chapter.avgProgress)}%;">
+                            <span align="center" class="text-small">${String.format("%.2f", chapter.avgProgress)}%</span>
+                        </div>
+                    </div>
+                    
+                    <br>
+                    <h5>총 과제 제출률</h5>
+                    <div class="progress" style="height: 30px;">
+                        <input type="hidden" id="chapterId" value="${chapter.chapterId}">
+                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
+                            role="progressbar"
+                            style="width: ${String.format('%.2f', chapter.avgAssignmentSubmissionRate)}%;">
+                            <span align="center" class="text-small">${String.format("%.2f", chapter.avgAssignmentSubmissionRate)}%</span>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div id="selectDept">
+                        
+                    </div>
+
+                    <div id="selectPosition" style="display:none;">
+
+                    </div>
+                <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
+                        class="d-flex justify-content-center align-items-center">
+                        <canvas id="courseChart"></canvas>
+                </div>
             </div>
 
     </div>
-    
-    
-    
 
     <script>
+
+        
+        
+        new Chart(document.getElementById('courseChart'), {
+            type: 'line',
+            data: {
+                labels: [
+                    <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                        '${ch.chapterTitle}'
+                        <c:if test="${!status.last}">,</c:if>
+                    </c:forEach>
+                ],
+                datasets: [{
+                    label: '수강률',
+                    data: [
+                        <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                            ${ch.avgProgress}
+                            <c:if test="${!status.last}">,</c:if>
+                        </c:forEach>
+                    ]
+                }]
+            }
+        });
+
         function chapterDelete(){
             if(confirm("정말로 챕터를 삭제하시겠습니까?")){
                 document.getElementById("deleteForm").submit();
@@ -356,8 +427,8 @@
 
             if (video) {
                 // 이전 시청 위치로 복원
-                const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
-                if (lastPos > 1) {
+      if (lastPos > 1) {               const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
+           
                     video.addEventListener("loadedmetadata", function() {
                         video.currentTime = lastPos;
                     }, {once: true});
@@ -537,50 +608,28 @@
                         str += "</div>";
                         str += "</div>";
                     }
-
                     $("#replyList").html(str);
-
                 }
-
             });
-
         }
         
-        
         $("#insertReplyBtn").click(function(){
-
             $.ajax({
-
                 url : "${pageContext.request.contextPath}/reply/insert",
-
                 type : "post",
-
                 data : {
-
                     chapterId : $("#chapterId").val(),
-
                     content : $("#replyContent").val()
-
                 },
-
                 success : function(result){
-
                     if(result == "SUCCESS"){
-
                         $("#replyContent").val("");
-
                         loadReplyList();
-
                     }else{
-
                         alert("댓글 등록 실패");
-
                     }
-
                 }
-
             });
-
         });
         
         
