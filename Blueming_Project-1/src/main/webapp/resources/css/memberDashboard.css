@@ -1,0 +1,493 @@
+@charset "UTF-8";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css');
+
+/* RESET & BASE */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
+  color: #333333;
+  background-color: #f5f6fa;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR (메뉴바 — menubar.jsp) */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background-color: #338cff;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px 40px 28px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sidebar-brand i {
+  font-size: 22px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav a i {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.sidebar-nav a.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* MAIN LAYOUT */
+.main-wrapper {
+  display: flex;
+  flex: 1;
+  padding: 36px 32px;
+  gap: 28px;
+  overflow: hidden;
+}
+
+/* LEFT COLUMN */
+.left-col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 인사말 + 검색 */
+.greeting-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.greeting-text h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+  line-height: 1.3;
+}
+
+.greeting-text p {
+  font-size: 17px;
+  color: #333333;
+  margin-top: 4px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 30px;
+  padding: 10px 18px;
+  min-width: 280px;
+  max-width: 340px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
+  color: #333333;
+  width: 100%;
+  background: transparent;
+}
+
+.search-bar input::placeholder {
+  color: #c4c5c6;
+}
+
+.search-bar i {
+  color: #c4c5c6;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* 강의 목록 */
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 18px;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+
+/* COURSE CARD */
+.course-card {
+  border-radius: 20px;
+  padding: 22px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  min-height: 170px;
+}
+
+/* 색상 테마별 */
+.course-card.theme-red {
+  background-color: #fde8e8;
+}
+.course-card.theme-yellow {
+  background-color: #fdf4dc;
+}
+.course-card.theme-green {
+  background-color: #e3f9e5;
+}
+.course-card.theme-gray {
+  background-color: #f0f0f0;
+}
+
+/* 카드 상단: 아이콘 + 도넛 */
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon i {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.course-card.theme-red   .card-icon { background-color: #c0605a; }
+.course-card.theme-yellow .card-icon { background-color: #d4a017; }
+.course-card.theme-green  .card-icon { background-color: #38b249; }
+.course-card.theme-gray   .card-icon { background-color: #aaaaaa; }
+
+/* 도넛 차트 */
+.donut-wrap {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+}
+
+.donut-wrap svg {
+  width: 58px;
+  height: 58px;
+  transform: rotate(-90deg);
+}
+
+.donut-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 5;
+}
+
+.donut-fill {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.course-card.theme-red    .donut-fill { stroke: #c0605a; }
+.course-card.theme-yellow .donut-fill { stroke: #d4a017; }
+.course-card.theme-green  .donut-fill { stroke: #38b249; }
+.course-card.theme-gray   .donut-fill { stroke: #aaaaaa; }
+
+.donut-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #555555;
+}
+
+/* 카드 하단: 제목 + D-day */
+.card-title-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.card-dday {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.course-card.theme-red    .card-dday { color: #c0605a; }
+.course-card.theme-yellow .card-dday { color: #d4a017; }
+.course-card.theme-green  .card-dday { color: #38b249; }
+.course-card.theme-gray   .card-dday { color: #aaaaaa; }
+
+
+/* RIGHT COLUMN */
+.right-col {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* 내 프로필 타이틀 */
+.right-col-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+}
+
+/* 프로필 카드 */
+.profile-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 4px;
+}
+
+.profile-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.profile-email {
+  font-size: 17px;
+  color: #c4c5c6;
+}
+
+/* 달력 */
+.calendar-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 18px 16px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaaaaa;
+  font-size: 17px;
+  padding: 2px 6px;
+  line-height: 1;
+}
+
+.calendar-month {
+  font-size: 17px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.calendar-days-header span {
+  font-size: 12px;
+  color: #aaaaaa;
+  text-align: center;
+  font-weight: 500;
+}
+
+.calendar-days-header span.today-label {
+  color: #333333;
+  font-weight: 700;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar-dates span {
+  font-size: 12px;
+  text-align: center;
+  padding: 6px 0;
+  color: #333333;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-dates span.today {
+  background-color: #40E0D0;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
+.calendar-dates span.weekday-highlight {
+  color: #333333;
+  font-weight: 700;
+}
+
+/* 과제 섹션 */
+.assignment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.assignment-section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+}
+
+.assignment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.assignment-item span {
+  font-size: 17px;
+  color: #333333;
+  flex: 1;
+}
+
+.btn-submit {
+  background-color: #40E0D0;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.btn-submit:hover {
+  opacity: 0.85;
+}
+
+.btn-unsubmit {
+  background-color: #cccccc;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: default;
+  white-space: nowrap;
+}
+
+/* BOOTSTRAP OVERRIDE (기존 JSP 클래스 대응) */
+.container-fluid {
+  padding: 0;
+  flex: 1;
+}
+
+.container-fluid .row {
+  margin: 0;
+  height: 100%;
+}
+
+.col-md-8 {
+  padding: 0;
+}
+
+.col-md-4 {
+  padding: 0;
+}
+
+/* 기존 Bootstrap 카드 비활성화 */
+.card {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.card-body {
+  padding: 0 !important;
+}
