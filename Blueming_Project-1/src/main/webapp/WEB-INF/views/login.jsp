@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,10 +26,31 @@
 		padding-top: 3px;
 		display: none; /* 기본적으로 숨김 */
 	}
+	.login-error{
+    width: 320px;
+    margin-bottom: 15px;
+    padding: 12px;
+
+    background: #fff5f5;
+    border: 1px solid #ffb3b3;
+    border-radius: 6px;
+
+    color: #ff1616;
+    font-size: 13px;
+    text-align: left;
+    box-sizing: border-box;
+}
 </style>
 
 </head>
 <body>
+
+		<c:if test="${ not empty errorMsg }">
+    <div class="login-error">
+        아이디 또는 비밀번호를 잘못 입력했습니다.<br>
+        입력하신 내용을 다시 확인해주세요.
+    </div>
+		</c:if>
 		<div class="login-area" align="center">
 	
 					<form id="login-form" action="/blueming/member/login" method="post"> 

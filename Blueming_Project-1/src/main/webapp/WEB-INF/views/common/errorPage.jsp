@@ -7,6 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
+	
+	<jsp:include page="../login.jsp" />
+	
 	<jsp:include page="../common/mainMenubar.jsp" />
 		<br><br>
 	<h1 align="center" style="color : red;">
