@@ -22,6 +22,7 @@ public class Chapter {
 	private Date createDate;
 	private Date updatedDate;
 	private double avgProgress;
+	private double avgAssignmentSubmissionRate;
 	
 	private String originalName;
 	private String changedName;

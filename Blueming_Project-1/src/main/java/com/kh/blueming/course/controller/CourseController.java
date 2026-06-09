@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.assignment.model.service.AssignmentService;
 import com.kh.blueming.assignment.model.vo.Assignment;
+import com.kh.blueming.assignment.model.vo.AssignmentSubmission;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.chapter.model.vo.ChapterProgress;
 import com.kh.blueming.common.template.FileRenamePolicy;
@@ -785,4 +786,14 @@ public class CourseController {
 
 	
 	/*************************************************/
+	
+	@ResponseBody
+	@PostMapping("avgAssignmentSubmissionRate")
+	public double avgAssignmentSubmissionRate(@RequestParam("chapterId") int chapterId) {
+		Chapter chapter =
+			    courseService.selectChapter(chapterId);
+		System.out.println(chapter);
+
+		return chapter.getAvgAssignmentSubmissionRate();
+	}
 }
