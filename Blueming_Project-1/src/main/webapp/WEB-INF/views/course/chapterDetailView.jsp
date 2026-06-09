@@ -287,27 +287,26 @@
 
 <h2 align="center">댓글</h2>
 
-<input type="hidden"
-       id="chapterId"
-       value="${chapter.chapterId}">
+<input type="hidden" id="chapterId" value="${chapter.chapterId}">
 
 <div id="replyList"></div>
 
 <div style="margin-top:20px;">
-    <textarea id="replyContent"
-              class="form-control"
-              rows="3"></textarea>
-
+    <textarea id="replyContent" class="form-control" rows="3" placeholder="댓글을 입력해주세요."></textarea>
     <br>
-
-    <button type="button"
-            id="insertReplyBtn"
-            class="btn btn-primary">
-        댓글 등록
-    </button>
+    
+    <div class="d-flex gap-2" style="display: flex !important;">
+        <button type="button" id="insertReplyBtn" class="btn btn-primary mr-2">
+            댓글 등록
+        </button>
+        
+        <button type="button" id="clearReplyBtn" class="btn btn-outline-secondary" onclick="$('#replyContent').val('');">
+            작성 취소
+        </button>
+    </div>
 </div>
-
 <br><br>
+
         
         <br><br><br><br>
         
@@ -490,97 +489,178 @@
             });
         });
         
-        // 댓글 추가기능
-        
+     // 1. 페이지 로드 시 댓글 목록 불러오기
         $(function(){
-
             loadReplyList();
-
         });
         
-        
+        // 2. 댓글 목록 조회 및 동적 화면 구성 (수정/삭제 버튼 추가)
+        // 댓글 목록 조회 및 동적 화면 구성 (관리자 권한 반영)
         function loadReplyList(){
-
             $.ajax({
-
                 url : "${pageContext.request.contextPath}/reply/list",
-
                 type : "get",
-
                 data : {
                     chapterId : $("#chapterId").val()
                 },
-
                 success : function(list){
-
                     let str = "";
+                    const loginMemberId = "${sessionScope.loginUser.memberId}"; 
+                    // 🌟 세션에서 로그인한 유저의 role 권한을 가져옵니다.
+                    const loginUserRole = "${sessionScope.loginUser.role}"; 
 
                     for(let i=0; i<list.length; i++){
-
-                        str += "<div class='card mb-2'>";
+                        str += "<div class='card mb-2 reply-row' data-id='" + list[i].replyId + "'>";
                         str += "<div class='card-body'>";
 
+                        // 작성자 정보
                         str += "<b>" + list[i].name + "</b>";
+                        str += " (" + (list[i].deptName || '') + " " + (list[i].positionName || '') + ")<br>";
 
-                        str += " (" +
-                               (list[i].deptName || '') +
-                               " " +
-                               (list[i].positionName || '') +
-                               ")<br>";
+                        // [일반 모드] 댓글 내용
+                        str += "<p class='reply-content' style='margin-top: 8px; margin-bottom: 8px;'>" + list[i].content + "</p>";
+                        
+                        // [수정 모드] 텍스트 입력창 (처음에는 숨김)
+                        str += "<textarea class='form-control edit-content' rows='2' style='display:none; margin-top: 8px; margin-bottom: 8px;'>" + list[i].content + "</textarea>";
 
-                        str += list[i].content + "<br>";
-
-                        str += "<small>"
-                            + list[i].createdDate
-                            + "</small>";
-
-                        str += "</div>";
-                        str += "</div>";
+                        // 작성일자 및 버튼 배치
+                        str += "<div class='d-flex justify-content-between align-items-center' style='display: flex !important;'>";
+                        str += "<small class='text-muted'>" + list[i].createdDate + "</small>";
+                        
+                        str += "<div class='reply-btn-area'>";
+                        
+                        // 🌟 권한 체크 분기 수정
+                        if(loginMemberId == list[i].memberId) {
+                            // 1) 본인이 쓴 댓글일 때: 수정 / 삭제 모두 가능
+                            str += "<button type='button' class='btn btn-sm btn-outline-warning mr-1 btn-edit' onclick='showEditForm(this)'>수정</button>";
+                            str += "<button type='button' class='btn btn-sm btn-outline-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>삭제</button>";
+                            
+                            // 수정 모드 전용 버튼
+                            str += "<button type='button' class='btn btn-sm btn-success mr-1 btn-save' style='display:none;' onclick='updateReply(this, " + list[i].replyId + ")'>저장</button>";
+                            str += "<button type='button' class='btn btn-sm btn-secondary btn-cancel' style='display:none;' onclick='cancelEdit(this)'>취소</button>";
+                        } else if(loginUserRole == 'S') {
+                            // 2) 본인 글은 아니지만, 로그인한 사람이 관리자('S')일 때: [삭제] 버튼만 노출
+                            str += "<button type='button' class='btn btn-sm btn-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>관리자 삭제</button>";
+                        }
+                        
+                        str += "</div>"; // reply-btn-area end
+                        str += "</div>"; // d-flex end
+                        str += "</div>"; // card-body end
+                        str += "</div>"; // card end
                     }
 
                     $("#replyList").html(str);
-
                 }
-
             });
-
         }
         
-        
-        $("#insertReplyBtn").click(function(){
+        // 3. [수정] 버튼 클릭 시 -> 입력 UI로 전환
+        function showEditForm(btn) {
+            const row = $(btn).closest('.reply-row');
+            row.find('.reply-content').hide();        // 기존 텍스트 숨기기
+            row.find('.edit-content').show();         // 편집 창 보이기
+            
+            row.find('.btn-edit, .btn-delete').hide(); // 기본 버튼 숨기기
+            row.find('.btn-save, .btn-cancel').show(); // 저장/취소 버튼 보이기
+        }
+
+        // 4. [취소] 버튼 클릭 시 -> 원상 복구
+        function cancelEdit(btn) {
+            const row = $(btn).closest('.reply-row');
+            row.find('.reply-content').show();
+            row.find('.edit-content').hide();
+            
+            row.find('.btn-edit, .btn-delete').show();
+            row.find('.btn-save, .btn-cancel').hide();
+            
+            // 수정하던 텍스트는 다시 원래 내용으로 초기화
+            const originalContent = row.find('.reply-content').text();
+            row.find('.edit-content').val(originalContent);
+        }
+
+        // 5. [저장] 버튼 클릭 시 -> 수정(Update) Ajax 실행
+        function updateReply(btn, replyId) {
+            const row = $(btn).closest('.reply-row');
+            const content = row.find('.edit-content').val();
+
+            if(!content.trim()) {
+                alert("수정할 내용을 입력해주세요.");
+                return;
+            }
 
             $.ajax({
-
-                url : "${pageContext.request.contextPath}/reply/insert",
-
-                type : "post",
-
-                data : {
-
-                    chapterId : $("#chapterId").val(),
-
-                    content : $("#replyContent").val()
-
+                url: "${pageContext.request.contextPath}/reply/update",
+                type: "post",
+                data: {
+                    replyId: replyId,
+                    content: content
                 },
-
-                success : function(result){
-
-                    if(result == "SUCCESS"){
-
-                        $("#replyContent").val("");
-
+             // 수정 Ajax의 success 부분도 똑같이 적용해 주세요
+                success: function(result) {
+                    if(result == "SUCCESS" || result > 0 || result == "1"){ 
+                        alert("댓글이 수정되었습니다.");
                         loadReplyList();
-
-                    }else{
-
-                        alert("댓글 등록 실패");
-
+                    } else {
+                        alert("댓글 수정 실패");
                     }
-
+                },
+                error: function() {
+                    alert("댓글 수정 중 오류가 발생했습니다.");
                 }
-
             });
+        }
 
+     // [삭제] 버튼 클릭 시 -> 삭제(Delete) Ajax 실행
+        function deleteReply(replyId) {
+            if(confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/reply/delete",
+                    type: "post",
+                    data: {
+                        replyId: replyId
+                    },
+                    success: function(result) {
+                        // 🌟 핵심 수정: result가 문자열 "SUCCESS" 이거나, 
+                        // 숫자로 0보다 큰 값(성공 행의 개수 1)이 들어오면 모두 성공으로 인정합니다.
+                        if(result == "SUCCESS" || result > 0 || result == "1"){
+                            alert("댓글이 삭제되었습니다.");
+                            loadReplyList(); // 새로고침 없이 비동기로 리스트를 다시 그려줍니다!
+                        } else {
+                            alert("댓글 삭제 실패");
+                        }
+                    },
+                    error: function() {
+                        alert("댓글 삭제 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+        
+        // 7. 기존 댓글 작성 기능 (성공 리턴값 매칭 수정 가능성 고려)
+        $("#insertReplyBtn").click(function(){
+            const content = $("#replyContent").val();
+            if(!content.trim()) {
+                alert("댓글 내용을 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                url : "${pageContext.request.contextPath}/reply/insert",
+                type : "post",
+                data : {
+                    chapterId : $("#chapterId").val(),
+                    content : content
+                },
+                success : function(result){
+                    // 기존 백엔드가 정수형(1) 혹은 "SUCCESS" 문자열을 주는지 확인하여 분기 처리
+                    if(result == "SUCCESS" || result > 0){
+                        $("#replyContent").val("");
+                        loadReplyList();
+                    }else{
+                        alert("댓글 등록 실패");
+                    }
+                }
+            });
         });
         
         

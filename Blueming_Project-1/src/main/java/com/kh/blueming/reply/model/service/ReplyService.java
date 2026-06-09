@@ -1,8 +1,11 @@
 package com.kh.blueming.reply.model.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.kh.blueming.reply.model.dao.ReplyDao;
 import com.kh.blueming.reply.model.vo.Reply;
 
@@ -32,4 +35,14 @@ public class ReplyService {
     public int deleteReply(int replyId) {
         return replyDao.deleteReply(replyId);
     }
+    
+    /**
+     * 댓글 수정 비즈니스 로직
+     */
+    @Transactional // 수정 중 예외 발생 시 롤백 처리
+    public int updateReply(Reply r) {
+        return replyDao.updateReply(r);
+    }
+    
+    
 }

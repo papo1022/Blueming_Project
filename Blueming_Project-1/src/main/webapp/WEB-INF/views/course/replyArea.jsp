@@ -159,5 +159,9 @@
                 }
             });
         }
+        error: function(xhr, status, error) {
+            // 통신 자체가 실패했을 때 (404 주소 오류 또는 500 서버 터짐 에러)
+            alert("Ajax 통신 에러 발생! 시스템 콘솔을 확인하세요. 에러코드: " + xhr.status);
+        }
     }
 </script>
