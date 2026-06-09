@@ -44,7 +44,6 @@ public class FileRenamePolicy {
 		try {
 			upfile.transferTo(new File(saveDir, changeName));
 		} catch (IllegalStateException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <title>강의 리스트</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <style>
     :root {
         --panel-bg: #ffffff;
@@ -145,9 +146,30 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .course-thumb {
-        height: 120px;
-        background: linear-gradient(180deg, #dfdfdf 0%, #d1d1d1 100%);
+    .course-thumbnail-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #eef2f7;
+        overflow: hidden;
+    }
+
+    .course-thumbnail-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .course-thumbnail-fallback {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #8da0bb;
+        font-size: 34px;
+        background: #e6ecf5;
     }
 
     .course-meta {
@@ -263,7 +285,7 @@
         const keyword = $("#keyword-input").val().trim();
         let sort = "${empty sort ? 'latest' : sort}";
         let mineOnly = "${mineOnly}" === "true";
-
+        const CONTEXT_PATH = "${pageContext.request.contextPath}";
         function applySortButtonState() {
             $(".sort-btn").removeClass("active");
             $(".sort-btn[data-sort='" + sort + "']").addClass("active");
@@ -297,6 +319,40 @@
                 .replace(/'/g, "&#39;");
         }
 
+        function sanitizeThumbnailUrl(url) {
+            if (url == null) return "";
+
+            const trimmed = String(url).trim();
+            if (!trimmed) return "";
+
+            if (/^javascript:/i.test(trimmed) || /^data:/i.test(trimmed)) {
+                return "";
+            }
+
+            return trimmed;
+        }
+
+        function resolveThumbnailUrl(url) {
+            const sanitized = sanitizeThumbnailUrl(url);
+            if (!sanitized) {
+                return "";
+            }
+
+            if (/^https?:\/\//i.test(sanitized)) {
+                return sanitized;
+            }
+
+            if (sanitized.startsWith(CONTEXT_PATH + "/")) {
+                return sanitized;
+            }
+
+            if (sanitized.startsWith("/")) {
+                return CONTEXT_PATH + sanitized;
+            }
+
+            return CONTEXT_PATH + "/" + sanitized;
+        }
+
         function cutDescription(desc) {
             if (!desc) return "";
             return desc.length > 40 ? desc.substring(0, 40) + "..." : desc;
@@ -304,23 +360,26 @@
 
         function appendCourseCards(list) {
             let resultStr = "";
-            const ctxPath = "${pageContext.request.contextPath}";
 
             for (let i = 0; i < list.length; i++) {
                 const course = list[i];
+                const resolvedThumbnail = resolveThumbnailUrl(course.thumbnailUrl);
+                const hasThumbnail = !!resolvedThumbnail;
+                const courseThumbnail = escapeHtml(resolvedThumbnail);
                 const title = escapeHtml(course.courseTitle);
                 const description = escapeHtml(cutDescription(course.description));
                 const startDate = formatDateOnlyKst(course.startDate);
                 const endDate = formatDateOnlyKst(course.endDate);
                 const period = escapeHtml(startDate + " ~ " + endDate + " (" + (course.status || "") + ")");
                 const totalHours = escapeHtml(String(course.totalHours == null ? "" : course.totalHours));
-                const thumbnailPath = course.thumbnailUrl ? String(course.thumbnailUrl).replace(/^\/+/, "") : "";
-                const thumbStyle = thumbnailPath
-                    ? "background-image: url('" + ctxPath + "/" + thumbnailPath + "'); background-size: cover; background-position: center;"
-                    : "";
+                const imageDisplay = hasThumbnail ? "block" : "none";
+                const fallbackDisplay = hasThumbnail ? "none" : "flex";
 
                 resultStr += "<div class='course-card' onclick=\"location.href='/blueming/course/detail?courseId=" + course.courseId + "'\">"
-                           + "<div class='course-thumb' style='" + thumbStyle + "'></div>"
+                           + "<div class='course-thumbnail-wrap'>"
+                           + "<img class='course-thumbnail-img' src='" + courseThumbnail + "' alt='Course Thumbnail' loading='lazy' style='display:" + imageDisplay + ";' onerror=\"this.style.display='none'; var fb=this.nextElementSibling; if(fb){fb.style.display='flex';}\">"
+                           + "<div class='course-thumbnail-fallback' style='display:" + fallbackDisplay + ";'><i class='fi fi-rr-camera'></i></div>"
+                           + "</div>"
                            + "<div class='course-meta'>"
                            + "<div class='course-line course-title'>" + title + "</div>"
                            + "<div class='course-line'>" + description + "</div>"
@@ -404,8 +463,6 @@
 
             const $mineOnlyCheckbox = $("#mine-only-checkbox");
             if ($mineOnlyCheckbox.length > 0) {
-                // Browser history navigation can restore checkbox UI state after render.
-                // Prefer the actual checkbox state so UI and ajax filter stay consistent.
                 mineOnly = $mineOnlyCheckbox.is(":checked");
                 $mineOnlyCheckbox.prop("checked", mineOnly);
             }

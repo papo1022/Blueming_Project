@@ -18,7 +18,7 @@ public class Course {
     private String courseTitle; // 강의 제목
     private String description; // 강의 설명
     private int memberId; // 강의 관리자(멤버 ID)
-    private int fileId; // 첨부파일 ID(썸네일)
+    private int fileId; // 첨부파일 ID
     private String status; // 강의 상태(예정W, 진행중Y, 종료N)
     private Date startDate; // 강의 시작일
     private Date endDate; // 강의 종료일
@@ -26,8 +26,9 @@ public class Course {
     private Date createDate; // 강의 생성일
     private Date updatedDate; // 강의 수정일
 
+    private String thumbnailUrl; // 강의 썸네일 URL
+    private String thumbnailOriginalName; // 강의 썸네일 원본 파일명
     private String targetType; // 강좌 대상 유형(전체/부서/직급)
     private String targetValue; // 강좌 대상 값(부서ID/직급ID)
-    private String thumbnailUrl; // 썸네일 상대 경로(filePath + changedName)
     private String name;
 }

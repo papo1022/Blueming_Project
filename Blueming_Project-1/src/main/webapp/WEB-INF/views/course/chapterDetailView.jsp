@@ -7,6 +7,8 @@
 <head>
 <meta charset="UTF-8">
 <title>blueming</title>
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
     .outer {
         width : 90%;
@@ -39,11 +41,154 @@
         margin-bottom: 30px;
     }
 
+    .player-shell {
+        background: linear-gradient(135deg, #121926 0%, #1f2d44 100%);
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 10px 24px rgba(17, 25, 40, 0.24);
+    }
+
     .video-section video {
         width: 100%;
         max-height: 480px;
         background: #000;
-        border-radius: 4px;
+        border-radius: 8px;
+        display: block;
+    }
+
+    .video-section video:fullscreen {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        object-fit: contain;
+        border-radius: 0;
+    }
+
+    .video-section video:-webkit-full-screen {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        object-fit: contain;
+        border-radius: 0;
+    }
+
+    .player-controls {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .control-btn {
+        border: 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #f0f6ff;
+        font-size: 13px;
+        padding: 7px 12px;
+        line-height: 1;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .control-btn.icon-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        font-size: 16px;
+    }
+
+    .control-btn.icon-btn i {
+        line-height: 1;
+    }
+
+    .control-btn:hover,
+    .control-btn:focus {
+        background: rgba(255, 255, 255, 0.24);
+        outline: none;
+    }
+
+    .control-btn.is-active {
+        background: #2ca9e1;
+        color: #fff;
+    }
+
+    .speed-select {
+        border: 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #f0f6ff;
+        font-size: 13px;
+        padding: 7px 10px;
+        min-width: 84px;
+        cursor: pointer;
+    }
+
+    .speed-select:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.24);
+    }
+
+    .speed-select option {
+        color: #111;
+    }
+
+    .volume-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 120px;
+    }
+
+    .volume-wrap input[type="range"] {
+        width: 90px;
+        accent-color: #2ca9e1;
+    }
+
+    .seek-wrap {
+        flex: 1 1 240px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 180px;
+    }
+
+    .seek-wrap input[type="range"] {
+        width: 100%;
+        accent-color: #2ca9e1;
+    }
+
+    .time-label {
+        color: #d9e4f7;
+        font-size: 12px;
+        min-width: 110px;
+        text-align: right;
+    }
+
+    .player-status {
+        margin-top: 8px;
+        color: #b6c8e2;
+        font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+        .player-shell {
+            padding: 10px;
+        }
+
+        .control-btn {
+            padding: 7px 10px;
+            font-size: 12px;
+        }
+
+        .time-label {
+            min-width: 96px;
+            font-size: 11px;
+        }
     }
 
     .progress-info {
@@ -133,11 +278,41 @@
                 <c:choose>
                     <c:when test="${not empty videoAttachment}">
                         <div class="video-section">
-                            
-                            <video id="chapterVideo" controls preload="metadata"
-                                src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
-                                브라우저가 video 태그를 지원하지 않습니다.
-                            </video>
+
+                            <div class="player-shell" id="chapterPlayerShell">
+                                <video id="chapterVideo" controls preload="metadata"
+                                    src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
+                                    브라우저가 video 태그를 지원하지 않습니다.
+                                </video>
+                                <div class="player-controls" id="playerControls" aria-label="동영상 제어 패널">
+                                    <button type="button" class="control-btn icon-btn" id="btnPlayPause" aria-label="재생 또는 일시정지">
+                                        <i class="fi fi-sr-play"></i>
+                                    </button>
+                                    <button type="button" class="control-btn" id="btnRewind">-10초</button>
+                                    <button type="button" class="control-btn" id="btnForward">+10초</button>
+                                    <div class="seek-wrap">
+                                        <input type="range" id="videoSeekBar" min="0" max="100" step="0.1" value="0" aria-label="재생 위치">
+                                        <span class="time-label" id="videoTimeLabel">00:00 / 00:00</span>
+                                    </div>
+                                    <select id="speedSelect" class="speed-select" aria-label="재생속도 선택">
+                                        <option value="0.75">0.75x</option>
+                                        <option value="1" selected>1.0x</option>
+                                        <option value="1.25">1.25x</option>
+                                        <option value="1.5">1.5x</option>
+                                        <option value="2">2.0x</option>
+                                    </select>
+                                    <div class="volume-wrap">
+                                        <button type="button" class="control-btn icon-btn" id="btnMuteToggle" aria-label="음소거 전환">
+                                            <i class="fi fi-rr-volume"></i>
+                                        </button>
+                                        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" aria-label="볼륨 조절">
+                                    </div>
+                                    <button type="button" class="control-btn icon-btn" id="btnFullscreen" aria-label="전체화면">
+                                        <i class="fi fi-rr-arrow-up-right-and-arrow-down-left-from-center"></i>
+                                    </button>
+                                </div>
+                                <div class="player-status" id="playerStatus">준비됨</div>
+                            </div>
                             <c:if test="${enrollmentId > 0}">
                                 <div class="progress-info">
                                     <span>수강률: <strong id="compRateDisplay">${not empty existingProgress ? existingProgress.chapCompRate : 0}</strong>%</span>
@@ -349,12 +524,192 @@
             const bar = document.getElementById("compRateBar");
             if (bar) bar.style.width = (bar.dataset.rate || 0) + "%";
 
+            const playerShell = document.getElementById("chapterPlayerShell");
+            const btnPlayPause = document.getElementById("btnPlayPause");
+            const btnRewind = document.getElementById("btnRewind");
+            const btnForward = document.getElementById("btnForward");
+            const seekBar = document.getElementById("videoSeekBar");
+            const timeLabel = document.getElementById("videoTimeLabel");
+            const speedSelect = document.getElementById("speedSelect");
+            const btnMuteToggle = document.getElementById("btnMuteToggle");
+            const volumeSlider = document.getElementById("volumeSlider");
+            const btnFullscreen = document.getElementById("btnFullscreen");
+            const playerStatus = document.getElementById("playerStatus");
+
             // ====== 영상 checkpoint 저장 ======
             const video = document.getElementById("chapterVideo");
             const enrollmentId = parseInt("${enrollmentId}") || 0;
             const chapterId = parseInt("${chapter.chapterId}") || 0;
 
             if (video) {
+                if (btnPlayPause && seekBar && timeLabel) {
+                    video.removeAttribute("controls");
+
+                    function formatTime(sec) {
+                        const total = Math.max(0, Math.floor(sec || 0));
+                        const min = Math.floor(total / 60);
+                        const rem = total % 60;
+                        return String(min).padStart(2, "0") + ":" + String(rem).padStart(2, "0");
+                    }
+
+                    function updateTimeline() {
+                        const duration = Number.isFinite(video.duration) ? video.duration : 0;
+                        const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+
+                        if (duration > 0) {
+                            seekBar.value = ((current / duration) * 100).toFixed(2);
+                        } else {
+                            seekBar.value = 0;
+                        }
+
+                        timeLabel.textContent = formatTime(current) + " / " + formatTime(duration);
+                    }
+
+                    function updatePlayButton() {
+                        btnPlayPause.innerHTML = video.paused
+                            ? '<i class="fi fi-sr-play"></i>'
+                            : '<i class="fi fi-sr-pause"></i>';
+
+                        if (playerStatus) {
+                            playerStatus.textContent = video.paused
+                                ? "일시정지 · " + video.playbackRate.toFixed(2) + "x"
+                                : "재생 중 · " + video.playbackRate.toFixed(2) + "x";
+                        }
+                    }
+
+                    function updateSpeedSelect() {
+                        if (speedSelect) {
+                            speedSelect.value = String(video.playbackRate);
+                        }
+                    }
+
+                    function updateVolumeUi() {
+                        if (btnMuteToggle) {
+                            btnMuteToggle.innerHTML = (video.muted || video.volume === 0)
+                                ? '<i class="fi fi-rr-volume-mute"></i>'
+                                : '<i class="fi fi-rr-volume"></i>';
+                        }
+
+                        if (volumeSlider) {
+                            volumeSlider.value = String(video.volume);
+                        }
+                    }
+
+                    btnPlayPause.addEventListener("click", function() {
+                        if (video.paused) {
+                            video.play();
+                        } else {
+                            video.pause();
+                        }
+                    });
+
+                    if (btnRewind) {
+                        btnRewind.addEventListener("click", function() {
+                            video.currentTime = Math.max(0, video.currentTime - 10);
+                        });
+                    }
+
+                    if (btnForward) {
+                        btnForward.addEventListener("click", function() {
+                            const duration = Number.isFinite(video.duration) ? video.duration : 0;
+                            const to = video.currentTime + 10;
+                            video.currentTime = duration > 0 ? Math.min(duration, to) : to;
+                        });
+                    }
+
+                    seekBar.addEventListener("input", function() {
+                        const duration = Number.isFinite(video.duration) ? video.duration : 0;
+                        if (duration > 0) {
+                            video.currentTime = (parseFloat(seekBar.value) / 100) * duration;
+                        }
+                    });
+
+                    if (speedSelect) {
+                        speedSelect.addEventListener("change", function() {
+                            const rate = parseFloat(speedSelect.value) || 1;
+                            video.playbackRate = Math.min(rate, 2);
+                            updateSpeedSelect();
+                        });
+                    }
+
+                    if (volumeSlider) {
+                        volumeSlider.addEventListener("input", function() {
+                            const volume = Math.max(0, Math.min(1, parseFloat(volumeSlider.value) || 0));
+                            video.volume = volume;
+                            video.muted = volume === 0;
+                            updateVolumeUi();
+                        });
+                    }
+
+                    if (btnMuteToggle) {
+                        btnMuteToggle.addEventListener("click", function() {
+                            video.muted = !video.muted;
+                            if (!video.muted && video.volume === 0) {
+                                video.volume = 0.5;
+                            }
+                            updateVolumeUi();
+                        });
+                    }
+
+                    if (btnFullscreen && playerShell) {
+                        btnFullscreen.addEventListener("click", function() {
+                            const activeFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+
+                            if (activeFullscreen === video) {
+                                if (document.exitFullscreen) {
+                                    document.exitFullscreen();
+                                } else if (document.webkitExitFullscreen) {
+                                    document.webkitExitFullscreen();
+                                }
+                                return;
+                            }
+
+                            if (!activeFullscreen) {
+                                if (video.requestFullscreen) {
+                                    video.requestFullscreen();
+                                } else if (video.webkitRequestFullscreen) {
+                                    video.webkitRequestFullscreen();
+                                }
+                            }
+                        });
+                    }
+
+                    if (playerShell) {
+                        playerShell.addEventListener("keydown", function(e) {
+                            if (e.target && e.target.tagName === "INPUT") return;
+
+                            if (e.code === "Space") {
+                                e.preventDefault();
+                                btnPlayPause.click();
+                            } else if (e.code === "ArrowLeft") {
+                                e.preventDefault();
+                                if (btnRewind) btnRewind.click();
+                            } else if (e.code === "ArrowRight") {
+                                e.preventDefault();
+                                if (btnForward) btnForward.click();
+                            } else if (e.key && e.key.toLowerCase() === "f") {
+                                e.preventDefault();
+                                btnFullscreen.click();
+                            }
+                        });
+                        playerShell.tabIndex = 0;
+                    }
+
+                    video.addEventListener("timeupdate", updateTimeline);
+                    video.addEventListener("loadedmetadata", updateTimeline);
+                    video.addEventListener("play", updatePlayButton);
+                    video.addEventListener("pause", updatePlayButton);
+                    video.addEventListener("ratechange", function() {
+                        updateSpeedSelect();
+                        updatePlayButton();
+                    });
+                    video.addEventListener("volumechange", updateVolumeUi);
+                    updateTimeline();
+                    updateSpeedSelect();
+                    updateVolumeUi();
+                    updatePlayButton();
+                }
+
                 // 이전 시청 위치로 복원
                 const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
                 if (lastPos > 1) {
