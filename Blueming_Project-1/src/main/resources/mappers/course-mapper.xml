@@ -43,7 +43,7 @@
 			END AS thumbnailUrl
 		FROM COURSE C
 		LEFT JOIN ATTACHMENT A
-		  ON A.FILE_ID = C.FILE_ID
+		  ON C.FILE_ID = A.FILE_ID
 		<where>
 			<if test="mineOnly == true and memberId != null and isAdmin == true">
 				C.MEMBER_ID = #{memberId}
@@ -286,6 +286,7 @@
 		SELECT C.COURSE_ID AS courseId,
 				C.COURSE_TITLE AS courseTitle,
 				C.DESCRIPTION AS description,
+				C.FILE_ID AS fileId,
 				M.NAME AS name,
 				C.STATUS AS status,
 				C.START_DATE AS startDate,
@@ -294,11 +295,18 @@
 				C.CREATE_DATE AS createDate,
 				C.UPDATED_DATE AS updatedDate,
 				M.MEMBER_ID AS memberId,
+				CASE
+					WHEN A.FILE_PATH IS NOT NULL AND A.CHANGED_NAME IS NOT NULL
+					THEN A.FILE_PATH || A.CHANGED_NAME
+					ELSE NULL
+				END AS thumbnailUrl,
+				A.ORIGINAL_NAME AS thumbnailOriginalName,
 				(SELECT CT.TARGET_TYPE FROM COURSE_TARGET CT WHERE CT.COURSE_ID = C.COURSE_ID AND ROWNUM = 1) AS targetType,
 				(SELECT CT.TARGET_VALUE FROM COURSE_TARGET CT WHERE CT.COURSE_ID = C.COURSE_ID AND ROWNUM = 1) AS targetValue
-		FROM COURSE C, MEMBER M
-		WHERE C.MEMBER_ID = M.MEMBER_ID
-		AND COURSE_ID = #{courseId}
+		FROM COURSE C
+		JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
+		LEFT JOIN ATTACHMENT A ON C.FILE_ID = A.FILE_ID AND A.STATUS = 'Y'
+		WHERE C.COURSE_ID = #{courseId}
 	</select>
 	
 	<!-- 챕터 리스트를 불러오기 -->
@@ -398,7 +406,7 @@
 							#{chapterOrder},
 							#{videoFileId},
 							SYSDATE,
-							SYSDATE)
+							NULL)
 	</insert>
 	
 	<!-- 첨부파일이 없을 경우 챕터 추가 코드 -->
@@ -423,7 +431,7 @@
 							#{chapterOrder},
 							NULL,
 							SYSDATE,
-							SYSDATE)
+							NULL)
 	</insert>
 	
 	<!-- 코스 내용 수정 -->

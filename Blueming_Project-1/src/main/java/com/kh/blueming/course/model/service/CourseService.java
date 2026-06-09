@@ -81,6 +81,22 @@ public class CourseService {
 	public ArrayList<Map<String, Object>> selectCourseTargetRules(int courseId) {
 		return courseDao.selectCourseTargetRules(sqlSession, courseId);
 	}
+
+	@Transactional
+	public int addAttachment(Attachment at) {
+		if (at == null) {
+			return 0;
+		}
+		return courseDao.addAttachment(sqlSession, at);
+	}
+
+	@Transactional
+	public int updateAttachment(Attachment at) {
+		if (at == null || at.getFileId() <= 0) {
+			return 0;
+		}
+		return courseDao.updateAttachment(sqlSession, at);
+	}
 	
 	@Transactional
 	public int addCourse(Course c, String targetType, String targetValue) {
@@ -94,18 +110,6 @@ public class CourseService {
 
 	@Transactional
 	public int addCourse(Course c, List<Map<String, String>> targetRules) {
-		return addCourse(c, targetRules, null);
-	}
-
-	@Transactional
-	public int addCourse(Course c, List<Map<String, String>> targetRules, Attachment thumbnailAttachment) {
-		if (thumbnailAttachment != null) {
-			int attachmentResult = courseDao.addAttachment(sqlSession, thumbnailAttachment);
-			if (attachmentResult <= 0) {
-				return 0;
-			}
-			c.setFileId(thumbnailAttachment.getFileId());
-		}
 
 		int result1 = courseDao.addCourse(sqlSession, c);
 		if (result1 <= 0) {
@@ -173,28 +177,9 @@ public class CourseService {
 
 	@Transactional
 	public int updateCourse(Course c, List<Map<String, String>> targetRules) {
-		return updateCourse(c, targetRules, null);
-	}
-
-	@Transactional
-	public int updateCourse(Course c, List<Map<String, String>> targetRules, Attachment newThumbnailAttachment) {
-
-		int oldFileId = c.getFileId();
-		if (newThumbnailAttachment != null) {
-			int attachmentResult = courseDao.addAttachment(sqlSession, newThumbnailAttachment);
-			if (attachmentResult <= 0) {
-				return 0;
-			}
-			c.setFileId(newThumbnailAttachment.getFileId());
-		}
-
 		int result1 = courseDao.updateCourse(sqlSession, c);
 		if (result1 <= 0) {
 			return 0;
-		}
-
-		if (newThumbnailAttachment != null && oldFileId > 0) {
-			courseDao.deleteAttachment(sqlSession, oldFileId);
 		}
 
 		courseDao.deleteCourseTargetsByCourseId(sqlSession, c.getCourseId());
@@ -315,24 +300,30 @@ public class CourseService {
 		courseDao.deleteCourseTargetsByCourseId(sqlSession, courseId);
 		
 		ArrayList<Chapter> chapterList = courseDao.selectChapterList(sqlSession, courseId);
-		
-		int result1 = 1;
-		
-		int result2 = courseDao.deleteAllChapter(sqlSession, courseId);
+		courseDao.deleteAllChapter(sqlSession, courseId);
 		
 		for(Chapter ch : chapterList) {
 			if(ch.getVideoFileId() > 0) {
-				result1 *= courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
+				int attachmentResult = courseDao.deleteAttachment(sqlSession, ch.getVideoFileId());
+				if (attachmentResult <= 0) {
+					return 0;
+				}
 			}
-		}
-
-		if (course != null && course.getFileId() > 0) {
-			result1 *= courseDao.deleteAttachment(sqlSession, course.getFileId());
 		}
 		
 		int result3 = courseDao.deleteCourse(sqlSession, courseId);
+		if (result3 <= 0) {
+			return 0;
+		}
+
+		if (result3 > 0 && course != null && course.getFileId() > 0) {
+			int attachmentResult = courseDao.deleteAttachment(sqlSession, course.getFileId());
+			if (attachmentResult <= 0) {
+				return 0;
+			}
+		}
 		
-		return result1 * result2 * result3;
+		return 1;
 		
 	}
 	

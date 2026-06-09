@@ -269,7 +269,7 @@ SELECT
     n.seq,
     MOD(((c.course_id - 1) * 5) + n.seq, 300) + 1,
     c.create_date,
-    c.updated_date
+    NULL
 FROM COURSE c
 CROSS JOIN (
     SELECT LEVEL AS seq FROM dual CONNECT BY LEVEL <= 5
@@ -357,7 +357,7 @@ SELECT
     '챕터 질문(원댓글) #' || id,
     CASE WHEN MOD(id, 5) = 0 THEN 'Y' ELSE 'N' END,
     SYSDATE - MOD(id, 90),
-    SYSDATE - MOD(id, 45),
+    NULL,
     CASE WHEN MOD(id, 19) = 0 THEN 'N' ELSE 'Y' END
 FROM (
     SELECT LEVEL AS id FROM dual CONNECT BY LEVEL <= 450
@@ -376,7 +376,7 @@ SELECT
     '챕터 질문(대댓글) #' || id,
     'N',
     SYSDATE - MOD(id, 60),
-    SYSDATE - MOD(id, 20),
+    NULL,
     'Y'
 FROM (
     SELECT LEVEL + 450 AS id FROM dual CONNECT BY LEVEL <= 250
@@ -396,7 +396,7 @@ SELECT
     CASE WHEN MOD(id, 10) = 0 THEN 1 ELSE 2 END,
     MOD(id * 17, 5000),
     SYSDATE - MOD(id, 140),
-    SYSDATE - MOD(id, 70),
+    NULL,
     CASE WHEN MOD(id, 3) = 0 THEN MOD(id, 300) + 1 ELSE NULL END,
     CASE WHEN MOD(id, 29) = 0 THEN 'N' ELSE 'Y' END
 FROM (
