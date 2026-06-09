@@ -406,7 +406,7 @@
 							#{chapterOrder},
 							#{videoFileId},
 							SYSDATE,
-							SYSDATE)
+							NULL)
 	</insert>
 	
 	<!-- 첨부파일이 없을 경우 챕터 추가 코드 -->
@@ -431,7 +431,7 @@
 							#{chapterOrder},
 							NULL,
 							SYSDATE,
-							SYSDATE)
+							NULL)
 	</insert>
 	
 	<!-- 코스 내용 수정 -->
