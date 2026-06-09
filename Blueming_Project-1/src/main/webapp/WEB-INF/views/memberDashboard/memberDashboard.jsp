@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Member Dashboard</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard.css">
 </head>
 <body>
 	

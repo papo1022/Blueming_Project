@@ -113,7 +113,14 @@
                 </tr>
                 <tr>
                     <td>썸네일 이미지</td>
-                    <td><input type="file" name="thumbnail" accept="image/*"></td>
+                    <td>
+                        <input type="file" name="thumbnail" accept="image/*">
+                        <c:if test="${not empty thumbnailAttachment and not empty thumbnailAttachment.originalName}">
+                            <div style="margin-top:6px; color:#555; font-size:13px;">
+                                기존 파일: ${thumbnailAttachment.originalName}
+                            </div>
+                        </c:if>
+                    </td>
                 </tr>
             </table>
 

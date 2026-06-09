@@ -3,7 +3,7 @@ package com.kh.blueming.common.interceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.kh.blueming.memberlist.model.vo.MemberList;
+import com.kh.blueming.member.model.vo.Member;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -62,10 +62,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 		//   참고로 로그인한 사용자의 정보는 session 객체에 담겨있음!!
 		
 		// 1. 우선 session 객체 부터 얻어내기 (request 객체로부터)
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			response.sendRedirect(request.getContextPath() + "/member/login");
+			return false;
+		}
 		
 		// 2. session 으로 부터 로그인한 회원의 정보를 꺼내오기
-		MemberList loginUser = (MemberList)session.getAttribute("loginUser");
+		Member loginUser = (Member)session.getAttribute("loginUser");
 		
 		// 3. 로그인 여부 판별
 		if(loginUser != null) {
@@ -81,7 +85,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			
 			session.setAttribute("alertMsg", "로그인 후 이용 가능한 서비스입니다.");
 			
-			response.sendRedirect("/blueming");
+			response.sendRedirect(request.getContextPath() + "/member/login");
 			// > 오버라이딩된 메소드라 문자열 타입으로 리턴이 불가!!
 			//   그래서 response 객체에서 제공하는 sendRedirect 메소드를 통해서 url 재요청을 진행
 			

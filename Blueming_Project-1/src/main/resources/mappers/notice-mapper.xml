@@ -66,6 +66,7 @@
 		UPDATE NOTICE
 		   SET NOTICE_TITLE = #{noticeTitle}
 		     , CONTENT = #{content}
+		     , UPDATED_DATE = SYSDATE
 		 WHERE NOTICE_ID = #{noticeId}
 		   AND STATUS = 'Y'
 	</update>
@@ -74,6 +75,7 @@
 	<update id="deleteNotice" parameterType="_int">
 		UPDATE NOTICE
 		   SET STATUS = 'N'
+		     , UPDATED_DATE = SYSDATE
 		 WHERE NOTICE_Id = #{noticeId}
 		   AND STATUS = 'Y'
 	</update>
