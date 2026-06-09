@@ -6,19 +6,157 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+
+/* ===== 전체 ===== */
+body{
+    background:#f5f6f8;
+    margin:0;
+    padding:0;
+}
+
+/* ===== 본문 ===== */
+.outer{
+    margin-left:250px;
+    padding:20px 30px;
+}
+
+/* ===== 제목 ===== */
+.outer h2{
+    text-align:center;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+/* ===== 검색영역 ===== */
+#search-area{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+#search-area form{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+#search-area select{
+    height:40px;
+    border:1px solid #ddd;
+    border-radius:20px;
+    padding:0 15px;
+}
+
+#search-area input{
+    width:320px;
+    height:40px;
+    border:1px solid #ddd;
+    border-radius:20px;
+    padding:0 15px;
+}
+
+#search-area button{
+    height:40px;
+    border-radius:20px;
+}
+
+/* ===== 글작성 버튼 ===== */
+.write-btn-area{
+    width:95%;
+    margin:0 auto 8px auto;
+    text-align:right;
+}
+
+/* ===== 게시글 테이블 ===== */
+.list-area{
+    width:95%;
+    margin:auto;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ===== 헤더 ===== */
+.list-area thead th{
+    text-align:center;
+    height:50px;
+    border:none;
+    background:#fafafa;
+    font-size:14px;
+}
+
+/* ===== 본문 ===== */
+.list-area tbody td{
+    height:45px;
+    padding:8px 12px;
+    vertical-align:middle;
+    border-top:1px solid #f0f0f0;
+    font-size:14px;
+}
+
+.list-area tbody tr:hover{
+    background:#f8fbff;
+    cursor:pointer;
+}
+
+/* ===== 번호 배지 ===== */
+.notice-badge{
+    background:#4fd1c5;
+    color:white;
+    border-radius:15px;
+    padding:5px 12px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* ===== 페이징 ===== */
+.paging-area{
+    margin-left:250px;
+    margin-top:10px;
+}
+
+.pagination{
+    margin-top:0;
+    margin-bottom:0;
+}
+
+.pagination .page-link{
+    border:none;
+    background:none;
+    color:#666;
+}
+
+.pagination .page-item.active .page-link{
+    background:#4fd1c5;
+    color:white;
+    border-radius:50%;
+    width:35px;
+    height:35px;
+    line-height:22px;
+}
+
+/* ===== 공백 제거 ===== */
+br{
+    display:none;
+}
+
+.list-area th,
+.list-area td{
+    text-align:center;
+    vertical-align:middle;
+}
+
+</style>
 </head>
 <body>
 	
 	<jsp:include page="../common/mainMenubar.jsp" />
 	
-	<div class="outer">
-	
-		<br>
-		<h2 align="center">공지사항</h2>
-		<br>
+<div class="outer">
 
-		<br>
-			<div class="outer">
+    <h2 align="center">공지사항</h2>
+    <br>
 		
 
 
@@ -70,7 +208,7 @@
 
 		<!-- 관리자만 보이는 글작성 버튼으로 배치 -->
 		<c:if test="${ (not empty sessionScope.loginUser) and (sessionScope.loginUser.loginId eq 'admin') }">
-			<div align="right" style="width : 950px;">
+			<div class="write-btn-area">
 				<a href="/blueming/notice/enrollForm" class="btn btn-secondary btn-sm">
 					글작성
 				</a>
@@ -79,7 +217,7 @@
 			</div>
 		</c:if>
 
-		<table class="list-area table table-hover">
+		<table class="list-area table">
 			<thead>
 				<tr>
 					<th>글번호</th>
@@ -173,7 +311,7 @@
 			  	<c:when test="${ requestScope.pi.currentPage eq 1 }">
 			  		<!-- 1 번 페이지일 경우 -->
 			  		<li class="page-item disabled">
-					  <a class="page-link">Previous</a>
+					 <a class="page-link">&lt;</a>
 					</li>
 			  	</c:when>
 			  	<c:otherwise>
@@ -182,7 +320,7 @@
 			  			<c:when test="${ empty requestScope.condition }">
 			  				<!-- 일반 목록 조회일 경우 -->
 			  				<li class="page-item">
-							  <a class="page-link" href="/blueming/notice/list?cpage=${ requestScope.pi.currentPage - 1 }">Previous</a>
+							  <a class="page-link" href="/blueming/notice/list?cpage=${ requestScope.pi.currentPage - 1 }">&lt;</a>
 							</li>
 			  			</c:when>
 			  			<c:otherwise>
@@ -233,7 +371,7 @@
 			  <c:choose>
 			  	<c:when test="${ requestScope.pi.currentPage eq requestScope.pi.maxPage }">
 				  <li class="page-item disabled">
-				  	<a class="page-link">Next</a>
+				  	<a class="page-link">&gt;</a>
 				  </li>
 			  	</c:when>
 			  	<c:otherwise>
@@ -242,7 +380,7 @@
 			  			<c:when test="${ empty requestScope.condition }">
 			  				<!-- 일반 목록 조회일 경우 -->
 			  				<li class="page-item">
-								<a class="page-link" href="/blueming/notice/list?cpage=${ requestScope.pi.currentPage + 1 }">Next</a>
+								<a class="page-link" href="/blueming/notice/list?cpage=${ requestScope.pi.currentPage + 1 }">&gt;</a>
 							</li>
 			  			</c:when>
 			  			<c:otherwise>
