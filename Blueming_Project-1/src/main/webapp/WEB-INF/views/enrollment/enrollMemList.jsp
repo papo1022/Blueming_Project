@@ -19,27 +19,31 @@
 </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
     
     <div class="outer">
         <h2>수강 정보 관리</h2>
         
-        <form action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post" style="margin-bottom: 20px;">
-            <select name="condition">
-                <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
+        <form id="searchForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
+            <select name="condition" id="searchCondition">
+                <option value="course">강의명</option>
             </select>
-            <input type="text" name="keyword" value="${keyword}">
+        
+            <input type="text" name="keyword" value="${keyword}" id="searchKeyword">
+        
             <button type="submit">검색</button>
-            <button type="button" onclick="resetSearch()">초기화</button>
+            <button type="button" onclick="clearSearchInput();">초기화</button>
         </form>
 
         <div class="table-container">
             <table class="table table-bordered">
                 <thead>
-                    <th><a href="javascript:void(0);" onclick="sortList('COURSE_TITLE')" class="sort-link">강의명 </a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('START_DATE')" class="sort-link">시작일 </a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('END_DATE')" class="sort-link">종료일 </a></th>
-					<th><a href="javascript:void(0);" onclick="sortList('STATUS')" class="sort-link">상태 </a></th>
+                    <tr>
+                        <th><a href="javascript:void(0);" onclick="sortList('COURSE_TITLE')" class="sort-link">강의명 </a></th>
+                        <th><a href="javascript:void(0);" onclick="sortList('START_DATE')" class="sort-link">시작일 </a></th>
+                        <th><a href="javascript:void(0);" onclick="sortList('END_DATE')" class="sort-link">종료일 </a></th>
+                        <th><a href="javascript:void(0);" onclick="sortList('STATUS')" class="sort-link">상태 </a></th>
+                    </tr>
                 </thead>
                 <tbody>
                     <c:choose>
@@ -68,7 +72,6 @@
             </table>
         </div>
 
-        <%-- 페이징바 영역: 이 아래로 복사본이 있는지 확인하세요 --%>
         <div class="pagination-wrapper">
             <c:if test="${not empty pi}">
                 <c:choose>
@@ -105,52 +108,85 @@
         </div>
     </div>
 
-    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post" style="display:none;">
-    <input type="hidden" name="condition" value="${condition}">
-    <input type="hidden" name="keyword" value="${keyword}">
-    
-    <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
-    <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
-    
-    <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
-</form>
+    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
+        <input type="hidden" name="condition" value="${condition}">
+        <input type="hidden" name="keyword" value="${keyword}">
+        <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
+        <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
+        <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
+    </form>
 
     <script>
     function sortList(colName) {
-        // 1. JSP 변수(${sortCol}) 대신, 실제 폼의 hidden input 값을 읽어옵니다.
         let currentSortCol = document.getElementById('sortCol').value;
         let currentSortOrder = document.getElementById('sortOrder').value;
         
-        // 2. 새로운 정렬 방향 결정
         let nextOrder = (currentSortCol === colName && currentSortOrder === 'ASC') ? 'DESC' : 'ASC';
         
-        // 3. 폼에 값 대입
         document.getElementById('sortCol').value = colName;
         document.getElementById('sortOrder').value = nextOrder;
-        document.getElementById('cpage').value = 1; // 정렬 시 1페이지로 초기화
+        document.getElementById('cpage').value = 1; 
         
-        // 4. 폼 제출
         document.getElementById('pagingForm').submit();
     }
-        function movePage(page) {
-            document.getElementById("cpage").value = page;
-            document.getElementById("pagingForm").submit();
+
+    function movePage(page) {
+        document.getElementById("cpage").value = page;
+        document.getElementById("pagingForm").submit();
+    }
+
+    function goDetail(cId) {
+        let f = document.createElement("form");
+        f.method = "post";
+        f.action = "${pageContext.request.contextPath}/enrollment/enrollMemDetail";
+
+        let params = {
+            "courseId" : cId,
+            "cpage" : "${pi.currentPage}", // 목록의 원래 페이지 번호
+            "condition" : "${condition}",
+            "keyword" : "${keyword}",
+            
+            // ❌ [기존 폼에 있던 것] "sortCol" : "${sortCol}" ◀ 이걸 그대로 보내면 상세 정렬이 목록 정렬로 덮어씌워집니다!
+            // 🌟 [수정] 목록에서 쓰던 정렬 컬럼 정보는 이름을 바꾸어 안전하게 대피시킵니다.
+            "listSortCol" : "${sortCol}",   
+            "listSortOrder" : "${sortOrder}"
+            
+            // 여기에 "sortCol": "DEPARTMENT_NAME"을 직접 적어서 보내거나, 
+            // 아예 안 보내야 컨트롤러의 defaultValue="DEPARTMENT_NAME"이 깨끗하게 작동합니다.
+        };
+
+        for(let key in params){
+            let input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = params[key];
+            f.appendChild(input);
         }
-        function goDetail(cId) {
-            let f = document.createElement("form");
-            f.setAttribute("method", "post");
-            f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/detail");
-            let i = document.createElement("input");
-            i.setAttribute("type", "hidden");
-            i.setAttribute("name", "courseId");
-            i.setAttribute("value", cId);
-            f.appendChild(i);
-            document.body.appendChild(f);
-            f.submit();
-        }
-        function resetSearch() {
-            location.href = "${pageContext.request.contextPath}/enrollment/enrollMemList";
-        }
+
+        document.body.appendChild(f);
+        f.submit();
+    }
+  
+    // 🌟 [완성] 현재 페이지 번호는 완벽하게 사수하면서 기존 좀비 검색어만 싹 청소하여 새로고침하는 로직입니다.
+    function clearSearchInput() {
+        // 1. 화면의 검색창 비우기
+        document.getElementById("searchKeyword").value = "";
+        document.getElementById("searchCondition").selectedIndex = 0;
+        
+        // 2. 폼 객체를 정확하게 찾아옵니다. (id 지정 완료)
+        let f = document.getElementById("searchForm");
+        
+        // 3. 현재 보고 있는 페이지 번호(cpage)를 빈 검색어와 함께 세트로 제출하기 위해 히든 태그로 심어줍니다.
+        let pageInput = document.createElement("input");
+        pageInput.type = "hidden";
+        pageInput.name = "cpage";
+        pageInput.value = "${pi.currentPage}"; 
+        f.appendChild(pageInput);
+        
+        // 4. 깨끗하게 비워진 상태로 서버에 재요청! 
+        // 서버 측 페이징 정보(pi)와 하단 페이징 히든 바구니들이 전부 검색어 없는 상태로 리프레시됩니다.
+        f.submit(); 
+    }
     </script>
 </body>
-</html>	
+</html>

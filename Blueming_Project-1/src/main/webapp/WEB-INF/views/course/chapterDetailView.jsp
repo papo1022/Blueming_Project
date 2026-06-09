@@ -66,6 +66,10 @@
         border-radius: 4px;
         transition: width 0.3s;
     }
+
+    .table {
+        text-align: center;
+    }
 </style>
 </head>
 <body>
@@ -73,129 +77,169 @@
     <jsp:include page="../common/mainMenubar.jsp" />
 
     <div class="outer">
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">챕터 상세조회</h2>
+                <!-- 관리자에게만 보이는 버튼-->
+                <c:choose>
+                    <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                        <div align="center" class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-warning mr-1" onclick="updateChapter();">
+                                챕터 수정
+                            </button>
+                            <form id="deleteForm" action="deleteChapter" method="post">
+                                <input type="hidden" name="chapterId" value="${chapter.chapterId}">
+                                <input type="hidden" name="videoFileId" value="${chapter.videoFileId}">
+                                <button type="button" class="btn btn-danger mr-1" onclick="chapterDelete();">
+                                    챕터 삭제
+                                </button>
+                            </form>
+                        </div>
+                    </c:when>
+                <c:otherwise>
+                    <style>
+                        .d-flex {
+                            display: none;
+                        }
+                    </style>
+                </c:otherwise>
+            </c:choose>
+            </div>
 
-        <br>
-        <h2 align="center">챕터 상세조회</h2>
-        <br>
-
-        <table id="detail-area" class="table">
-            <tr>
-                <th>챕터명</th>
-                <td>${ requestScope.chapter.chapterTitle }</td>
-            </tr>
-            <tr>
-                <th>올린 날짜</th>
-                <td>${ requestScope.chapter.createDate }</td>
-            </tr>
-            <tr>
-                <th>업데이트 날짜</th>
-                <td>${ requestScope.chapter.updatedDate}</td>
-            </tr>
-        </table>
-
-        <!-- 관리자에게만 보이는 버튼-->
-        <div align="center">
-            <button class="btn btn-warning" onclick="updateChapter();">
-                챕터 수정
-            </button>
-            <form id="deleteForm" action="deleteChapter" method="post">
-                <input type="hidden" name="chapterId" value="${chapter.chapterId}">
-                <input type="hidden" name="videoFileId" value="${chapter.videoFileId}">
-                <button type="button" class="btn btn-danger" onclick="chapterDelete();">
-                    챕터 삭제
-                </button>
-            </form>
-            <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                <button type="button" class="btn btn-primary" onclick="addAssignment();">
-                    과제 추가
-                </button>
-            </c:if>
-            <br><br>
+            <div class="card-body">
+                <table id="detail-area" class="table">
+                    <tr>
+                        <th>챕터명</th>
+                        <td>${ requestScope.chapter.chapterTitle }</td>
+                    </tr>
+                    <tr>
+                        <th>올린 날짜</th>
+                        <td>${ requestScope.chapter.createDate }</td>
+                    </tr>
+                    <tr>
+                        <th>업데이트 날짜</th>
+                        <td>${ requestScope.chapter.updatedDate}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         <!-- ====== 영상 플레이어 ====== -->
-        <c:choose>
-            <c:when test="${not empty videoAttachment}">
-                <div class="video-section">
-                    <h4 align="center">강의 영상</h4>
-                    <video id="chapterVideo" controls preload="metadata"
-                           src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
-                        브라우저가 video 태그를 지원하지 않습니다.
-                    </video>
-                    <c:if test="${enrollmentId > 0}">
-                        <div class="progress-info">
-                            <span>수강률: <strong id="compRateDisplay">${not empty existingProgress ? existingProgress.chapCompRate : 0}</strong>%</span>
-                            <c:if test="${not empty existingProgress and existingProgress.isCompleted eq 'Y'}">
-                                <span class="label label-success" style="margin-left:8px;">이수 완료</span>
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">강의 영상</h2>
+            </div>
+            <div class="card-body">
+                <c:choose>
+                    <c:when test="${not empty videoAttachment}">
+                        <div class="video-section">
+                            
+                            <video id="chapterVideo" controls preload="metadata"
+                                src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
+                                브라우저가 video 태그를 지원하지 않습니다.
+                            </video>
+                            <c:if test="${enrollmentId > 0}">
+                                <div class="progress-info">
+                                    <span>수강률: <strong id="compRateDisplay">${not empty existingProgress ? existingProgress.chapCompRate : 0}</strong>%</span>
+                                    <c:if test="${not empty existingProgress and existingProgress.isCompleted eq 'Y'}">
+                                        <span class="label label-success" style="margin-left:8px;">이수 완료</span>
+                                    </c:if>
+                                </div>
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar-fill" id="compRateBar"
+                                        data-rate="${not empty existingProgress ? existingProgress.chapCompRate : 0}"></div>
+                                </div>
+                            </c:if>
+                            <c:if test="${enrollmentId <= 0}">
+                                <p class="text-muted" style="margin-top:6px;font-size:13px;">※ 수강 신청 후 진도가 저장됩니다.</p>
                             </c:if>
                         </div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill" id="compRateBar"
-                                 data-rate="${not empty existingProgress ? existingProgress.chapCompRate : 0}"></div>
-                        </div>
-                    </c:if>
-                    <c:if test="${enrollmentId <= 0}">
-                        <p class="text-muted" style="margin-top:6px;font-size:13px;">※ 수강 신청 후 진도가 저장됩니다.</p>
-                    </c:if>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="alert alert-info" align="center">등록된 강의 영상이 없습니다.</div>
-            </c:otherwise>
-        </c:choose>
-        <!-- ====== /영상 플레이어 ====== -->
-
-        <h2 align="center">과제 목록</h2>
-        <table id="assignment-area" class="table">
-            <thead>
-                <tr>
-                    <th>과제명</th>
-                    <th>마감일</th>
-                    <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                        <th>관리</th>
-                    </c:if>
-                </tr>
-            </thead>
-            <tbody>
-                <c:choose>
-                    <c:when test="${not empty assignmentList}">
-                        <c:forEach var="assignment" items="${assignmentList}">
-                            <tr class="assignment-clickable"
-                                data-assignment-title="${assignment.assignmentTitle}"
-                                data-assignment-description="${assignment.description}"
-                                data-assignment-start-date="${assignment.startDate}"
-                                data-assignment-due-date="${assignment.dueDate}"
-                                data-assignment-max-score="${assignment.maxScore}">
-                                <td>${assignment.assignmentTitle}</td>
-                                <td>${assignment.dueDate}</td>
-                                <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                                    <td>
-                                        <div class="assignment-actions">
-                                            <button type="button" class="btn btn-sm btn-warning" onclick="updateAssignment(${assignment.assignmentId});">
-                                                수정
-                                            </button>
-                                            <form action="/blueming/assignment/delete" method="post">
-                                                <input type="hidden" name="assignmentId" value="${assignment.assignmentId}">
-                                                <input type="hidden" name="chapterId" value="${chapter.chapterId}">
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('정말로 과제를 삭제하시겠습니까?');">
-                                                    삭제
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </c:if>
-                            </tr>
-                        </c:forEach>
                     </c:when>
                     <c:otherwise>
-                        <tr>
-                            <td class="assignment-empty" colspan="${sessionScope.loginUser.role eq 'S' ? 3 : 2}">등록된 과제가 없습니다.</td>
-                        </tr>
+                        <div class="alert alert-info" align="center">등록된 강의 영상이 없습니다.</div>
                     </c:otherwise>
                 </c:choose>
-            </tbody>
-        </table>
+            </div>
+        </div>
+    <!-- ====== /영상 플레이어 ====== -->
 
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">과제 목록</h2>
+                <c:choose>
+                    <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                        <div align="center" class="d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-primary mr-1" onclick="addAssignment();">
+                                과제 추가
+                            </button>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <style>
+                            .d-flex {
+                                display: none;
+                            }
+                        </style>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="card-body">
+                <table id="assignment-area" class="table">
+                    <thead>
+                        <tr>
+                            <th>과제명</th>
+                            <th>마감일</th>
+                            <c:if test="${sessionScope.loginUser.role eq 'S'}">
+                                <th>관리</th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:choose>
+                            <c:when test="${not empty assignmentList}">
+                                <c:forEach var="assignment" items="${assignmentList}">
+                                    <tr class="assignment-clickable"
+                                        data-assignment-title="${assignment.assignmentTitle}"
+                                        data-assignment-description="${assignment.description}"
+                                        data-assignment-start-date="${assignment.startDate}"
+                                        data-assignment-due-date="${assignment.dueDate}"
+                                        data-assignment-max-score="${assignment.maxScore}">
+                                        <td>${assignment.assignmentTitle}</td>
+                                        <td>${assignment.dueDate}</td>
+                                        <c:if test="${sessionScope.loginUser.role eq 'S'}">
+                                            <td>
+                                                <div class="assignment-actions">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="">
+                                                        채점
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-warning" onclick="updateAssignment(${assignment.assignmentId});">
+                                                        수정
+                                                    </button>
+                                                    <form action="/blueming/assignment/delete" method="post">
+                                                        <input type="hidden" name="assignmentId" value="${assignment.assignmentId}">
+                                                        <input type="hidden" name="chapterId" value="${chapter.chapterId}">
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('정말로 과제를 삭제하시겠습니까?');">
+                                                            삭제
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </c:if>
+                                    </tr>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <tr>
+                                    <td class="assignment-empty" colspan="${sessionScope.loginUser.role eq 'S' ? 3 : 2}">등록된 과제가 없습니다.</td>
+                                </tr>
+                            </c:otherwise>
+                        </c:choose>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 과제 목록 테이블 -->
         <div class="modal fade" id="assignmentDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -235,11 +279,51 @@
                 </div>
             </div>
         </div>
+        
+        
+        <br><br><br><br>
+        
+       <br><br>
 
-        <h2 align="center">챕터 통계 </h2>
-        <!-- 여기에 통계가 들어감 암 그렇고 말고 -->
+<h2 align="center">댓글</h2>
+
+<input type="hidden"
+       id="chapterId"
+       value="${chapter.chapterId}">
+
+<div id="replyList"></div>
+
+<div style="margin-top:20px;">
+    <textarea id="replyContent"
+              class="form-control"
+              rows="3"></textarea>
+
+    <br>
+
+    <button type="button"
+            id="insertReplyBtn"
+            class="btn btn-primary">
+        댓글 등록
+    </button>
+</div>
+
+<br><br>
+        
+        <br><br><br><br>
+        
+
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 align="center">통계</h2>   
+            </div>
+            <div class="card-body">
+            
+            </div>
 
     </div>
+    
+    
+    
 
     <script>
         function chapterDelete(){
@@ -281,19 +365,47 @@
 
                 // 시청한 구간을 Set으로 추적 (1초 단위)
                 const watchedSet = new Set();
-                let lastSaveTime = 0;
+                const savedWatchedSeconds = parseInt("${not empty existingProgress ? existingProgress.watchedSeconds : 0}") || 0;
+                let maxWatchedSeconds = Math.max(savedWatchedSeconds, Math.floor(lastPos));
+                let lastSentWatchedSeconds = savedWatchedSeconds;
+                let saveTimer = null;
+                let hasShownRateLimitNotice = false;
+
+                // 2배속 초과 재생은 인정하지 않으므로 즉시 제한
+                video.addEventListener("ratechange", function() {
+                    if (video.playbackRate > 2) {
+                        video.playbackRate = 2;
+                        if (!hasShownRateLimitNotice) {
+                            alert("수강 인정은 최대 2배속까지 가능합니다.");
+                            hasShownRateLimitNotice = true;
+                        }
+                    }
+                });
+
+                // 본인이 시청한 범위를 넘어서는 점프 탐색은 차단
+                video.addEventListener("seeking", function() {
+                    const allowedSeek = Math.min(maxWatchedSeconds + 1, Math.floor(video.duration) || 0);
+                    if (video.currentTime > allowedSeek) {
+                        video.currentTime = allowedSeek;
+                    }
+                });
 
                 video.addEventListener("timeupdate", function() {
+                    if (video.playbackRate > 2) {
+                        return;
+                    }
+
                     const cur = Math.floor(video.currentTime);
                     watchedSet.add(cur);
 
-                    const now = Date.now();
-                    // 5초마다 저장
-                    if (now - lastSaveTime >= 5000) {
-                        lastSaveTime = now;
-                        saveProgress(false);
-                    }
+                    // 과거 구간으로 이동해도 누적 시청 시간은 감소하지 않도록 유지
+                    maxWatchedSeconds = Math.max(maxWatchedSeconds, watchedSet.size);
                 });
+
+                // checkpoint 저장 주기 (부하를 줄이기 위해 10초)
+                saveTimer = window.setInterval(function() {
+                    saveProgress(false);
+                }, 10000);
 
                 // 영상 종료 시 즉시 저장
                 video.addEventListener("ended", function() {
@@ -302,15 +414,23 @@
 
                 // 페이지 떠날 때 저장
                 window.addEventListener("beforeunload", function() {
+                    if (saveTimer) {
+                        clearInterval(saveTimer);
+                        saveTimer = null;
+                    }
                     saveProgress(false);
                 });
 
                 function saveProgress(onEnded) {
                     const duration = Math.floor(video.duration) || 0;
                     const lastPos  = Math.floor(video.currentTime);
-                    const watched  = onEnded ? duration : watchedSet.size;
+                    const watched  = onEnded ? duration : Math.max(maxWatchedSeconds, savedWatchedSeconds);
 
                     if (duration <= 0) return;
+                    if (!onEnded && watched <= lastSentWatchedSeconds) return;
+
+                    const prevSentWatchedSeconds = lastSentWatchedSeconds;
+                    lastSentWatchedSeconds = watched;
 
                     $.ajax({
                         url: "${pageContext.request.contextPath}/course/saveProgress",
@@ -327,9 +447,18 @@
                                 const rate = parseFloat(res.chapCompRate).toFixed(2);
                                 $("#compRateDisplay").text(rate);
                                 $("#compRateBar").css("width", rate + "%");
+
+                                if (typeof res.watchedSeconds !== "undefined") {
+                                    maxWatchedSeconds = Math.max(maxWatchedSeconds, parseInt(res.watchedSeconds) || 0);
+                                    lastSentWatchedSeconds = Math.max(lastSentWatchedSeconds, maxWatchedSeconds);
+                                }
                             } else if (res.message) {
                                 console.warn("progress save skipped:", res.message);
                             }
+                        },
+                        error: function() {
+                            // 실패 시 재전송 기회를 위해 마지막 전송값 롤백
+                            lastSentWatchedSeconds = prevSentWatchedSeconds;
                         }
                     });
                 }
@@ -360,6 +489,102 @@
                 e.stopPropagation();
             });
         });
+        
+        // 댓글 추가기능
+        
+        $(function(){
+
+            loadReplyList();
+
+        });
+        
+        
+        function loadReplyList(){
+
+            $.ajax({
+
+                url : "${pageContext.request.contextPath}/reply/list",
+
+                type : "get",
+
+                data : {
+                    chapterId : $("#chapterId").val()
+                },
+
+                success : function(list){
+
+                    let str = "";
+
+                    for(let i=0; i<list.length; i++){
+
+                        str += "<div class='card mb-2'>";
+                        str += "<div class='card-body'>";
+
+                        str += "<b>" + list[i].name + "</b>";
+
+                        str += " (" +
+                               (list[i].deptName || '') +
+                               " " +
+                               (list[i].positionName || '') +
+                               ")<br>";
+
+                        str += list[i].content + "<br>";
+
+                        str += "<small>"
+                            + list[i].createdDate
+                            + "</small>";
+
+                        str += "</div>";
+                        str += "</div>";
+                    }
+
+                    $("#replyList").html(str);
+
+                }
+
+            });
+
+        }
+        
+        
+        $("#insertReplyBtn").click(function(){
+
+            $.ajax({
+
+                url : "${pageContext.request.contextPath}/reply/insert",
+
+                type : "post",
+
+                data : {
+
+                    chapterId : $("#chapterId").val(),
+
+                    content : $("#replyContent").val()
+
+                },
+
+                success : function(result){
+
+                    if(result == "SUCCESS"){
+
+                        $("#replyContent").val("");
+
+                        loadReplyList();
+
+                    }else{
+
+                        alert("댓글 등록 실패");
+
+                    }
+
+                }
+
+            });
+
+        });
+        
+        
+        
     </script>
 </body>
 </html>

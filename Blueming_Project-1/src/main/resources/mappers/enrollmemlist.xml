@@ -11,6 +11,8 @@
         <result column="END_DATE"       property="endDate" />
         <result column="DEPARTMENT_ID"  property="detpId"/>
         <result column="DEPARTMENT_NAME"  property="detpName"/>
+        <result column="CHAP_COMP_RATE"  property="chapCompRate"/>
+        <result column="POSITION_ID"  property="positionId"/>
     </resultMap>
 	
     <select id="selectListCount" resultType="int">
@@ -109,47 +111,106 @@
         WHERE COURSE_ID = #{courseId}
     </select>
 
-    <select id="selectEnrollmentCountByCourse" parameterType="int" resultType="int">
-        SELECT COUNT(*) 
-        FROM ENROLLMENT 
-        WHERE COURSE_ID = #{courseId}
-    </select>
+   <select id="selectEnrollmentCountByCourse"
+        parameterType="hashmap"
+        resultType="int">
 
-    <select id="selectEnrollmentListByCourse" parameterType="hashmap" resultType="map">
-    SELECT 
-        M.NAME, 
-        NVL(D.DEPARTMENT_NAME, '미지정') AS DEPT_NAME, 
-        P.POSITION_NAME, 
-        TO_CHAR(C.END_DATE, 'YYYY-MM-DD') AS END_DATE,
-        CASE C.STATUS WHEN 'W' THEN '예정' WHEN 'Y' THEN '진행중' WHEN 'N' THEN '종료' END AS STATUS,
-        NVL(TRUNC(
-            (SELECT COUNT(*) FROM CHAPTER_PROGRESS CP 
-             WHERE CP.ENROLLMENT_ID = E.ENROLLMENT_ID AND CP.IS_COMPLETED = 'Y') 
-             / 
-             (SELECT COUNT(*) FROM CHAPTER CH WHERE CH.COURSE_ID = E.COURSE_ID) 
-             * 100
-        ), 0) AS PROGRESS
+    SELECT COUNT(*)
     FROM ENROLLMENT E
-    JOIN MEMBER M ON E.MEMBER_ID = M.MEMBER_ID
-    LEFT JOIN DEPARTMENT D ON M.DEPARTMENT_ID = D.DEPARTMENT_ID
-    LEFT JOIN POSITION P ON M.POSITION_ID = P.POSITION_ID
-    JOIN COURSE C ON E.COURSE_ID = C.COURSE_ID
+    JOIN MEMBER M
+        ON E.MEMBER_ID = M.MEMBER_ID
     WHERE E.COURSE_ID = #{courseId}
+
     <if test="deptFilter != null and deptFilter != ''">
-    	AND M.DEPARTMENT_ID = #{deptFilter}
-	</if>
-    ORDER BY 
-    <choose>
-        <when test="sortCol == 'NAME'">M.NAME</when>
-        <when test="sortCol == 'PROGRESS'">PROGRESS</when>
-        <when test="sortCol == 'DEPT_NAME'">DEPT_NAME</when>
-        <when test="sortCol == 'POSITION_NAME'">P.POSITION_NAME</when>
-        <otherwise>E.ENROLLMENT_ID</otherwise> 
-    </choose>
-    <choose>
-        <when test="sortOrder == 'ASC'">ASC</when>
-        <otherwise>DESC</otherwise> 
-    </choose>
+        AND M.DEPARTMENT_ID = #{deptFilter}
+    </if>
+
+</select>
+
+<select id="selectEnrollmentListByCourse"
+        parameterType="hashmap"
+        resultType="map">
+
+    SELECT
+        E.ENROLLMENT_ID AS "enrollmentId",
+        M.NAME AS "name",
+        NVL(D.DEPARTMENT_NAME, '미지정') AS "deptName",
+        NVL(P.POSITION_NAME, '미지정') AS "positionName",
+        TO_CHAR(C.END_DATE, 'YYYY-MM-DD') AS "endDate",
+        CASE C.STATUS
+            WHEN 'W' THEN '예정'
+            WHEN 'Y' THEN '진행중'
+            WHEN 'N' THEN '종료'
+        END AS "status",
+        NVL(CP.CHAP_COMP_RATE, 0) AS "chapCompRate"
+
+    FROM ENROLLMENT E
+
+    JOIN MEMBER M
+        ON E.MEMBER_ID = M.MEMBER_ID
+
+    LEFT JOIN DEPARTMENT D
+        ON M.DEPARTMENT_ID = D.DEPARTMENT_ID
+
+    LEFT JOIN POSITION P
+        ON M.POSITION_ID = P.POSITION_ID
+
+    JOIN COURSE C
+        ON E.COURSE_ID = C.COURSE_ID
+
+    /* 중복 제거 */
+    LEFT JOIN (
+    SELECT
+        ENROLLMENT_ID,
+        ROUND(AVG(CHAP_COMP_RATE), 2) AS CHAP_COMP_RATE
+    FROM CHAPTER_PROGRESS
+    GROUP BY ENROLLMENT_ID
+) CP
+ON E.ENROLLMENT_ID = CP.ENROLLMENT_ID
+
+    WHERE E.COURSE_ID = #{courseId}
+
+    <if test="deptFilter != null and deptFilter != ''">
+        AND M.DEPARTMENT_ID = #{deptFilter}
+    </if>
+
+    <if test="keyword != null and keyword != ''">
+        AND M.NAME LIKE '%' || #{keyword} || '%'
+    </if>
+
+    ORDER BY
+
+<choose>
+    <when test="sortCol == 'DEPARTMENT_NAME'">
+        D.DEPARTMENT_NAME
+    </when>
+
+    <when test="sortCol == 'POSITION_ID'">
+        P.POSITION_ID
+    </when>
+
+    <when test="sortCol == 'NAME'">
+        M.NAME
+    </when>
+
+    <when test="sortCol == 'CHAP_COMP_RATE'">
+        CP.CHAP_COMP_RATE
+    </when>
+
+    <otherwise>
+        E.ENROLLMENT_ID
+    </otherwise>
+</choose>
+
+<choose>
+    <when test="sortOrder == 'ASC'">
+        ASC
+    </when>
+    <otherwise>
+        DESC
+    </otherwise>
+</choose>
+
 </select>
 
 <select id="selectDeptList" resultType="map">

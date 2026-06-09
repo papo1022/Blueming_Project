@@ -65,44 +65,38 @@
 </head>
 
 <body>
+    <c:url var="homeUrl" value="/"/>
+    <c:if test="${not empty loginUser}">
+        <c:choose>
+            <c:when test="${loginUser.role eq 'S'}">
+                <c:url var="homeUrl" value="/member/admin"/>
+            </c:when>
+            <c:when test="${loginUser.role eq 'R'}">
+                <c:url var="homeUrl" value="/member/hr"/>
+            </c:when>
+            <c:otherwise>
+                <c:url var="homeUrl" value="/member/employee"/>
+            </c:otherwise>
+        </c:choose>
+    </c:if>
 
 <!-- 메뉴바 -->
-	<c:choose>
+	<div class="nav-area" align="center">
+        <div class="menu"><a href="${homeUrl}">Home</a></div>
+	    <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
+	    <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
+	    <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
 
-    
-	    <c:when test="${loginUser.role eq 'S'}">
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	            <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-	        </div>
-	    </c:when>
-	
-	    
-	    <c:when test="${loginUser.role eq 'R'}">
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/memberlist'/>">memberlist</a></div>
-              <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
-	        </div>
-	    </c:when>
-	
-	
-	    <c:otherwise>
-	        <div class="nav-area" align="center">
-	            <div class="menu"><a href="<c:url value='/'/>">Home</a></div>
-	            <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	            <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-	            <div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	        </div>
-	    </c:otherwise>
-
-	</c:choose>
+	    <c:if test="${loginUser.role eq 'R'}">
+	        <div class="menu"><a href="<c:url value='/memberlist'/>">사원조회</a></div>
+	        <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
+	    </c:if>
+	</div>
 
 <!-- 사용자 정보 -->
 <div id="user-info">
+    <c:choose>
+        <c:when test="${not empty loginUser}">
 
     이름 : <b>${loginUser.name}</b>
 
@@ -142,8 +136,15 @@
 
     <a href="<c:url value='/member/myPage'/>">마이페이지</a>
     <a href="<c:url value='/member/logout'/>">로그아웃</a>
+	    </c:when>
+	
+	
+	    <c:otherwise>
+	        <a href="<c:url value='/member/logout'/>">되돌아가기</a>
+	    </c:otherwise>
 
-</div>
+	</c:choose>
+    </div>
 
 </body>
 </html>

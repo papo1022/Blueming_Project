@@ -3,6 +3,7 @@ package com.kh.blueming.course.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.assignment.model.service.AssignmentService;
@@ -45,6 +49,106 @@ public class CourseController {
 		return loginUser != null
 			&& course != null
 			&& ("S".equals(loginUser.getRole()) || loginUser.getMemberId() == course.getMemberId());
+	}
+
+	private List<Map<String, String>> parseTargetRules(String targetRulesJson, String legacyTargetType, String legacyTargetValue) {
+		if (targetRulesJson != null && !targetRulesJson.isBlank()) {
+			try {
+				ObjectMapper objectMapper = new ObjectMapper();
+				return objectMapper.readValue(targetRulesJson, new TypeReference<List<Map<String, String>>>() {});
+			} catch (Exception ignored) {
+				// Fall through to legacy form fields
+			}
+		}
+
+		ArrayList<Map<String, String>> legacyRules = new ArrayList<>();
+		Map<String, String> rule = new HashMap<>();
+		rule.put("targetType", legacyTargetType);
+		rule.put("targetValue", legacyTargetValue);
+		legacyRules.add(rule);
+		return legacyRules;
+	}
+
+	private String getRuleValueIgnoreCase(Map<String, Object> source, String... candidates) {
+		if (source == null || candidates == null) {
+			return null;
+		}
+		for (String key : candidates) {
+			if (key == null) {
+				continue;
+			}
+			for (Map.Entry<String, Object> entry : source.entrySet()) {
+				if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(key)) {
+					Object value = entry.getValue();
+					return value == null ? null : String.valueOf(value);
+				}
+			}
+		}
+		return null;
+	}
+
+	private ArrayList<Map<String, String>> normalizeTargetRulesForView(List<Map<String, Object>> rawRules) {
+		ArrayList<Map<String, String>> normalized = new ArrayList<>();
+		if (rawRules == null) {
+			return normalized;
+		}
+		for (Map<String, Object> raw : rawRules) {
+			String type = getRuleValueIgnoreCase(raw, "targetType", "target_type", "TARGETTYPE", "TARGET_TYPE");
+			String value = getRuleValueIgnoreCase(raw, "targetValue", "target_value", "TARGETVALUE", "TARGET_VALUE");
+			if (type == null || type.isBlank()) {
+				continue;
+			}
+			Map<String, String> rule = new HashMap<>();
+			rule.put("targetType", type);
+			rule.put("targetValue", value);
+			normalized.add(rule);
+		}
+		return normalized;
+	}
+
+	private Attachment buildThumbnailAttachment(MultipartFile thumbnail, String changedName, int memberId) {
+		if (thumbnail == null || changedName == null || changedName.isBlank()) {
+			return null;
+		}
+		String originalName = thumbnail.getOriginalFilename();
+		if (originalName == null || originalName.isBlank()) {
+			originalName = changedName;
+		}
+		String type = "";
+		int dotIndex = originalName.lastIndexOf('.');
+		if (dotIndex >= 0 && dotIndex < originalName.length() - 1) {
+			type = originalName.substring(dotIndex + 1);
+		}
+
+		Attachment attachment = new Attachment();
+		attachment.setOriginalName(originalName);
+		attachment.setChangedName(changedName);
+		attachment.setFilePath("resources/course-thumbnail/");
+		attachment.setFileSize((int) thumbnail.getSize());
+		attachment.setType(type);
+		attachment.setVideoDuration(null);
+		attachment.setMemberId(memberId);
+		attachment.setStatus("Y");
+		return attachment;
+	}
+
+	private void deletePhysicalFile(HttpSession session, Attachment attachment) {
+		if (attachment == null || attachment.getChangedName() == null || attachment.getChangedName().isBlank()) {
+			return;
+		}
+		String filePath = attachment.getFilePath();
+		if (filePath == null || filePath.isBlank()) {
+			return;
+		}
+		String normalizedPath = filePath.startsWith("/") ? filePath : "/" + filePath;
+		String realPath = session.getServletContext().getRealPath(normalizedPath);
+		if (realPath == null || realPath.isBlank()) {
+			return;
+		}
+		File file = new File(realPath, attachment.getChangedName());
+		if (file.exists()) {
+			file.delete();
+		}
 	}
     
     //리스트들을 띄우는 코드
@@ -99,7 +203,7 @@ public class CourseController {
                                               courseLimit,
                                               keyword,
                                               sort,
-						      memberId,
+						      				  memberId,
                                               departmentId,
                                               positionId,
 											  isAdmin,
@@ -156,30 +260,52 @@ public class CourseController {
     
     //코스 추가 페이지로 이동
     @GetMapping("addCourseView")
-    public String addForm() {
-    	return "course/courseAdd";
+    public ModelAndView addForm(ModelAndView mv) {
+    	mv.addObject("deptOptions", courseService.selectDepartmentOptions())
+    	  .addObject("positionOptions", courseService.selectPositionOptions())
+    	  .setViewName("course/courseAdd");
+    	return mv;
     }
     
     //코스를 데이터베이스에 추가하는 코드 (완료)
     @PostMapping("addCourse")
 	public String addCourse(Course c,
+						@RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+						@RequestParam(value = "targetRulesJson", required = false) String targetRulesJson,
 						@RequestParam(value = "targetType", defaultValue = "전체") String targetType,
 						@RequestParam(value = "targetValue", required = false) String targetValue,
 						Model model,
 						HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			model.addAttribute("errorMsg", "로그인이 필요합니다.");
+			return "common/errorPage";
+		}
+		c.setMemberId(loginUser.getMemberId());
     	
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
     	
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
+
+		Attachment thumbnailAttachment = null;
+		if (thumbnail != null && !thumbnail.isEmpty()) {
+			String changeName = FileRenamePolicy.saveFile(thumbnail, session, "resources/course-thumbnail/");
+			thumbnailAttachment = buildThumbnailAttachment(thumbnail, changeName, loginUser.getMemberId());
+		}
+
+		List<Map<String, String>> targetRules = parseTargetRules(targetRulesJson, targetType, targetValue);
     	
-		int result = courseService.addCourse(c, targetType, targetValue);
+		int result = courseService.addCourse(c, targetRules, thumbnailAttachment);
     	
     	if(result > 0) {
 			session.setAttribute("alertMsg", "강의 등록 완료");
 			return "redirect:/course/list";
 		} else {
+			if (thumbnailAttachment != null) {
+				deletePhysicalFile(session, thumbnailAttachment);
+			}
 			model.addAttribute("errorMsg", "등록에 실패했습니다.");
 			return "common/errorPage";
 		}
@@ -279,35 +405,73 @@ public class CourseController {
 			return mv;
 		}
 		
-		mv.addObject("c", c).setViewName("course/courseUpdate");
+		ArrayList<Map<String, String>> targetRules = normalizeTargetRulesForView(courseService.selectCourseTargetRules(courseId));
+
+		mv.addObject("c", c)
+		  .addObject("deptOptions", courseService.selectDepartmentOptions())
+		  .addObject("positionOptions", courseService.selectPositionOptions())
+		  .addObject("targetRules", targetRules)
+		  .setViewName("course/courseUpdate");
 		return mv;
 	}
     
 	//코스 수정하기
 	@PostMapping("updateCourse")
-    public String updateCourse(@RequestParam("courseId") int courseId, Course c, Model model, HttpSession session) {
+	public String updateCourse(Course c,
+						@RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+						@RequestParam(value = "targetRulesJson", required = false) String targetRulesJson,
+						@RequestParam(value = "targetType", defaultValue = "전체") String targetType,
+						@RequestParam(value = "targetValue", required = false) String targetValue,
+						Model model,
+						HttpSession session) {
     	
 		Member loginUser = (Member)session.getAttribute("loginUser");
-		Course originCourse = courseService.selectCourse(courseId);
-		if (!canManageCourse(loginUser, originCourse)) {
+		Course existingCourse = courseService.selectCourse(c.getCourseId());
+		if (existingCourse == null) {
+			model.addAttribute("errorMsg", "강의 정보를 찾을 수 없습니다.");
+			return "common/errorPage";
+		}
+		if (!canManageCourse(loginUser, existingCourse)) {
 			model.addAttribute("errorMsg", "강의를 수정할 권한이 없습니다.");
 			return "common/errorPage";
 		}
+
+		// 작성자 ID는 서버 기준으로 고정
+		c.setMemberId(existingCourse.getMemberId());
+		c.setFileId(existingCourse.getFileId());
 		
     	String replaceTitle = XssDefencePolicy.defence(c.getCourseTitle());
     	String replaceDescription = XssDefencePolicy.defence(c.getDescription());
     	
-	    	c.setCourseId(courseId);
-	    	c.setMemberId(originCourse.getMemberId());
+	    c.setCourseId(existingCourse.getCourseId());
     	c.setCourseTitle(replaceTitle);
     	c.setDescription(replaceDescription);
-    	
-    	int result = courseService.updateCourse(c);
+
+		Attachment oldThumbnailAttachment = null;
+		if (existingCourse.getFileId() > 0) {
+			oldThumbnailAttachment = courseService.selectAttachmentByFileId(existingCourse.getFileId());
+		}
+
+		Attachment newThumbnailAttachment = null;
+		if (thumbnail != null && !thumbnail.isEmpty()) {
+			String changeName = FileRenamePolicy.saveFile(thumbnail, session, "resources/course-thumbnail/");
+			newThumbnailAttachment = buildThumbnailAttachment(thumbnail, changeName, existingCourse.getMemberId());
+		}
+
+		List<Map<String, String>> targetRules = parseTargetRules(targetRulesJson, targetType, targetValue);
+
+		int result = courseService.updateCourse(c, targetRules, newThumbnailAttachment);
     	
     	if(result > 0) {
+			if (newThumbnailAttachment != null && oldThumbnailAttachment != null) {
+				deletePhysicalFile(session, oldThumbnailAttachment);
+			}
 			session.setAttribute("alertMsg", "강의 수정 완료");
 			return "redirect:/course/list";
 		} else {
+			if (newThumbnailAttachment != null) {
+				deletePhysicalFile(session, newThumbnailAttachment);
+			}
 			model.addAttribute("errorMsg", "등록에 실패했습니다.");
 			return "common/errorPage";
 		}
@@ -319,15 +483,36 @@ public class CourseController {
 		
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Course c = courseService.selectCourse(courseId);
+		ArrayList<Attachment> attachmentsToDelete = new ArrayList<>();
 		
 		if(!canManageCourse(loginUser, c)) {
 			model.addAttribute("errorMsg", "강의를 삭제할 권한이 없습니다.");
 			return "common/errorPage";
 		}
+
+		if (c != null && c.getFileId() > 0) {
+			Attachment thumbnailAttachment = courseService.selectAttachmentByFileId(c.getFileId());
+			if (thumbnailAttachment != null) {
+				attachmentsToDelete.add(thumbnailAttachment);
+			}
+		}
+
+		ArrayList<Chapter> chapterList = courseService.selectChapterList(courseId);
+		for (Chapter chapter : chapterList) {
+			if (chapter.getVideoFileId() > 0) {
+				Attachment videoAttachment = courseService.selectAttachmentByFileId(chapter.getVideoFileId());
+				if (videoAttachment != null) {
+					attachmentsToDelete.add(videoAttachment);
+				}
+			}
+		}
 		
 		int result = courseService.deleteCourse(courseId);
 		
 		if(result > 0) {
+			for (Attachment attachment : attachmentsToDelete) {
+				deletePhysicalFile(session, attachment);
+			}
 			session.setAttribute("alertMsg", "강의 삭제 완료");
 			return "redirect:/course/list";
 		} else {
@@ -396,7 +581,7 @@ public class CourseController {
 		Member loginUser = (Member)session.getAttribute("loginUser");
 		Chapter originCh = courseService.selectChapter(ch.getChapterId());
 		Course c = courseService.selectCourse(originCh.getCourseId());			
-		Attachment originAt = courseService.selectAttachment(originCh.getVideoFileId());
+		Attachment originAt = courseService.selectAttachmentByFileId(originCh.getVideoFileId());
 		
 		//전역변수
 		int result = 1;
@@ -552,18 +737,33 @@ public class CourseController {
 			return result;
 		}
 
+		// 진도는 단조 증가해야 하므로 기존 저장값보다 작은 요청은 무시(최댓값 유지)
+		ChapterProgress existing = courseService.selectChapterProgress(enrollmentId, chapterId);
+		if (existing != null) {
+			watchedSeconds = Math.max(watchedSeconds, existing.getWatchedSeconds());
+		}
+
 		double chapCompRate = (videoDuration > 0)
 				? Math.min(((double) watchedSeconds / videoDuration) * 100, 100.0)
 				: 0.0;
+		if (existing != null) {
+			chapCompRate = Math.max(chapCompRate, existing.getChapCompRate());
+		}
 		chapCompRate = Math.round(chapCompRate * 100.0) / 100.0;
 		String isCompleted = chapCompRate >= 90.0 ? "Y" : "N";
+		if (existing != null && "Y".equals(existing.getIsCompleted())) {
+			isCompleted = "Y";
+		}
 
 		int rows = courseService.upsertChapterProgress(enrollmentId, chapterId,
 				watchedSeconds, lastPositionSeconds, chapCompRate, isCompleted);
 
 		result.put("success", rows > 0);
+		result.put("watchedSeconds", watchedSeconds);
 		result.put("chapCompRate", chapCompRate);
 		result.put("isCompleted", isCompleted);
 		return result;
 	}
+	
+	/*************************************************/
 }

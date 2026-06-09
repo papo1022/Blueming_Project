@@ -304,6 +304,7 @@
 
         function appendCourseCards(list) {
             let resultStr = "";
+            const ctxPath = "${pageContext.request.contextPath}";
 
             for (let i = 0; i < list.length; i++) {
                 const course = list[i];
@@ -313,9 +314,13 @@
                 const endDate = formatDateOnlyKst(course.endDate);
                 const period = escapeHtml(startDate + " ~ " + endDate + " (" + (course.status || "") + ")");
                 const totalHours = escapeHtml(String(course.totalHours == null ? "" : course.totalHours));
+                const thumbnailPath = course.thumbnailUrl ? String(course.thumbnailUrl).replace(/^\/+/, "") : "";
+                const thumbStyle = thumbnailPath
+                    ? "background-image: url('" + ctxPath + "/" + thumbnailPath + "'); background-size: cover; background-position: center;"
+                    : "";
 
                 resultStr += "<div class='course-card' onclick=\"location.href='/blueming/course/detail?courseId=" + course.courseId + "'\">"
-                           + "<div class='course-thumb'></div>"
+                           + "<div class='course-thumb' style='" + thumbStyle + "'></div>"
                            + "<div class='course-meta'>"
                            + "<div class='course-line course-title'>" + title + "</div>"
                            + "<div class='course-line'>" + description + "</div>"

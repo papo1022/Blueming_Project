@@ -22,9 +22,7 @@ public class MemberListDao {
         int offset = (pi.getCurrentPage() - 1) * limit;
         RowBounds rowBounds = new RowBounds(offset, limit);
         
-        System.out.println("현재 페이지: " + pi.getCurrentPage());
-        System.out.println("계산된 Offset: " + offset); // 2페이지라면 10이 나와야 함
-        System.out.println("Limit: " + limit);
+      
         // 쿼리 호출 시 map을 전달
         return (ArrayList) sqlSession.selectList("memberlistMapper.selectMemberList", map, rowBounds);
     }

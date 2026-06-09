@@ -19,7 +19,7 @@
 </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer">
         <h2>사원 인사정보 관리</h2>
@@ -157,8 +157,31 @@ function pageMove(page) {
 
  // 상세 보기 버튼 클릭 시 실행할 함수
     // 추천 방식: 폼 전송 말고 URL 이동
-function goDetail(memberId) {
-    location.href = "${pageContext.request.contextPath}/memberlist/detail?memberId=" + memberId;
+// 사원 목록 페이지(memberListView.jsp) 내부의 상세 이동 함수 예시
+function goDetail(mId) {
+    let f = document.createElement("form");
+    f.method = "get"; // 컨트롤러가 @GetMapping("/detail")이므로 GET 방식 세팅
+    f.action = "${pageContext.request.contextPath}/memberlist/detail";
+
+    let params = {
+        "memberId" : mId,
+        "cpage" : "${pi.currentPage}", // 현재 목록의 페이지 번호
+        "condition" : "${condition}",
+        "keyword" : "${keyword}",
+        "sortColumn" : "${sortColumn}",
+        "sortOrder" : "${sortOrder}"
+    };
+
+    for(let key in params){
+        let input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key];
+        f.appendChild(input);
+    }
+
+    document.body.appendChild(f);
+    f.submit();
 }
 
 
