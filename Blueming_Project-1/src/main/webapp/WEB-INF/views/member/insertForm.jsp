@@ -14,12 +14,14 @@
     .btn-group { text-align: center; margin-top: 30px; }
     .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
     .btn-primary { background-color: #007bff; color: white; }
+
+}
 </style>
 </head>
 <body>
     <div class="insert-container">
         <h2>사원 추가</h2>
-        <form action="/blueming/memberlist/insert" method="post">
+        <form id="enrollForm" action="${pageContext.request.contextPath}/memberlist/insert" method="post">
             
             <div class="insert-row">
 			    <div class="insert-label">사원번호</div>
@@ -28,12 +30,16 @@
             
             <div class="insert-row">
                 <div class="insert-label">로그인ID</div>
-                <div class="insert-value"><input type="text" name="loginId" required></div>
+                <div class="insert-value"><input type="text" name="loginId" id="loginId"  required>
+                <span id="idMsg" style="color: red; font-size: 12px; display: none;"></span>
+                </div>
             </div>
             
             <div class="insert-row">
 			    <div class="insert-label">비밀번호</div>
-			    <div class="insert-value"><input type="password" name="loginPwd" required></div>
+			    <div class="insert-value"><input type="password" name="loginPwd" id="loginPwd"  required>
+			    <span id="pwdMsg" style="color: red; font-size: 12px; display: none;"></span>
+			    </div>
 			</div>
 			
 			<div class="insert-row">
@@ -48,7 +54,16 @@
 			
 			<div class="insert-row">
 			    <div class="insert-label">전화번호</div>
-			    <div class="insert-value"><input type="tel" name="phone" placeholder="010-1234-5678" required></div>
+			    <div class="insert-value">
+			        <input type="tel" 
+			               name="phone" 
+			               id="phoneInput" 
+			               placeholder="010-1234-5678" 
+			               maxlength="13" 
+			               pattern="010-[0-9]{3,4}-[0-9]{4}" 
+			               title="010-XXXX-XXXX 형식의 13자리(하이픈 포함)로 입력해주세요." 
+			               required>
+			    </div>
 			</div>
 			
 			<div class="insert-row">
@@ -56,16 +71,16 @@
 			    <div class="insert-value"><input type="text" name="address" required></div>
 			</div>
 			
-            
             <div class="insert-row">
                 <div class="insert-label">부서</div>
                 <div class="insert-value">
-                    <select name="deptId">
-                        <option value="D01">인사팀</option>
-                        <option value="D02">개발팀</option>
-                        <option value="D03">디자인팀</option>
-                        <option value="D04">영업팀</option>
-                        <option value="D05">마케팅팀</option>
+                    <select name="deptId" id="deptSelect" required>
+                        <option value="">-- 부서 선택 --</option>
+                        <c:forEach var="dept" items="${deptList}">
+                            <option value="<c:out value='${dept.deptId}' />">
+                                <c:out value="${dept.deptName}" />
+                            </option>
+                        </c:forEach>
                     </select>
                 </div>
             </div>
@@ -73,11 +88,13 @@
             <div class="insert-row">
                 <div class="insert-label">직급</div>
                 <div class="insert-value">
-                    <select name="positionId">
-                        <option value="P01">사원</option>
-                        <option value="P02">주임</option>
-                        <option value="P03">대리</option>
-                        <option value="P04">과장</option>
+                    <select name="positionId" required>
+                        <option value="">-- 직급 선택 --</option>
+                        <c:forEach var="pos" items="${posList}">
+                            <option value="<c:out value='${pos.positionId}' />">
+                                <c:out value="${pos.positionName}" />
+                            </option>
+                        </c:forEach>
                     </select>
                 </div>
             </div>
@@ -85,10 +102,10 @@
             <div class="insert-row">
                 <div class="insert-label">권한코드</div>
                 <div class="insert-value">
-                    <select name="role">
+                    <select name="role" id="role" required>
                         <option value="N">사원</option>
-                        <option value="S">관리자</option>
                         <option value="R">인사</option>
+                        <option value="S">강사</option>
                     </select>
                 </div>
             </div>
@@ -98,16 +115,188 @@
                 <div class="insert-value"><input type="date" name="hireDate" required></div>
             </div>
 
-            
-                <div class="btn-group">
-             
-			        <button type="submit" class="btn btn-primary">등록</button>
-			        <button type="button" class="btn" onclick="history.back()">취소</button>
-   			    </div>
-
-			
-     	
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="submitEnrollForm();">등록</button>
+		        <button type="button" class="btn" onclick="history.back()">취소</button>
+   		    </div>
         </form>
     </div>
+
+ <script>
+    // 입력 제한 함수
+    function handleLengthLimit(inputEl, msgEl, limit, isIdField) {
+
+    let val = inputEl.value;
+
+    // 아이디는 영문/숫자만
+    if (isIdField) {
+
+        const filtered = val.replace(/[^a-zA-Z0-9]/g, '');
+
+        if (val !== filtered) {
+            msgEl.textContent = "아이디는 영문과 숫자만 입력 가능합니다.";
+            msgEl.style.display = "block";
+
+            inputEl.value = filtered;
+            return;
+        }
+    }
+
+    if (val.length >= limit) {
+        msgEl.textContent = "최대 20자까지 입력 가능합니다.";
+        msgEl.style.display = "block";
+
+        if (val.length > limit) {
+            inputEl.value = val.substring(0, limit);
+        }
+    } else {
+        msgEl.style.display = "none";
+    }
+}
+
+    // 등록 버튼 클릭
+    function submitEnrollForm() {
+
+        const form = document.getElementById("enrollForm");
+        const loginId = document.getElementById("loginId");
+        const loginPwd = document.getElementById("loginPwd");
+        const phoneInput = document.getElementById("phoneInput");
+
+        // 아이디 영문/숫자 체크
+        if (!/^[a-zA-Z0-9]+$/.test(loginId.value)) {
+            alert("아이디는 영문과 숫자만 입력 가능합니다.");
+            loginId.focus();
+            return;
+        }
+
+        // 아이디 길이 체크
+        if (loginId.value.length > 20) {
+            alert("아이디는 최대 20자까지 가능합니다.");
+            loginId.focus();
+            return;
+        }
+
+        // 비밀번호 길이 체크
+        if (loginPwd.value.length > 20) {
+            alert("비밀번호는 최대 20자까지 가능합니다.");
+            loginPwd.focus();
+            return;
+        }
+
+        // 전화번호 길이 체크
+        if (phoneInput.value.length !== 13) {
+            alert("연락처는 010-1234-5678 형식으로 입력해주세요.");
+            phoneInput.focus();
+            return;
+        }
+
+        if (form.checkValidity()) {
+            form.submit();
+        } else {
+            form.reportValidity();
+        }
+     // XSS 제거
+        document.querySelectorAll("input[type='text'], input[type='password'], input[type='email']")
+            .forEach(function(el) {
+                el.value = removeXss(el.value);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const loginIdInput = document.getElementById("loginId");
+        const loginPwdInput = document.getElementById("loginPwd");
+        const idMsg = document.getElementById("idMsg");
+        const pwdMsg = document.getElementById("pwdMsg");
+        const deptSelect = document.getElementById("deptSelect");
+        const roleSelect = document.getElementById("role");
+        const phoneInput = document.getElementById("phoneInput");
+
+        // 아이디 입력 제한
+        if (loginIdInput && idMsg) {
+            loginIdInput.addEventListener("input", function() {
+                handleLengthLimit(loginIdInput, idMsg, 20, true);
+            });
+        }
+
+        // 비밀번호 입력 제한
+        if (loginPwdInput && pwdMsg) {
+            loginPwdInput.addEventListener("input", function() {
+                handleLengthLimit(loginPwdInput, pwdMsg, 20, false);
+            });
+        }
+
+        // 부서 선택 시 권한 자동 변경
+        if (deptSelect && roleSelect) {
+            deptSelect.addEventListener("change", function() {
+
+                if (this.value === "D01") {
+                    roleSelect.value = "R";
+                } else if (this.value !== "") {
+                    roleSelect.value = "N";
+                }
+
+            });
+        }
+
+        // 전화번호 자동 하이픈
+        if (phoneInput) {
+
+            phoneInput.addEventListener("input", function() {
+
+                let val = this.value.replace(/[^0-9]/g, '');
+
+                if (val.length < 4) {
+                    this.value = val;
+                } else if (val.length < 8) {
+                    this.value =
+                        val.substring(0, 3) +
+                        '-' +
+                        val.substring(3);
+                } else {
+                    this.value =
+                        val.substring(0, 3) +
+                        '-' +
+                        val.substring(3, 7) +
+                        '-' +
+                        val.substring(7, 11);
+                }
+
+            });
+
+        }
+        const textInputs = document.querySelectorAll(
+        	    "#loginId, #loginPwd, input[name='name'], input[name='email'], input[name='address']"
+        	);
+
+        	textInputs.forEach(function(input) {
+
+        	    input.addEventListener("input", function() {
+
+        	        const cleaned = removeXss(this.value);
+
+        	        if (this.value !== cleaned) {
+        	            alert("특수문자는 입력할 수 없습니다.");
+        	            this.value = cleaned;
+        	        }
+
+        	    });
+
+        	});
+
+    });
+    
+    
+    function removeXss(value) {
+        return value
+            .replace(/</g, "")
+            .replace(/>/g, "")
+            .replace(/"/g, "")
+            .replace(/'/g, "")
+            .replace(/&/g, "")
+            .replace(/\(/g, "")
+            .replace(/\)/g, "");
+    }
+</script>
 </body>
 </html>

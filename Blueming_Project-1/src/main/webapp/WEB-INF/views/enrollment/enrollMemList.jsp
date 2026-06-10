@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,12 +25,12 @@
     <div class="outer">
         <h2>수강 정보 관리</h2>
         
-        <form id="searchForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
+        <form id="searchForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="get">
             <select name="condition" id="searchCondition">
-                <option value="course">강의명</option>
+                <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
             </select>
         
-            <input type="text" name="keyword" value="${keyword}" id="searchKeyword">
+            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword">
         
             <button type="submit">검색</button>
             <button type="button" onclick="clearSearchInput();">초기화</button>
@@ -52,16 +53,16 @@
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="item" items="${list}">
-                                <tr onclick="goDetail('${item.courseId}')">
-                                    <td>${item.courseTitle}</td>
-                                    <td>${item.startDate}</td>
-                                    <td>${item.endDate}</td>
+                                <tr onclick="goDetail('<c:out value="${item.courseId}"/>')">
+                                    <td><c:out value="${item.courseTitle}" /></td>
+                                    <td><c:out value="${item.startDate}" /></td>
+                                    <td><c:out value="${item.endDate}" /></td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${item.status == 'W'}"><span style="color: blue;">예정</span></c:when>
                                             <c:when test="${item.status == 'Y'}"><span style="color: green; font-weight: bold;">진행중</span></c:when>
                                             <c:when test="${item.status == 'N'}"><span style="color: gray;">종료</span></c:when>
-                                            <c:otherwise>${item.status}</c:otherwise>
+                                            <c:otherwise><c:out value="${item.status}" /></c:otherwise>
                                         </c:choose>
                                     </td>
                                 </tr>
@@ -108,11 +109,11 @@
         </div>
     </div>
 
-    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="post">
-        <input type="hidden" name="condition" value="${condition}">
-        <input type="hidden" name="keyword" value="${keyword}">
-        <input type="hidden" name="sortCol" id="sortCol" value="${sortCol}">
-        <input type="hidden" name="sortOrder" id="sortOrder" value="${sortOrder}">
+    <form id="pagingForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="get">
+        <input type="hidden" name="condition" value="<c:out value='${condition}' />">
+        <input type="hidden" name="keyword" value="<c:out value='${keyword}' />">
+        <input type="hidden" name="sortCol" id="sortCol" value="<c:out value='${sortCol}' />">
+        <input type="hidden" name="sortOrder" id="sortOrder" value="<c:out value='${sortOrder}' />">
         <input type="hidden" name="cpage" id="cpage" value="${pi.currentPage}">
     </form>
 
@@ -135,56 +136,47 @@
         document.getElementById("pagingForm").submit();
     }
 
+    // 🌟 [교정 완료] 불필요하게 쪼개져 덩그러니 남겨져 있던 잔여 유령 스크립트를 완벽하게 삭제했습니다.
     function goDetail(cId) {
         let f = document.createElement("form");
-        f.method = "post";
-        f.action = "${pageContext.request.contextPath}/enrollment/enrollMemDetail";
-
+        f.setAttribute("method", "get"); 
+        f.setAttribute("action", "${pageContext.request.contextPath}/enrollment/enrollMemDetail");
+        
         let params = {
             "courseId" : cId,
-            "cpage" : "${pi.currentPage}", // 목록의 원래 페이지 번호
-            "condition" : "${condition}",
-            "keyword" : "${keyword}",
-            
-            // ❌ [기존 폼에 있던 것] "sortCol" : "${sortCol}" ◀ 이걸 그대로 보내면 상세 정렬이 목록 정렬로 덮어씌워집니다!
-            // 🌟 [수정] 목록에서 쓰던 정렬 컬럼 정보는 이름을 바꾸어 안전하게 대피시킵니다.
-            "listSortCol" : "${sortCol}",   
-            "listSortOrder" : "${sortOrder}"
-            
-            // 여기에 "sortCol": "DEPARTMENT_NAME"을 직접 적어서 보내거나, 
-            // 아예 안 보내야 컨트롤러의 defaultValue="DEPARTMENT_NAME"이 깨끗하게 작동합니다.
+            "cpage" : "${pi.currentPage}", 
+            "condition" : "<c:out value='${condition}' />",
+            "keyword" : "<c:out value='${keyword}' />",
+            "listSortCol" : "<c:out value='${sortCol}' />",   
+            "listSortOrder" : "<c:out value='${sortOrder}' />"
         };
-
-        for(let key in params){
-            let input = document.createElement("input");
-            input.type = "hidden";
-            input.name = key;
-            input.value = params[key];
-            f.appendChild(input);
+        
+        for (let key in params) {
+            let val = params[key] ? params[key].trim() : "";
+            if (val !== undefined && val !== null && val !== 'null' && val !== '') {
+                let i = document.createElement("input");
+                i.setAttribute("type", "hidden");
+                i.setAttribute("name", key);
+                i.setAttribute("value", val);
+                f.appendChild(i);
+            }
         }
-
         document.body.appendChild(f);
         f.submit();
     }
   
-    // 🌟 [완성] 현재 페이지 번호는 완벽하게 사수하면서 기존 좀비 검색어만 싹 청소하여 새로고침하는 로직입니다.
     function clearSearchInput() {
-        // 1. 화면의 검색창 비우기
         document.getElementById("searchKeyword").value = "";
         document.getElementById("searchCondition").selectedIndex = 0;
         
-        // 2. 폼 객체를 정확하게 찾아옵니다. (id 지정 완료)
         let f = document.getElementById("searchForm");
         
-        // 3. 현재 보고 있는 페이지 번호(cpage)를 빈 검색어와 함께 세트로 제출하기 위해 히든 태그로 심어줍니다.
         let pageInput = document.createElement("input");
         pageInput.type = "hidden";
         pageInput.name = "cpage";
         pageInput.value = "${pi.currentPage}"; 
         f.appendChild(pageInput);
         
-        // 4. 깨끗하게 비워진 상태로 서버에 재요청! 
-        // 서버 측 페이징 정보(pi)와 하단 페이징 히든 바구니들이 전부 검색어 없는 상태로 리프레시됩니다.
         f.submit(); 
     }
     </script>
