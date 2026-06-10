@@ -172,5 +172,61 @@ public class MemberListController {
         return "redirect:/memberlist";
     }
     
+    
+    /**
+     * 5. 사원 등록 화면 이동
+     * 부서 목록과 직급 목록을 조회해서 등록 폼(JSP)으로 넘겨줍니다.
+     */
+    @GetMapping("/insertForm")
+    public ModelAndView enrollForm(HttpSession session, ModelAndView mv) {
+        // 1. 권한 체크 (기존에 만드신 공통 권한 체크 활용)
+        if (isNotAuthorized(session)) {
+            mv.setViewName("redirect:/");
+            return mv;
+        }
+
+        // 2. 등록 화면(Select 내 내보낼 옵션)에 필요한 부서/직급 리스트 조회 후 바구니에 담기
+        mv.addObject("deptList", memlistService.selectDeptList());
+        mv.addObject("posList", memlistService.selectPosList());
+        
+        // 3. 이동할 JSP 경로 지정 (memberListEnrollForm.jsp)
+        mv.setViewName("member/insertForm");
+        
+        return mv;
+    }
+
+    /**
+     * 6. 사원 등록 실행 (DB Insert)
+     * XML 구문의 #{loginId}, #{loginPwd}, #{name} 등이 MemberList 객체 m에 자동 매핑됩니다.
+     */
+    @PostMapping("/insert")
+    public String insertMember(MemberList m, HttpSession session, RedirectAttributes ra) {
+        // 1. 권한 체크
+        if (isNotAuthorized(session)) {
+            return "redirect:/";
+        }
+
+        // 2. 서비스 호출하여 DB에 사원 정보 삽입
+        int result = memlistService.insertMember(m);
+        
+        // 3. insert 성공(1 이상 리턴) 여부에 따른 알림창 메시지 세팅
+        if (result > 0) {
+            ra.addFlashAttribute("alertMsg", "새로운 사원이 성공적으로 등록되었습니다.");
+        } else {
+            ra.addFlashAttribute("alertMsg", "사원 등록에 실패했습니다.");
+        }
+        
+        // 4. 등록이 끝나면 깔끔하게 사원 목록 페이지로 리다이렉트 이동
+        return "redirect:/memberlist";
+    }
+    
+    private String cleanXss(String value) {
+        if(value == null) return null;
+
+        return value.replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll("\"", "&quot;")
+                    .replaceAll("'", "&#x27;");
+    }
  
 }

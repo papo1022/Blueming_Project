@@ -132,7 +132,7 @@
   <update id="updateMember" parameterType="memberlist">
     UPDATE MEMBER
        SET NAME = #{name}, EMAIL = #{email}, PHONE = #{phone}, ADDRESS = #{address}, 
-           DEPARTMENT_ID = #{deptId}, POSITION_ID = #{positionId}, HIRE_DATE = #{hireDate}, 
+           DEPARTMENT_ID = #{deptId}, POSITION_ID = #{positionId}, ROLE = #{role},HIRE_DATE = #{hireDate}, 
            STATUS = #{status}, LEAVE_START_DATE = #{leaveStartDate, jdbcType=NUMERIC}, 
            LEAVE_END_DATE = #{leaveEndDate, jdbcType=NUMERIC}, RETIRE_DATE = #{retireDate}
      WHERE MEMBER_ID = #{memberId}

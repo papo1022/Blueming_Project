@@ -29,7 +29,7 @@ public class Reply {
     // 🌟 [화면 출력용 추가 필드] SQL 조인(JOIN)으로 가져올 작성자 정보
     private String name;          // 작성자 이름 (MEMBER 테이블 조인)
     private String deptName;      // 작성자 부서명 (DEPARTMENT 테이블 조인)
-    private String originName;    // 첨부파일 원본명 (ATTACHMENT 테이블 조인 시 사용)
+    private String originalName;    // 첨부파일 원본명 (ATTACHMENT 테이블 조인 시 사용)
    
     private String positionName;
 

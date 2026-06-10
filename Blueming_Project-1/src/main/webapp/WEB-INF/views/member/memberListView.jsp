@@ -41,6 +41,12 @@
             </form>
         </div>
 
+        <div style="width: 100%; max-width: 1000px; display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <button type="button" class="btn btn-success" onclick="goEnrollForm();" style="font-weight: bold;">
+                + 사원 추가
+            </button>
+        </div>
+
         <div class="table-container">
             <table class="table table-bordered table-sm">
                 <thead>
@@ -62,9 +68,9 @@
                             <c:forEach var="member" items="${requestScope.list}">
                                 <tr align="center" onclick='goDetail("${member.memberId}")'>
                                     <td>${member.memberId}</td>
-                                    <td>${member.deptName}</td>
-                                    <td>${member.positionName}</td>
-                                    <td>${member.name}</td>
+                                    <td><c:out value="${member.deptName}" /></td>
+                                    <td><c:out value="${member.positionName}" /></td>
+                                    <td><c:out value="${member.name}" /></td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${member.status == 'Y'}"><span style="color: green; font-weight: bold;">재직</span></c:when>
@@ -107,65 +113,44 @@
         </div>
     </div>
 		
-   
-
-	<form id="actionForm" action="${pageContext.request.contextPath}/memberlist" method="get" style="display:none;">
-    <input type="hidden" name="cpage" id="cpage">
-    <input type="hidden" name="sortColumn" id="sortColumn" value="${requestScope.sortColumn}">
-    <input type="hidden" name="sortOrder" id="sortOrder" value="${requestScope.sortOrder}">
-    
-    <input type="hidden" name="condition" value="${requestScope.condition}">
-    <input type="hidden" name="keyword" value="${requestScope.keyword}">
-</form>
+    <form id="actionForm" action="${pageContext.request.contextPath}/memberlist" method="get" style="display:none;">
+        <input type="hidden" name="cpage" id="cpage">
+        <input type="hidden" name="sortColumn" id="sortColumn" value="${requestScope.sortColumn}">
+        <input type="hidden" name="sortOrder" id="sortOrder" value="${requestScope.sortOrder}">
+        <input type="hidden" name="condition" value="${requestScope.condition}">
+        <input type="hidden" name="keyword" value="${requestScope.keyword}">
+    </form>
 
 <script>
-//JSP 하단의 스크립트 수정
 function clickSort(columnName) {
-    // 폼 객체 가져오기
     let form = document.getElementById('actionForm');
-    
-    // 정렬값 갱신
     document.getElementById('sortColumn').value = columnName;
     
-    // 기존 순서 확인
     let currentOrder = document.getElementById('sortOrder').value;
     document.getElementById('sortOrder').value = (currentOrder === 'ASC') ? 'DESC' : 'ASC';
     
-    // 페이지를 1로 초기화하여 검색 결과를 처음부터 보여줌
     document.getElementById('cpage').value = 1;
-    
     form.submit();
 }
 
 function pageMove(page) {
-    // 폼 객체 확인
     let actionForm = document.getElementById('actionForm');
     if (!actionForm) {
         console.error("actionForm을 찾을 수 없습니다!");
         return;
     }
-    
-    // 값 세팅
     document.getElementById('cpage').value = page;
-    
-    // 로그 확인
-    console.log("제출할 폼의 cpage 값: " + document.getElementById('cpage').value);
-    
-    // 폼 제출 (강제)
     actionForm.submit();
 }
 
- // 상세 보기 버튼 클릭 시 실행할 함수
-    // 추천 방식: 폼 전송 말고 URL 이동
-// 사원 목록 페이지(memberListView.jsp) 내부의 상세 이동 함수 예시
 function goDetail(mId) {
     let f = document.createElement("form");
-    f.method = "get"; // 컨트롤러가 @GetMapping("/detail")이므로 GET 방식 세팅
+    f.method = "get";
     f.action = "${pageContext.request.contextPath}/memberlist/detail";
 
     let params = {
         "memberId" : mId,
-        "cpage" : "${pi.currentPage}", // 현재 목록의 페이지 번호
+        "cpage" : "${pi.currentPage}",
         "condition" : "${condition}",
         "keyword" : "${keyword}",
         "sortColumn" : "${sortColumn}",
@@ -184,10 +169,13 @@ function goDetail(mId) {
     f.submit();
 }
 
-
 function resetSearch() {
-    // 검색 폼의 action URL로 이동하되, 파라미터 없이 보냄
     location.href = "${pageContext.request.contextPath}/memberlist";
+}
+
+function goEnrollForm() {
+    // 🌟 404 에러를 유발하던 insertForm 대신, 컨트롤러 맵핑 경로인 enrollForm으로 정확히 변경!
+    location.href = "${pageContext.request.contextPath}/memberlist/insertForm";
 }
 </script>
 </body>

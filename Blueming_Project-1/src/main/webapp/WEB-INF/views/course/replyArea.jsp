@@ -49,7 +49,7 @@
     function selectReplyList() {
         $.ajax({
             url: "${pageContext.request.contextPath}/reply/list",
-            type: "get",
+            type: "post",
             data: { chapterId: currentChapterId },
             success: function(list) {
                 $("#replyCount").text(list.length);
@@ -109,16 +109,27 @@
         });
     }
 
-    // 2. 부모 댓글 등록
+ // 2. 부모 댓글 등록
     function addMainReply() {
         let content = $("#mainReplyContent").val();
         let isPrivate = $("#mainIsPrivate").is(":checked") ? "Y" : "N";
-        if(content.trim().length === 0) { alert("내용을 입력해주세요."); return; }
+        
+        // 💡 로그로 확인!
+        console.log("보낼 내용 확인:", content); 
+
+        if(!content || content.trim().length === 0) { 
+            alert("내용을 입력해주세요."); 
+            return; 
+        }
 
         $.ajax({
             url: "${pageContext.request.contextPath}/reply/insert",
             type: "post",
-            data: { chapterId: currentChapterId, content: content, isPrivate: isPrivate },
+            data: { 
+                chapterId: currentChapterId, 
+                content: content,      // 🌟 여기에 값이 들어가는지 확인
+                isPrivate: isPrivate 
+            },
             success: function(result) {
                 if(result === "SUCCESS") {
                     $("#mainReplyContent").val("");
@@ -147,7 +158,8 @@
         });
     }
 
-    // 4. 댓글 삭제
+
+    // 4. 댓글 삭제 (문법 오류 수정 완료)
     function deleteReply(replyId) {
         if(confirm("정말 삭제하시겠습니까?")) {
             $.ajax({
@@ -155,13 +167,16 @@
                 type: "post",
                 data: { replyId: replyId },
                 success: function(result) {
-                    if(result === "SUCCESS") { selectReplyList(); }
+                    if(result === "SUCCESS" || result > 0 || result == "1") { 
+                        selectReplyList(); 
+                    } else {
+                        alert("댓글 삭제 실패");
+                    }
+                }, // <--- success 닫는 중괄호와 콤마가 누락되었던 곳입니다.
+                error: function(xhr, status, error) {
+                    alert("Ajax 통신 에러 발생! 에러코드: " + xhr.status);
                 }
-            });
-        }
-        error: function(xhr, status, error) {
-            // 통신 자체가 실패했을 때 (404 주소 오류 또는 500 서버 터짐 에러)
-            alert("Ajax 통신 에러 발생! 시스템 콘솔을 확인하세요. 에러코드: " + xhr.status);
-        }
-    }
+            }); // <--- ajax 끝
+        } // <--- confirm 끝
+    } // <--- function 끝
 </script>

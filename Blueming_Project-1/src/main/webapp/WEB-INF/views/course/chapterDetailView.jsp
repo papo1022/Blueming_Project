@@ -226,6 +226,22 @@
         font-size: 13px;
         font-weight: bold;
     }
+    
+    /* 댓글 영역 강제 노출 (기존 꼬인 display:none 무력화) */
+#replyList, 
+#replyList * {
+    display: revert !important;
+}
+
+#replyList .card {
+    display: block !important;
+}
+
+#replyList .d-flex {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 </style>
 </head>
 <body>
@@ -464,12 +480,33 @@
                 </div>
             </div>
         </div>
+        
+        
+        <br><br><br><br>
+        
+       <br><br>
+       <h2 align="center">댓글</h2>
+       <input type="hidden" id="chapterId" value="${chapter.chapterId}">
 
-        <h2 align="center">댓글</h2>
+       <div id="replyList" style="max-width: 800px; margin: 0 auto; margin-bottom: 20px;"></div>
 
-        <input type="hidden" id="chapterId" value="${chapter.chapterId}">
+       <div style="max-width: 800px; margin: 0 auto;">
+           <div class="input-group" style="display: flex; align-items: stretch; height: 45px;">
+               <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력해주세요..." style="border-radius: 6px 0 0 6px;">
 
-        <div id="replyList"></div>
+               <input type="file" id="replyFile" style="display: none;" onchange="showFileName(this)">
+
+               <button type="button" class="btn btn-outline-secondary" onclick="$('#replyFile').click();">파일 첨부</button>
+
+               <button type="button" id="insertReplyBtn" class="btn btn-primary" style="border-radius: 0 6px 6px 0; padding: 0 20px;">등록</button>
+           </div>
+
+           <div id="fileInfoArea" style="margin-top: 8px; padding: 5px 10px; background-color: #f8f9fa; border-radius: 4px; display: none; align-items: center; justify-content: space-between; border: 1px solid #eee;">
+               <span id="fileName" style="font-size: 13px; color: #495057;">선택된 파일 없음</span>
+               <button type="button" class="btn btn-sm btn-link text-danger" onclick="clearFile()" style="padding: 0; font-size: 12px;">삭제</button>
+           </div>
+        </div>
+        <br><br>  
 
         <div style="margin-top:20px;">
             <textarea id="replyContent" class="form-control" rows="3" placeholder="댓글을 입력해주세요." maxlength="333"></textarea>
@@ -563,7 +600,150 @@
                         
 
     <script>
+ // 1. 파일 선택 시 이름 표시 (전역 함수 - 스크립트 최상단 배치)
+    function showFileName(input) {
+        if (input.files && input.files[0]) {
+            $("#fileName").text(input.files[0].name);
+            $("#fileInfoArea").css("display", "flex");
+        }
+    }
 
+    // 2. 파일 삭제 (초기화)
+    function clearFile() {
+        $("#replyFile").val("");
+        $("#fileName").text("선택된 파일 없음");
+        $("#fileInfoArea").hide();
+    }
+
+    // 3. 페이지 로드 시 단 1회만 호출
+    $(function(){
+        loadReplyList();
+        
+
+
+        // 등록 버튼 이벤트 등록 (중복 실행 방지)
+        $("#insertReplyBtn").off("click").on("click", function(){
+            const content = $("#replyContent").val();
+            const chapterId = $("#chapterId").val();
+            const file = $("#replyFile")[0].files[0]; 
+
+            if(!content.trim() && !file) {
+                alert("댓글 내용이나 파일을 선택해주세요.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("chapterId", chapterId);
+            formData.append("content", content);
+            if(file) formData.append("uploadFile", file);
+
+            $.ajax({
+                url : "${pageContext.request.contextPath}/reply/insert",
+                type : "post",
+                data : formData,
+                processData: false, 
+                contentType: false, 
+                success : function(result){
+                    if(result === "SUCCESS"){
+                        $("#replyContent").val("");
+                        clearFile(); 
+                        loadReplyList();
+                    } else {
+                        alert("등록 실패");
+                    }
+                },
+                error: function() { alert("서버 통신 오류"); }
+            });
+        });
+    });
+    
+    // 4. 댓글 목록 조회
+    function loadReplyList(){
+        $.ajax({
+            url : "${pageContext.request.contextPath}/reply/list",
+            type : "post",
+            data : { chapterId : $("#chapterId").val() },
+            success : function(list){
+            	console.log("서버에서 받은 댓글 리스트:", list);
+                let str = "";
+                const loginMemberId = "${sessionScope.loginUser.memberId}"; 
+                const loginUserRole = "${sessionScope.loginUser.role}"; 
+
+                for(let i=0; i<list.length; i++){
+                    str += "<div class='card mb-2 reply-row' data-id='" + list[i].replyId + "'>";
+                    str += "  <div class='card-body'>";
+                    str += "    <b>" + list[i].name + "</b> (" + (list[i].deptName || '') + " " + (list[i].positionName || '') + ")<br>";
+                 // loadReplyList 함수 내 for문 내부
+                    str += "<p class='reply-content' style='margin-top:8px;'>" + list[i].content + "</p>";
+
+                    // 🌟 파일명이 넘어왔다면 화면에 표시
+                    if(list[i].originalName) {
+                        str += "<div style='margin-top:5px; font-size:12px; color:#007bff;'>"
+                             + "  <i class='fa fa-paperclip'></i> 📎 " + list[i].originalName
+                             + "</div>";
+                    }
+                    str += "    <textarea class='form-control edit-content' rows='2' style='display:none; margin-top:8px;'>" + list[i].content + "</textarea>";
+                    str += "    <div style='display:flex; justify-content:space-between; align-items:center;'>";
+                    str += "      <small class='text-muted'>" + list[i].createdDate + "</small>";
+                    str += "      <div class='reply-btn-area'>";
+                    
+                    if(loginMemberId == list[i].memberId) {
+                        str += "<button type='button' class='btn btn-sm btn-outline-warning btn-edit' onclick='showEditForm(this)'>수정</button> ";
+                        str += "<button type='button' class='btn btn-sm btn-outline-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>삭제</button> ";
+                        str += "<button type='button' class='btn btn-sm btn-success btn-save' style='display:none;' onclick='updateReply(this, " + list[i].replyId + ")'>저장</button> ";
+                        str += "<button type='button' class='btn btn-sm btn-secondary btn-cancel' style='display:none;' onclick='cancelEdit(this)'>취소</button>";
+                    } else if(loginUserRole == 'S') {
+                        str += "<button type='button' class='btn btn-sm btn-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>관리자 삭제</button>";
+                    }
+                    str += "      </div>";
+                    str += "    </div>";
+                    str += "  </div>";
+                    str += "</div>";
+                }
+                $("#replyList").html(str);
+            }
+        });
+    }
+
+    // 5. 수정/삭제/취소 기능 함수들
+    function showEditForm(btn) {
+        const row = $(btn).closest('.reply-row');
+        row.find('.reply-content, .btn-edit, .btn-delete').hide();
+        row.find('.edit-content, .btn-save, .btn-cancel').show();
+    }
+
+    function cancelEdit(btn) {
+        const row = $(btn).closest('.reply-row');
+        row.find('.reply-content, .btn-edit, .btn-delete').show();
+        row.find('.edit-content, .btn-save, .btn-cancel').hide();
+        row.find('.edit-content').val(row.find('.reply-content').text());
+    }
+
+    function updateReply(btn, replyId) {
+        const row = $(btn).closest('.reply-row');
+        $.ajax({
+            url: "${pageContext.request.contextPath}/reply/update",
+            type: "post",
+            data: { replyId: replyId, content: row.find('.edit-content').val() },
+            success: function(res) { if(res=="SUCCESS" || res>0) loadReplyList(); else alert("수정 실패"); }
+        });
+    }
+
+    function deleteReply(replyId) {
+        if(confirm("삭제하시겠습니까?")) {
+            $.ajax({
+                url: "${pageContext.request.contextPath}/reply/delete",
+                type: "post",
+                data: { replyId: replyId },
+                success: function(res) { if(res=="SUCCESS" || res>0) loadReplyList(); else alert("삭제 실패"); }
+            });
+        }
+    }
+    
+    
+    
+    
+    
         $("#PostBtn").click(function() {
             $("#DeptBtn").removeClass("btn-primary").addClass("btn-secondary");
             $(this).removeClass("btn-secondary").addClass("btn-primary");

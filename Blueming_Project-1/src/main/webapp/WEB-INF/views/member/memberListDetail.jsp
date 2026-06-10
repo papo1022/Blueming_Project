@@ -22,83 +22,117 @@
 <body>
     <jsp:include page="../common/menubar.jsp"/>
 
-    <div class="detail-container">
-        <h2>사원 상세정보</h2>
-        
-        <c:choose>
-            <c:when test="${empty member}">
-                <p align="center">사원 정보를 찾을 수 없습니다.</p>
-            </c:when>
-            <c:otherwise>
-                <%-- 1. 기본 정보 출력 (반복문 활용) --%>
-                <c:set var="items" value="사원번호:${member.memberId},이름:${member.name},로그인ID:${member.loginId},이메일:${member.email},연락처:${member.phone},주소:${member.address},부서:${member.deptName},직급:${member.positionName}" />
-                <c:forEach var="item" items="${fn:split(items, ',')}">
-                    <div class="detail-row">
-                        <div class="detail-label">${fn:split(item, ':')[0]}</div>
-                        <div class="detail-value">${fn:split(item, ':')[1]}</div>
-                    </div>
-                </c:forEach>
+	<div class="detail-container">
+		<h2>사원 상세정보</h2>
 
-                <%-- 2. 입사일 및 상태 --%>
-                <div class="detail-row">
-                    <div class="detail-label">입사일</div>
-                    <div class="detail-value"><fmt:formatDate value="${member.hireDate}" pattern="yyyy-MM-dd"/></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">상태</div>
-                    <div class="detail-value">
-                        <c:choose>
-                            <c:when test="${member.status == 'Y'}">재직</c:when>
-                            <c:when test="${member.status == 'R'}">휴직</c:when>
-                            <c:when test="${member.status == 'N'}">퇴사</c:when>
-                        </c:choose>
-                    </div>
-                </div>
-                
-                <%-- 3. 추가 정보 (휴직/퇴사일) --%>
-                <c:if test="${member.status == 'R' or member.status == 'N'}">
-                    <div class="detail-row">
-                        <div class="detail-label">${member.status == 'R' ? '휴직기간' : '퇴사일'}</div>
-                        <div class="detail-value">
-                            <c:choose>
-                                <c:when test="${member.status == 'R'}">
-                                    ${fn:substring(member.leaveStartDate,0,4)}-${fn:substring(member.leaveStartDate,4,6)}-${fn:substring(member.leaveStartDate,6,8)} 
-                                    ~ ${fn:substring(member.leaveEndDate,0,4)}-${fn:substring(member.leaveEndDate,4,6)}-${fn:substring(member.leaveEndDate,6,8)}
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:formatDate value="${member.retireDate}" pattern="yyyy-MM-dd"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                    </div>
-                </c:if>
-            </c:otherwise>
-        </c:choose>
-        
-        <div class="btn-group">
-    <button class="btn btn-primary" onclick="document.getElementById('editForm').submit()">수정</button>
-    
-    <button class="btn btn-secondary" onclick="goMemberList();">목록</button>
-</div>
+		<c:choose>
+			<c:when test="${empty member}">
+				<p align="center">사원 정보를 찾을 수 없습니다.</p>
+			</c:when>
+			<c:otherwise>
+				<c:choose>
+					<c:when test="${member.role eq 'R'}"><c:set var="roleName" value="인사" /></c:when>
+					<c:when test="${member.role eq 'S'}"><c:set var="roleName" value="강사" /></c:when>
+					<c:otherwise><c:set var="roleName" value="사원" /></c:otherwise>
+				</c:choose>
 
-        <form id="editForm" action="/blueming/memberlist/updateForm" method="post">
-            <input type="hidden" name="memberId" value="${member.memberId}">
-        </form>
-    </div> 
-    
-    
-    <script>
+				<div class="detail-row">
+					<div class="detail-label">사원번호</div>
+					<div class="detail-value"><c:out value="${member.memberId}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">이름</div>
+					<div class="detail-value"><c:out value="${member.name}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">로그인ID</div>
+					<div class="detail-value"><c:out value="${member.loginId}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">이메일</div>
+					<div class="detail-value"><c:out value="${member.email}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">연락처</div>
+					<div class="detail-value"><c:out value="${member.phone}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">주소</div>
+					<div class="detail-value"><c:out value="${member.address}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">부서</div>
+					<div class="detail-value"><c:out value="${member.deptName}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">직급</div>
+					<div class="detail-value"><c:out value="${member.positionName}" /></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">권한코드</div>
+					<div class="detail-value"><c:out value="${roleName}" /></div>
+				</div>
+
+				<%-- 입사일 및 상태 --%>
+				<div class="detail-row">
+					<div class="detail-label">입사일</div>
+					<div class="detail-value"><fmt:formatDate value="${member.hireDate}" pattern="yyyy-MM-dd"/></div>
+				</div>
+				<div class="detail-row">
+					<div class="detail-label">상태</div>
+					<div class="detail-value">
+						<c:choose>
+							<c:when test="${member.status == 'Y'}">재직</c:when>
+							<c:when test="${member.status == 'R'}">휴직</c:when>
+							<c:when test="${member.status == 'N'}">퇴사</c:when>
+						</c:choose>
+					</div>
+				</div>
+
+				<%-- 추가 정보 (휴직/퇴사일) --%>
+				<c:if test="${member.status == 'R' or member.status == 'N'}">
+					<div class="detail-row">
+						<div class="detail-label">${member.status == 'R' ? '휴직기간' : '퇴사일'}</div>
+						<div class="detail-value">
+							<c:choose>
+								<c:when test="${member.status == 'R'}">
+									<c:out value="${fn:substring(member.leaveStartDate,0,4)}-${fn:substring(member.leaveStartDate,4,6)}-${fn:substring(member.leaveStartDate,6,8)}" />
+									~ 
+									<c:out value="${fn:substring(member.leaveEndDate,0,4)}-${fn:substring(member.leaveEndDate,4,6)}-${fn:substring(member.leaveEndDate,6,8)}" />
+								</c:when>
+								<c:otherwise>
+									<fmt:formatDate value="${member.retireDate}" pattern="yyyy-MM-dd"/>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+				</c:if>
+			</c:otherwise>
+		</c:choose>
+
+		<div class="btn-group">
+			<button class="btn btn-primary" onclick="document.getElementById('editForm').submit()">수정</button>
+			<button class="btn btn-secondary" onclick="goMemberList();">목록</button>
+		</div>
+
+		<form id="editForm" action="${pageContext.request.contextPath}/memberlist/updateForm" method="post">
+			<input type="hidden" name="memberId" value="<c:out value='${member.memberId}' />">
+		</form>
+	</div>
+
+<script>
 function goMemberList() {
     let f = document.createElement("form");
     f.setAttribute("method", "post");
     f.setAttribute("action", "${pageContext.request.contextPath}/memberlist"); 
     
+    // 🛡️ 스크립트 내부 주입 공격 방어를 위해 EL 데이터를 문자열 처리 및 트림 처리
     let params = {
-        "cpage": "${listCpage}",         // 컨트롤러가 전달해 준 원래 페이지
-        "condition": "${listCondition}", // 컨트롤러가 전달해 준 원래 검색조건
-        "keyword": "${listKeyword}",     // 컨트롤러가 전달해 준 원래 검색어
-        "sortColumn": "${listSortColumn}",
-        "sortOrder": "${listSortOrder}"
+        "cpage": "<c:out value='${listCpage}' />",         
+        "condition": "<c:out value='${listCondition}' />", 
+        "keyword": "<c:out value='${listKeyword}' />",     
+        "sortColumn": "<c:out value='${listSortColumn}' />",
+        "sortOrder": "<c:out value='${listSortOrder}' />"
     };
     
     for (let key in params) {
