@@ -3,6 +3,7 @@
 /* --- 전체 레이아웃---  */
 
 .main-wrapper {
+    margin-left: 260px; /* nav-area 너비와 동일한 크기임 */
     display: flex;
     min-height: 100vh;
     border: 2px solid red;
