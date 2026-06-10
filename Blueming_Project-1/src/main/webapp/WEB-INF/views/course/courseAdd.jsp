@@ -56,6 +56,12 @@
         margin-bottom: 0;
     }
 
+    .outer {
+        float : center;
+        margin: 20px;
+        width : 80%;
+    }
+
 </style>
 </head>
 <body>
@@ -64,16 +70,16 @@
 
     <h1 align="center">강의 등록</h1>
 
-    <form action="addCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+    <form id="courseAddForm" action="addCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
         <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
         <table class="table">
             <tr>
                 <td>* 강의명</td>
-                <td><input type="text" name="courseTitle" id="courseTitle" required></td>
+                <td><input type="text" name="courseTitle" id="courseTitle" maxlength="30" required></td>
             </tr>
             <tr>
                 <td>* 강의 설명</td>
-                <td><textarea name="description" id="description" required></textarea></td>
+                <td><textarea name="description" id="description" required maxlength="666"></textarea></td>
             </tr>
             <tr>
                 <td>* 강의 시작 시간</td>
@@ -115,6 +121,7 @@
             <button type="reset" class="btn btn-warning">초기화</button>
         </div>
     </form>
+    </div>
 
     <script>
         const deptOptions = [
@@ -253,6 +260,17 @@
         populateSelect("posSelector", posOptions, "직급 선택");
         onRuleTypeChange();
         renderTargetRules();
+
+        document.getElementById("courseAddForm").addEventListener("reset", function() {
+            window.setTimeout(function() {
+                targetRules.length = 0;
+                document.getElementById("ruleTypeSelector").value = "ALL";
+                document.getElementById("deptSelector").value = "";
+                document.getElementById("posSelector").value = "";
+                onRuleTypeChange();
+                renderTargetRules();
+            }, 0);
+        });
     </script>
 </body>
 </html>

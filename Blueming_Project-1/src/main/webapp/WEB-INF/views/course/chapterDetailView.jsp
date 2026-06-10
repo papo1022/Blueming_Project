@@ -11,10 +11,12 @@
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
-
+    
     .assignment-empty {
         text-align: center;
         color: #666;
@@ -305,7 +307,7 @@
                         <div class="video-section">
 
                             <div class="player-shell" id="chapterPlayerShell">
-                                <video id="chapterVideo" controls preload="metadata"
+                                <video id="chapterVideo" preload="metadata"
                                     src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
                                     브라우저가 video 태그를 지원하지 않습니다.
                                 </video>
@@ -361,7 +363,7 @@
                 </c:choose>
             </div>
         </div>
-    <!-- ====== /영상 플레이어 ====== -->
+        <!-- ====== /영상 플레이어 ====== -->
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -437,7 +439,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
 
         <!-- 과제 목록 테이블 -->
         <div class="modal fade" id="assignmentDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -484,46 +485,58 @@
         <br><br><br><br>
         
        <br><br>
-<h2 align="center">댓글</h2>
-<input type="hidden" id="chapterId" value="${chapter.chapterId}">
+       <h2 align="center">댓글</h2>
+       <input type="hidden" id="chapterId" value="${chapter.chapterId}">
 
-<div id="replyList" style="max-width: 800px; margin: 0 auto; margin-bottom: 20px;"></div>
+       <div id="replyList" style="max-width: 800px; margin: 0 auto; margin-bottom: 20px;"></div>
 
-<div style="max-width: 800px; margin: 0 auto;">
-    <div class="input-group" style="display: flex; align-items: stretch; height: 45px;">
-        <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력해주세요..." style="border-radius: 6px 0 0 6px;">
-        
-        <input type="file" id="replyFile" style="display: none;" onchange="showFileName(this)">
-        
-        <button type="button" class="btn btn-outline-secondary" onclick="$('#replyFile').click();">파일 첨부</button>
-        
-        <button type="button" id="insertReplyBtn" class="btn btn-primary" style="border-radius: 0 6px 6px 0; padding: 0 20px;">등록</button>
-    </div>
-    
-    <div id="fileInfoArea" style="margin-top: 8px; padding: 5px 10px; background-color: #f8f9fa; border-radius: 4px; display: none; align-items: center; justify-content: space-between; border: 1px solid #eee;">
-        <span id="fileName" style="font-size: 13px; color: #495057;">선택된 파일 없음</span>
-        <button type="button" class="btn btn-sm btn-link text-danger" onclick="clearFile()" style="padding: 0; font-size: 12px;">삭제</button>
-    </div>
-</div>
-<br><br>
+       <div style="max-width: 800px; margin: 0 auto;">
+           <div class="input-group" style="display: flex; align-items: stretch; height: 45px;">
+               <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력해주세요..." style="border-radius: 6px 0 0 6px;">
 
-        
-        <br><br><br><br>
-        
+               <input type="file" id="replyFile" style="display: none;" onchange="showFileName(this)">
+
+               <button type="button" class="btn btn-outline-secondary" onclick="$('#replyFile').click();">파일 첨부</button>
+
+               <button type="button" id="insertReplyBtn" class="btn btn-primary" style="border-radius: 0 6px 6px 0; padding: 0 20px;">등록</button>
+           </div>
+
+           <div id="fileInfoArea" style="margin-top: 8px; padding: 5px 10px; background-color: #f8f9fa; border-radius: 4px; display: none; align-items: center; justify-content: space-between; border: 1px solid #eee;">
+               <span id="fileName" style="font-size: 13px; color: #495057;">선택된 파일 없음</span>
+               <button type="button" class="btn btn-sm btn-link text-danger" onclick="clearFile()" style="padding: 0; font-size: 12px;">삭제</button>
+           </div>
+        </div>
+        <br><br>  
+
+        <div style="margin-top:20px;">
+            <textarea id="replyContent" class="form-control" rows="3" placeholder="댓글을 입력해주세요." maxlength="333"></textarea>
+            <br>
+            
+            <div class="d-flex gap-2" style="display: flex !important;">
+                <button type="button" id="insertReplyBtn" class="btn btn-primary mr-2">
+                    댓글 등록
+                </button>
+                
+                <button type="button" id="clearReplyBtn" class="btn btn-outline-secondary" onclick="$('#replyContent').val('');">
+                    작성 취소
+                </button>
+            </div>
+        </div>
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 align="center">통계</h2>
                 <div class="d-flex justify-content-end gap-2">
-                   <button type="button"
-                        id="sortByDeptBtn"
-                        class="btn btn-primary mr-1">
+                   <button type="button" id="DeptBtn" class="btn btn-primary mr-1">
                         부서별
                     </button>
-                    <button type="button"
-                        id="sortByPositionBtn"
-                        class="btn btn-secondary mr-1">
+                    <button type="button" id="PostBtn" class="btn btn-secondary mr-4">
                         직급별
+                    </button>
+                    <button type="button" id="submit" class="btn btn-warning mr-1">
+                        적용
+                    </button>
+
                     </button>
                 </div>
             </div>
@@ -532,41 +545,59 @@
                 <div class="mb-5">
                     <h5>총 이수율</h5>
                     <input type="hidden" id="courseId" value="${chapter.courseId}">
-                    <input type="hidden" id="chapterId" value="${chapter.chapterId}">
+                    <input type="hidden" id="chapterIdStat" value="${chapter.chapterId}">
                     <div class="progress" style="height: 30px;">
-                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                        <div id="totalCourseProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
                             role="progressbar"
-                            style="width: ${String.format('%.2f', chapter.avgProgress)}%;">
+                            style="width: 0%;"
+                            data-rate="${chapter.avgProgress}">
                             <span align="center" class="text-small">${String.format("%.2f", chapter.avgProgress)}%</span>
                         </div>
                     </div>
                     
+
                     <br>
                     <h5>총 과제 제출률</h5>
                     <div class="progress" style="height: 30px;">
-                        <input type="hidden" id="chapterId" value="${chapter.chapterId}">
-                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
+                        <div id="totalAssignmentProgressBar" class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
                             role="progressbar"
-                            style="width: ${String.format('%.2f', chapter.avgAssignmentSubmissionRate)}%;">
+                            style="width: 0%;"
+                            data-rate="${chapter.avgAssignmentSubmissionRate}">
                             <span align="center" class="text-small">${String.format("%.2f", chapter.avgAssignmentSubmissionRate)}%</span>
                         </div>
                     </div>
                     <br>
 
                     <div id="selectDept">
-                        
+                        <label><input type="checkbox" name="dept" value="D01">인사팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D02">개발팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D03">디자인팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D04">영업팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D05">마케팅팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D06">운영팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D07">품질관리팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D08">전략기획팀</div></label>
                     </div>
-
-                    <div id="selectPosition" style="display:none;">
-
+                    <!--
+                    <div id="selectPost"> // 처음에 안보여져 있어야 함
+                        <label><input type="checkbox" name="post" value="P01">사원</div></label>
+                        <label><input type="checkbox" name="post" value="P02">주임</div></label>
+                        <label><input type="checkbox" name="post" value="P03">대리</div></label>
+                        <label><input type="checkbox" name="post" value="P04">과장</div></label>
+                        <label><input type="checkbox" name="post" value="P05">차장</div></label>
+                        <label><input type="checkbox" name="post" value="P06">부장</div></label>
                     </div>
-                <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
+                    -->
+
+                    <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
                         class="d-flex justify-content-center align-items-center">
-                        <canvas id="courseChart"></canvas>
+                        <canvas id="courseChart">조회된 데이터가 없습니다.</canvas>
+                    </div>
                 </div>
             </div>
-
+        </div>
     </div>
+                        
 
     <script>
  // 1. 파일 선택 시 이름 표시 (전역 함수 - 스크립트 최상단 배치)
@@ -713,28 +744,81 @@
     
     
     
+        $("#PostBtn").click(function() {
+            $("#DeptBtn").removeClass("btn-primary").addClass("btn-secondary");
+            $(this).removeClass("btn-secondary").addClass("btn-primary");
+        });
+
+        $("#DeptBtn").click(function() {
+            $("#PostBtn").removeClass("btn-primary").addClass("btn-secondary");
+            $(this).removeClass("btn-secondary").addClass("btn-primary");
+        });
+
+        $("#searchBtn").click(function(){
+
+            let positions = [];
+
+            $("input[name=position]:checked").each(function(){
+                positions.push($(this).val());
+            });
+
+            let departments = [];
+
+            $("input[name=department]:checked").each(function(){
+                departments.push($(this).val());
+            });
+
+            $.ajax({
+                url : "assignmentAverageFilter.ed",
+                type : "POST",
+                traditional : true,
+                data : {
+                    positions : positions,
+                    departments : departments
+                },
+                success : function(result){
+                    drawChart(result);
+                }
+            });
+
+        });
+      
+        function onReady(fn) {
+            if (window.jQuery) {
+                window.jQuery(fn);
+                return;
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", fn);
+            } else {
+                fn();
+            }
+        }  
         
-        
-        new Chart(document.getElementById('courseChart'), {
-            type: 'line',
-            data: {
-                labels: [
-                    <c:forEach var="ch" items="${chapterList}" varStatus="status">
-                        '${ch.chapterTitle}'
-                        <c:if test="${!status.last}">,</c:if>
-                    </c:forEach>
-                ],
-                datasets: [{
-                    label: '수강률',
-                    data: [
+        const chartCanvas = document.getElementById('courseChart');
+        if (chartCanvas && typeof Chart !== 'undefined') {
+            new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels: [
                         <c:forEach var="ch" items="${chapterList}" varStatus="status">
-                            ${ch.avgProgress}
+                            '${ch.chapterTitle}'
                             <c:if test="${!status.last}">,</c:if>
                         </c:forEach>
-                    ]
-                }]
-            }
-        });
+                    ],
+                    datasets: [{
+                        label: '수강률',
+                        data: [
+                            <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                                ${ch.avgProgress}
+                                <c:if test="${!status.last}">,</c:if>
+                            </c:forEach>
+                        ]
+                    }]
+                }
+            });
+        }
 
         function chapterDelete(){
             if(confirm("정말로 챕터를 삭제하시겠습니까?")){
@@ -754,10 +838,20 @@
             window.location.href = "/blueming/assignment/updateView?assignmentId=" + assignmentId;
         }
 
-        $(function() {
+        onReady(function() {
             // 초기 진도 바 너비 적용
             const bar = document.getElementById("compRateBar");
             if (bar) bar.style.width = (bar.dataset.rate || 0) + "%";
+
+            const totalCourseProgressBar = document.getElementById("totalCourseProgressBar");
+            if (totalCourseProgressBar) {
+                totalCourseProgressBar.style.width = (totalCourseProgressBar.dataset.rate || 0) + "%";
+            }
+
+            const totalAssignmentProgressBar = document.getElementById("totalAssignmentProgressBar");
+            if (totalAssignmentProgressBar) {
+                totalAssignmentProgressBar.style.width = (totalAssignmentProgressBar.dataset.rate || 0) + "%";
+            }
 
             const playerShell = document.getElementById("chapterPlayerShell");
             const btnPlayPause = document.getElementById("btnPlayPause");
@@ -946,11 +1040,11 @@
                 }
 
                 // 이전 시청 위치로 복원
-      if (lastPos > 1) {               const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
-           
+                const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
+                if (lastPos > 1) {
                     video.addEventListener("loadedmetadata", function() {
                         video.currentTime = lastPos;
-                    }, {once: true});
+                    }, { once: true });
                 }
 
                 // 시청한 구간을 Set으로 추적 (1초 단위)
@@ -1080,8 +1174,179 @@
             });
         });
         
-   
-    
+     // 1. 페이지 로드 시 댓글 목록 불러오기
+        onReady(function(){
+            loadReplyList();
+        });
+        
+        // 2. 댓글 목록 조회 및 동적 화면 구성 (수정/삭제 버튼 추가)
+        // 댓글 목록 조회 및 동적 화면 구성 (관리자 권한 반영)
+        function loadReplyList(){
+            $.ajax({
+                url : "${pageContext.request.contextPath}/reply/list",
+                type : "get",
+                data : {
+                    chapterId : $("#chapterId").val()
+                },
+                success : function(list){
+                    let str = "";
+                    const loginMemberId = "${sessionScope.loginUser.memberId}"; 
+                    // 🌟 세션에서 로그인한 유저의 role 권한을 가져옵니다.
+                    const loginUserRole = "${sessionScope.loginUser.role}"; 
+
+                    for(let i=0; i<list.length; i++){
+                        str += "<div class='card mb-2 reply-row' data-id='" + list[i].replyId + "'>";
+                        str += "<div class='card-body'>";
+
+                        // 작성자 정보
+                        str += "<b>" + list[i].name + "</b>";
+                        str += " (" + (list[i].deptName || '') + " " + (list[i].positionName || '') + ")<br>";
+
+                        // [일반 모드] 댓글 내용
+                        str += "<p class='reply-content' style='margin-top: 8px; margin-bottom: 8px;'>" + list[i].content + "</p>";
+                        
+                        // [수정 모드] 텍스트 입력창 (처음에는 숨김)
+                        str += "<textarea class='form-control edit-content' rows='2' style='display:none; margin-top: 8px; margin-bottom: 8px;'>" + list[i].content + "</textarea>";
+
+                        // 작성일자 및 버튼 배치
+                        str += "<div class='d-flex justify-content-between align-items-center' style='display: flex !important;'>";
+                        str += "<small class='text-muted'>" + list[i].createdDate + "</small>";
+                        
+                        str += "<div class='reply-btn-area'>";
+                        
+                        // 🌟 권한 체크 분기 수정
+                        if(loginMemberId == list[i].memberId) {
+                            // 1) 본인이 쓴 댓글일 때: 수정 / 삭제 모두 가능
+                            str += "<button type='button' class='btn btn-sm btn-outline-warning mr-1 btn-edit' onclick='showEditForm(this)'>수정</button>";
+                            str += "<button type='button' class='btn btn-sm btn-outline-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>삭제</button>";
+                            
+                            // 수정 모드 전용 버튼
+                            str += "<button type='button' class='btn btn-sm btn-success mr-1 btn-save' style='display:none;' onclick='updateReply(this, " + list[i].replyId + ")'>저장</button>";
+                            str += "<button type='button' class='btn btn-sm btn-secondary btn-cancel' style='display:none;' onclick='cancelEdit(this)'>취소</button>";
+                        } else if(loginUserRole == 'S') {
+                            // 2) 본인 글은 아니지만, 로그인한 사람이 관리자('S')일 때: [삭제] 버튼만 노출
+                            str += "<button type='button' class='btn btn-sm btn-danger btn-delete' onclick='deleteReply(" + list[i].replyId + ")'>관리자 삭제</button>";
+                        }
+                        
+                        str += "</div>"; // reply-btn-area end
+                        str += "</div>"; // d-flex end
+                        str += "</div>"; // card-body end
+                        str += "</div>"; // card end
+                    }
+
+                    $("#replyList").html(str);
+                }
+            });
+        }
+        
+        // 3. [수정] 버튼 클릭 시 -> 입력 UI로 전환
+        function showEditForm(btn) {
+            const row = $(btn).closest('.reply-row');
+            row.find('.reply-content').hide();        // 기존 텍스트 숨기기
+            row.find('.edit-content').show();         // 편집 창 보이기
+            
+            row.find('.btn-edit, .btn-delete').hide(); // 기본 버튼 숨기기
+            row.find('.btn-save, .btn-cancel').show(); // 저장/취소 버튼 보이기
+        }
+
+        // 4. [취소] 버튼 클릭 시 -> 원상 복구
+        function cancelEdit(btn) {
+            const row = $(btn).closest('.reply-row');
+            row.find('.reply-content').show();
+            row.find('.edit-content').hide();
+            
+            row.find('.btn-edit, .btn-delete').show();
+            row.find('.btn-save, .btn-cancel').hide();
+            
+            // 수정하던 텍스트는 다시 원래 내용으로 초기화
+            const originalContent = row.find('.reply-content').text();
+            row.find('.edit-content').val(originalContent);
+        }
+
+        // 5. [저장] 버튼 클릭 시 -> 수정(Update) Ajax 실행
+        function updateReply(btn, replyId) {
+            const row = $(btn).closest('.reply-row');
+            const content = row.find('.edit-content').val();
+
+            if(!content.trim()) {
+                alert("수정할 내용을 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                url: "${pageContext.request.contextPath}/reply/update",
+                type: "post",
+                data: {
+                    replyId: replyId,
+                    content: content
+                },
+             // 수정 Ajax의 success 부분도 똑같이 적용해 주세요
+                success: function(result) {
+                    if(result == "SUCCESS" || result > 0 || result == "1"){ 
+                        alert("댓글이 수정되었습니다.");
+                        loadReplyList();
+                    } else {
+                        alert("댓글 수정 실패");
+                    }
+                },
+                error: function() {
+                    alert("댓글 수정 중 오류가 발생했습니다.");
+                }
+            });
+        }
+
+     // [삭제] 버튼 클릭 시 -> 삭제(Delete) Ajax 실행
+        function deleteReply(replyId) {
+            if(confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/reply/delete",
+                    type: "post",
+                    data: {
+                        replyId: replyId
+                    },
+                    success: function(result) {
+                        // 🌟 핵심 수정: result가 문자열 "SUCCESS" 이거나, 
+                        // 숫자로 0보다 큰 값(성공 행의 개수 1)이 들어오면 모두 성공으로 인정합니다.
+                        if(result == "SUCCESS" || result > 0 || result == "1"){
+                            alert("댓글이 삭제되었습니다.");
+                            loadReplyList(); // 새로고침 없이 비동기로 리스트를 다시 그려줍니다!
+                        } else {
+                            alert("댓글 삭제 실패");
+                        }
+                    },
+                    error: function() {
+                        alert("댓글 삭제 중 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+        
+        // 7. 기존 댓글 작성 기능 (성공 리턴값 매칭 수정 가능성 고려)
+        $("#insertReplyBtn").click(function(){
+            const content = $("#replyContent").val();
+            if(!content.trim()) {
+                alert("댓글 내용을 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                url : "${pageContext.request.contextPath}/reply/insert",
+                type : "post",
+                data : {
+                    chapterId : $("#chapterId").val(),
+                    content : content
+                },
+                success : function(result){
+                    // 기존 백엔드가 정수형(1) 혹은 "SUCCESS" 문자열을 주는지 확인하여 분기 처리
+                    if(result == "SUCCESS" || result > 0){
+                        $("#replyContent").val("");
+                        loadReplyList();
+                    }else{
+                        alert("댓글 등록 실패");
+                    }
+                }
+            });
+        });
         
         
         

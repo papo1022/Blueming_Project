@@ -1,174 +1,166 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="adminAssignmentMapper">
+
+    <sql id="searchCondition">
+        <if test="condition == 'name' and keyword != null and keyword != ''">
+            AND M.NAME LIKE '%' || #{keyword} || '%'
+        </if>
+        <if test="condition == 'department' and keyword != null and keyword != ''">
+            AND (
+                (#{keyword} LIKE '%인사%' AND M.DEPARTMENT_ID = 'D01') OR
+                (#{keyword} LIKE '%개발%' AND M.DEPARTMENT_ID = 'D02') OR
+                (#{keyword} LIKE '%디자인%' AND M.DEPARTMENT_ID = 'D03') OR
+                (#{keyword} LIKE '%영업%' AND M.DEPARTMENT_ID = 'D04') OR
+                (#{keyword} LIKE '%마케팅%' AND M.DEPARTMENT_ID = 'D05') OR
+                (#{keyword} LIKE '%운영%' AND M.DEPARTMENT_ID = 'D06') OR
+                (#{keyword} LIKE '%품질%' AND M.DEPARTMENT_ID = 'D07') OR
+                (#{keyword} LIKE '%전략%' AND M.DEPARTMENT_ID = 'D08')
+            )
+        </if>
+        <if test="condition == 'position' and keyword != null and keyword != ''">
+            AND (
+                (#{keyword} LIKE '%사원%' AND M.POSITION_ID = 'P01') OR
+                (#{keyword} LIKE '%주임%' AND M.POSITION_ID = 'P02') OR
+                (#{keyword} LIKE '%대리%' AND M.POSITION_ID = 'P03') OR
+                (#{keyword} LIKE '%과장%' AND M.POSITION_ID = 'P04') OR
+                (#{keyword} LIKE '%차장%' AND M.POSITION_ID = 'P05') OR
+                (#{keyword} LIKE '%부장%' AND M.POSITION_ID = 'P06')
+            )
+        </if>
+    </sql>
 
     <select id="selectAssignmentList"
             parameterType="map"
             resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
-
         SELECT
             M.MEMBER_ID AS memberId,
             M.LOGIN_ID AS loginId,
             M.NAME AS name,
             M.DEPARTMENT_ID AS departmentId,
             M.POSITION_ID AS positionId,
-
             A.ASSIGNMENT_ID AS assignmentId,
             A.ASSIGNMENT_TITLE AS assignmentTitle,
             TO_CHAR(A.START_DATE,'YYYY-MM-DD') AS startDate,
             TO_CHAR(A.DUE_DATE,'YYYY-MM-DD') AS dueDate,
-
             S.SUBMISSION_ID AS submissionId,
             S.SCORE AS score
-
         FROM MEMBER M
-        JOIN ASSIGNMENT_SUBMISSION S
-            ON M.MEMBER_ID = S.MEMBER_ID
-        JOIN ASSIGNMENT A
-            ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
-
+        JOIN ASSIGNMENT_SUBMISSION S ON M.MEMBER_ID = S.MEMBER_ID
+        JOIN ASSIGNMENT A ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
         WHERE 1=1
-
-        <if test="condition == 'name' and keyword != null and keyword != ''">
-            AND M.NAME LIKE '%' || #{keyword} || '%'
-        </if>
-
-        <if test="condition == 'department' and keyword != null and keyword != ''">
-
-			    AND (
+        <include refid="searchCondition"/>
+        
+			   <choose>
+			    <when test="sort == 'memberId'">ORDER BY M.MEMBER_ID</when>
+			    <when test="sort == 'loginId'">ORDER BY M.LOGIN_ID</when>
+			    <when test="sort == 'name'">ORDER BY M.NAME</when>
+			    <when test="sort == 'departmentId'">ORDER BY M.DEPARTMENT_ID</when>
+			    <when test="sort == 'positionId'">ORDER BY M.POSITION_ID</when>
+			    <when test="sort == 'assignmentTitle'">ORDER BY A.ASSIGNMENT_TITLE</when>
+			    <when test="sort == 'startDate'">ORDER BY A.START_DATE</when>
+			    <when test="sort == 'dueDate'">ORDER BY A.DUE_DATE</when>
+			    <when test="sort == 'score'">ORDER BY S.SCORE</when>
+			    <otherwise>ORDER BY A.DUE_DATE</otherwise>
+			</choose>
 			
-			        (#{keyword} LIKE '%인사%' AND M.DEPARTMENT_ID = 'D01')
-			        OR
-			        (#{keyword} LIKE '%개발%' AND M.DEPARTMENT_ID = 'D02')
-			        OR
-			        (#{keyword} LIKE '%디자인%' AND M.DEPARTMENT_ID = 'D03')
-			        OR
-			        (#{keyword} LIKE '%영업%' AND M.DEPARTMENT_ID = 'D04')
-			        OR
-			        (#{keyword} LIKE '%마케팅%' AND M.DEPARTMENT_ID = 'D05')
-			        OR
-			        (#{keyword} LIKE '%운영%' AND M.DEPARTMENT_ID = 'D06')
-			        OR
-			        (#{keyword} LIKE '%품질%' AND M.DEPARTMENT_ID = 'D07')
-			        OR
-			        (#{keyword} LIKE '%전략%' AND M.DEPARTMENT_ID = 'D08')
-			
-			    )
+			<choose>
+			    <when test="order != null and order.equalsIgnoreCase('ASC')">ASC</when>
+			    <otherwise>DESC</otherwise> </choose>
+    </select>
 
-		</if>
-
-       <if test="condition == 'position' and keyword != null and keyword != ''">
-
-			    AND (
-			
-			        (#{keyword} LIKE '%사원%' AND M.POSITION_ID = 'P01')
-			        OR
-			        (#{keyword} LIKE '%주임%' AND M.POSITION_ID = 'P02')
-			        OR
-			        (#{keyword} LIKE '%대리%' AND M.POSITION_ID = 'P03')
-			        OR
-			        (#{keyword} LIKE '%과장%' AND M.POSITION_ID = 'P04')
-			        OR
-			        (#{keyword} LIKE '%차장%' AND M.POSITION_ID = 'P05')
-			        OR
-			        (#{keyword} LIKE '%부장%' AND M.POSITION_ID = 'P06')
-			
-			    )
-
-		</if>
-
-        <choose>
-            <when test="sort == 'memberId'">ORDER BY M.MEMBER_ID</when>
-            <when test="sort == 'loginId'">ORDER BY M.LOGIN_ID</when>
-            <when test="sort == 'name'">ORDER BY M.NAME</when>
-            <when test="sort == 'departmentId'">ORDER BY M.DEPARTMENT_ID</when>
-            <when test="sort == 'positionId'">ORDER BY M.POSITION_ID</when>
-            <when test="sort == 'assignmentTitle'">ORDER BY A.ASSIGNMENT_TITLE</when>
-            <when test="sort == 'startDate'">ORDER BY A.START_DATE</when>
-            <when test="sort == 'dueDate'">ORDER BY A.DUE_DATE</when>
-            <when test="sort == 'score'">ORDER BY S.SCORE DESC</when>
-            <otherwise>ORDER BY A.DUE_DATE DESC</otherwise>
-        </choose>
-
+    <select id="selectListCount"
+            parameterType="map"
+            resultType="_int">
+        SELECT COUNT(*)
+        FROM MEMBER M
+        JOIN ASSIGNMENT_SUBMISSION S ON M.MEMBER_ID = S.MEMBER_ID
+        JOIN ASSIGNMENT A ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        WHERE 1=1
+        <include refid="searchCondition"/>
     </select>
 
     <select id="selectAssignmentDetail"
             parameterType="map"
             resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
-
         SELECT
             M.MEMBER_ID AS memberId,
             M.LOGIN_ID AS loginId,
             M.NAME AS name,
             M.DEPARTMENT_ID AS departmentId,
             M.POSITION_ID AS positionId,
-
             A.ASSIGNMENT_ID AS assignmentId,
             A.ASSIGNMENT_TITLE AS assignmentTitle,
             A.DESCRIPTION AS description,
             TO_CHAR(A.START_DATE,'YYYY-MM-DD') AS startDate,
             TO_CHAR(A.DUE_DATE,'YYYY-MM-DD') AS dueDate,
             A.MAX_SCORE AS maxScore,
-
             S.SUBMISSION_ID AS submissionId,
             S.CONTENT AS submittedContent,
             S.SCORE AS score,
             S.FILE_ID AS submittedFileId,
-
             F.ORIGINAL_NAME AS submittedFileName
-
         FROM MEMBER M
-        JOIN ASSIGNMENT_SUBMISSION S
-            ON M.MEMBER_ID = S.MEMBER_ID
-        JOIN ASSIGNMENT A
-            ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
-        LEFT JOIN ATTACHMENT F
-            ON S.FILE_ID = F.FILE_ID
-
+        JOIN ASSIGNMENT_SUBMISSION S ON M.MEMBER_ID = S.MEMBER_ID
+        JOIN ASSIGNMENT A ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        LEFT JOIN ATTACHMENT F ON S.FILE_ID = F.FILE_ID
         WHERE M.MEMBER_ID = #{memberId}
-        AND A.ASSIGNMENT_ID = #{assignmentId}
-
+          AND A.ASSIGNMENT_ID = #{assignmentId}
     </select>
 
     <update id="updateScore">
-
         UPDATE ASSIGNMENT_SUBMISSION
            SET SCORE = #{score}
          WHERE SUBMISSION_ID = #{submissionId}
-
     </update>
     
     <select id="selectFile"
-        parameterType="int"
+        parameterType="map"
         resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
 
-    SELECT
-        FILE_ID,
-        ORIGINAL_NAME,
-        CHANGED_NAME,
-        FILE_PATH
-    FROM ATTACHMENT
-    WHERE FILE_ID = #{fileId}
+        SELECT
+                        FILE_ID AS fileId,
+                        ORIGINAL_NAME AS originalName,
+                        CHANGED_NAME AS changedName,
+                        FILE_PATH AS filePath
+        FROM ATTACHMENT
+        WHERE FILE_ID = #{fileId}
+                    AND STATUS = 'Y'
+
+	</select>
+
+        <select id="selectFileBySubmissionId"
+                parameterType="map"
+                resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+
+                SELECT
+                        F.FILE_ID AS fileId,
+                        F.ORIGINAL_NAME AS originalName,
+                        F.CHANGED_NAME AS changedName,
+                        F.FILE_PATH AS filePath
+                FROM ASSIGNMENT_SUBMISSION S
+                JOIN ATTACHMENT F
+                    ON S.FILE_ID = F.FILE_ID
+                WHERE S.SUBMISSION_ID = #{submissionId}
+                    AND S.FILE_ID IS NOT NULL
+                    AND F.STATUS = 'Y'
 
 	</select>
 	
 	<select id="selectListCount"
         resultType="_int">
 
-    SELECT COUNT(*)
+        SELECT COUNT(*)
 
-    FROM MEMBER M
+        FROM MEMBER M
 
-    JOIN ASSIGNMENT_SUBMISSION S
-      ON M.MEMBER_ID = S.MEMBER_ID
+        JOIN ASSIGNMENT_SUBMISSION S
+        ON M.MEMBER_ID = S.MEMBER_ID
 
-    JOIN ASSIGNMENT A
-      ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        JOIN ASSIGNMENT A
+        ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
 
-</select>
+    </select>
 
 </mapper>

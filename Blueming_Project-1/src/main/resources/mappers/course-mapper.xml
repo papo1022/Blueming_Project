@@ -74,6 +74,17 @@
 		</choose>
 	</select>
 	
+	<!-- 코스 스테이터스 갱신하기 -->
+	<update id="updateCourseStatus">
+		UPDATE COURSE 
+		SET STATUS = 
+			CASE
+				WHEN SYSDATE &lt; START_DATE THEN 'W'
+				WHEN SYSDATE &gt; END_DATE THEN 'N'
+				ELSE 'Y'
+			END
+	</update>
+	
 	<!-- 코스 추가하기 -->
 	<insert id="addCourse" >
 		<selectKey resultType="int" keyProperty="courseId" order="BEFORE">

@@ -9,8 +9,10 @@
 <title>Insert title here</title>
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
 
     #courseTitle {
@@ -28,7 +30,6 @@
         width : 80%;
     }
 </style>
-</head>
 <body>
 
     <jsp:include page="../common/mainMenubar.jsp" />
@@ -48,7 +49,7 @@
                 </tr>
                 <tr>
                     <td>* 챕터명 </td>
-                    <td><input type="text" name="chapterTitle" id="chapterTitle" value="${ch.chapterTitle}" required></td>
+                    <td><input type="text" name="chapterTitle" id="chapterTitle" value="${ch.chapterTitle}" maxlength="30" required></td>
                 </tr>
                 <tr>
                     <td>현재 업로드된 영상</td>

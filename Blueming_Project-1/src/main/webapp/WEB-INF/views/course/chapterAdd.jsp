@@ -7,8 +7,10 @@
 <title>Insert title here</title>
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
 
     #courseTitle {
@@ -31,11 +33,8 @@
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    <br><br>
-    <h1 align="center">챕터 추가</h1>
-    <br><br>
-
     <div class="outer" id="detail-area">
+        <h1 align="center">챕터 추가</h1>
         <form action="addChapter" align="center" method="post" enctype="multipart/form-data">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
             <input type="hidden" name="courseId" value="${courseId}">
@@ -46,7 +45,7 @@
                 </tr>
                 <tr>
                     <td>* 챕터명 </td>
-                    <td><input type="text" name="chapterTitle" id="chapterTitle" required></td>
+                    <td><input type="text" name="chapterTitle" id="chapterTitle" maxlength="30" required></td>
                 </tr>
                 <tr>
                     <td>동영상 첨부파일</td>
