@@ -8,6 +8,8 @@
 <title>강의 리스트</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
 <style>
     :root {
         --panel-bg: #ffffff;
@@ -17,8 +19,9 @@
     }
 
     .outer {
+        width : 100%;
         max-width: 1200px;
-        margin: 0 auto;
+        margin-left: 270px;
         padding-bottom: 20px;
     }
 

@@ -56,6 +56,12 @@
         margin-bottom: 0;
     }
 
+    .outer {
+        float : center;
+        margin: 20px;
+        width : 80%;
+    }
+
 </style>
 </head>
 <body>
@@ -69,11 +75,11 @@
         <table class="table">
             <tr>
                 <td>* 강의명</td>
-                <td><input type="text" name="courseTitle" id="courseTitle" required></td>
+                <td><input type="text" name="courseTitle" id="courseTitle" maxlength="30" required></td>
             </tr>
             <tr>
                 <td>* 강의 설명</td>
-                <td><textarea name="description" id="description" required></textarea></td>
+                <td><textarea name="description" id="description" required maxlength="666"></textarea></td>
             </tr>
             <tr>
                 <td>* 강의 시작 시간</td>
@@ -115,6 +121,7 @@
             <button type="reset" class="btn btn-warning">초기화</button>
         </div>
     </form>
+    </div>
 
     <script>
         const deptOptions = [

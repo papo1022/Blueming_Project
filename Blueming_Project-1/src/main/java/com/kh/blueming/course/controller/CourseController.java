@@ -181,6 +181,8 @@ public class CourseController {
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
 		    @RequestParam(value = "mineOnly", defaultValue = "false") boolean mineOnly,
             HttpSession session) {
+    	
+    	
 
         if (currentPage < 1) {
             currentPage = 1;
@@ -200,6 +202,8 @@ public class CourseController {
 		Integer memberId = (loginUser != null) ? loginUser.getMemberId() : null;
         boolean isAdmin = loginUser != null && "S".equals(loginUser.getRole());
 		boolean mineOnlyFilter = mineOnly && loginUser != null;
+		
+		int result = courseService.updateCourseStatus();
 
         return courseService.selectCourseList(currentPage,
                                               courseLimit,
@@ -666,10 +670,10 @@ public class CourseController {
 		else if(hasOld && !hasNew) {
 			
 			if("Y".equals(isDelete)) {
-				result *= courseService.updateChapter(originCh, originAt, 3);
+				result *= courseService.updateChapter(ch, originAt, 3);
 				result *= courseService.deleteAttachment(originCh);
 			} else {
-				result *= courseService.updateChapter(originCh, originAt, 2);
+				result *= courseService.updateChapter(ch, originAt, 2);
 				ereaeFile = false;
 			}
 		}
@@ -787,6 +791,7 @@ public class CourseController {
 	
 	/*************************************************/
 	
+	//모든 수강생의 과제 제출률을 확인하는 코드 (데이터가 이상한것 같음)
 	@ResponseBody
 	@PostMapping("avgAssignmentSubmissionRate")
 	public double avgAssignmentSubmissionRate(@RequestParam("chapterId") int chapterId) {
@@ -796,4 +801,6 @@ public class CourseController {
 
 		return chapter.getAvgAssignmentSubmissionRate();
 	}
+	
+	
 }
