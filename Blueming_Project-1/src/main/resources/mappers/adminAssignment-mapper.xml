@@ -143,32 +143,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
     
     <select id="selectFile"
-        parameterType="int"
+        parameterType="map"
         resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
 
-    SELECT
-        FILE_ID,
-        ORIGINAL_NAME,
-        CHANGED_NAME,
-        FILE_PATH
-    FROM ATTACHMENT
-    WHERE FILE_ID = #{fileId}
+        SELECT
+                        FILE_ID AS fileId,
+                        ORIGINAL_NAME AS originalName,
+                        CHANGED_NAME AS changedName,
+                        FILE_PATH AS filePath
+        FROM ATTACHMENT
+        WHERE FILE_ID = #{fileId}
+                    AND STATUS = 'Y'
+
+	</select>
+
+        <select id="selectFileBySubmissionId"
+                parameterType="map"
+                resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+
+                SELECT
+                        F.FILE_ID AS fileId,
+                        F.ORIGINAL_NAME AS originalName,
+                        F.CHANGED_NAME AS changedName,
+                        F.FILE_PATH AS filePath
+                FROM ASSIGNMENT_SUBMISSION S
+                JOIN ATTACHMENT F
+                    ON S.FILE_ID = F.FILE_ID
+                WHERE S.SUBMISSION_ID = #{submissionId}
+                    AND S.FILE_ID IS NOT NULL
+                    AND F.STATUS = 'Y'
 
 	</select>
 	
 	<select id="selectListCount"
         resultType="_int">
 
-    SELECT COUNT(*)
+        SELECT COUNT(*)
 
-    FROM MEMBER M
+        FROM MEMBER M
 
-    JOIN ASSIGNMENT_SUBMISSION S
-      ON M.MEMBER_ID = S.MEMBER_ID
+        JOIN ASSIGNMENT_SUBMISSION S
+        ON M.MEMBER_ID = S.MEMBER_ID
 
-    JOIN ASSIGNMENT A
-      ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        JOIN ASSIGNMENT A
+        ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
 
-</select>
+    </select>
 
 </mapper>

@@ -71,4 +71,11 @@ public class AdminAssignmentService {
                 sqlSession,
                 fileId);
     }
+
+        public AdminAssignment selectFileBySubmissionId(int submissionId) {
+
+                return adminAssignmentDao.selectFileBySubmissionId(
+                                sqlSession,
+                                submissionId);
+        }
 }
