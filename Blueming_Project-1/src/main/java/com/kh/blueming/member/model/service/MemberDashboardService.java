@@ -2,6 +2,7 @@ package com.kh.blueming.member.model.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.blueming.assignment.model.vo.AssignmentCard;
@@ -12,6 +13,7 @@ import com.kh.blueming.member.model.vo.MemberProfile;
 @Service
 public class MemberDashboardService {
 
+	@Autowired
 	private MemberDashboardDao memberDashboardDao;
 	
 	// 1. 회원 프로필 조회
