@@ -412,4 +412,9 @@ public class CourseService {
 		map.put("isCompleted", isCompleted);
 		return courseDao.upsertChapterProgress(sqlSession, map);
 	}
+
+
+	public int updateCourseStatus() {
+		return courseDao.updateCourseStatus(sqlSession);
+	}
 }

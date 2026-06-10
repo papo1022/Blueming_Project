@@ -8,8 +8,10 @@
 <title>Insert title here</title>
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
 
     #courseTitle {
@@ -67,9 +69,10 @@
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    <h1 align="center">강의 수정</h1>
+    
     
     <div class="outer">
+        <h1 align="center">강의 수정</h1>
         <form action="updateCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}">
             <input type="hidden" name="courseId" value="${requestScope.c.courseId}">
@@ -77,11 +80,11 @@
             <table class="table">
                 <tr>
                     <td>* 강의명</td>
-                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.c.courseTitle}" required></td>
+                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.c.courseTitle}" maxlength="30" required></td>
                 </tr>
                 <tr>
                     <td>* 강의 설명</td>
-                    <td><textarea name="description" id="description" required>${requestScope.c.description}</textarea></td>
+                    <td><textarea name="description" id="description" maxlength="666" required>${requestScope.c.description}</textarea></td>
                 </tr>
                 <tr>
                     <td>* 강의 시작 시간</td>

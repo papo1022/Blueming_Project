@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -23,7 +25,7 @@
 
 <style>
 
-    /* 왼쪽 사이드바 */
+    /* 왼쪽 사이드바
 .nav-area {
     position: fixed;
     left: 0;
@@ -35,13 +37,13 @@
     flex-direction: column;
     padding-top: 20px;
 }
-/* 메뉴 한 줄 */
+/* 메뉴 한 줄 
 .menu {
     width: 100%;
     height: 50px;
 }
 
-/* 메뉴 링크 */
+/* 메뉴 링크 
 .menu a {
     display: block;
     width: 100%;
@@ -58,16 +60,14 @@
     color: white;
 }
 
-
-
-    .menu a:hover {
-        color: white;
-        font-size: 18px;
-        text-decoration: none;
-    }
+.menu a:hover {
+    color: white;
+    font-size: 18px;
+    text-decoration: none;
+} */
+    
 </style>
 </head>
-
 <body>
     <c:url var="homeUrl" value="/"/>
     <c:if test="${not empty loginUser}">
@@ -81,40 +81,63 @@
             <c:when test="${loginUser.role eq 'N'}">
                 <c:url var="homeUrl" value="/member/employee"/>
             </c:when>
-            
         </c:choose>
     </c:if>
 
-<!-- 메뉴바 -->
-	<c:choose>
-        <c:when test="${not empty loginUser}">
-	<div class="nav-area" align="center">
-        <div class="menu"><a href="${homeUrl}">Home</a></div>
-	    <div class="menu"><a href="<c:url value='/notice/list'/>">Notice</a></div>
-	    <div class="menu"><a href="<c:url value='/course/list'/>">Course</a></div>
-	    
+    <!-- 메뉴바 -->
+    <div class="wrapper">
+        <div class="nav-area">
+            <div class="menu">
+                <a href="${homeUrl}"><i class="fi fi-sr-computer"></i>
+                &nbsp;&nbsp;대시보드
+            </a><div>
+                <c:choose>
+                    <c:when test="${not empty loginUser}">
+                        <nav class="sidebar-nav">
+                            <ul>
+                                <li>
+                                    <a href="<c:url value='/notice/list'/>"><i class="fi fi-sr-megaphone"></i>
+                                        공지
+                                </a></li>
+                                <li>
+                                    <a href="<c:url value='/course/list'/>"><i class="fi fi-sr-graduation-cap"></i>
+                                        코스
+                                </a></li>
 
-	    <c:if test="${loginUser.role eq 'R'}">
-	    	<div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	        <div class="menu"><a href="<c:url value='/memberlist'/>">사원조회</a></div>
-	        <div class="menu"><a href="<c:url value='/enrollment/enrollMemList'/>">사원강의관리</a></div>
-	    </c:if>
-	    <c:if test="${loginUser.role eq 'S'}">
-	    	<div class="menu"><a href="<c:url value='/adminAssignment/list'/>">Assignment</a></div>
-	    </c:if>
-	    <c:if test="${loginUser.role eq 'N'}">
-	    	<div class="menu"><a href="<c:url value='/assignment/list'/>">Assignment</a></div>
-	    </c:if>
-	</div>
-	</c:when>
-	 <c:otherwise>
-               
-                <a href="<c:url value='/member/logout'/>">되돌아가기</a>
-      </c:otherwise>
-	
-	</c:choose>
+                                <c:if test="${loginUser.role eq 'R'}">
+                                    <li>
+                                        <a href="<c:url value='/assignment/list'/>"><i class="fi fi-sr-document"></i>
+                                            인사과의 과제
+                                    </a></li> 
+                                    <li>
+                                        <a href="<c:url value='/memberlist'/>"><i class="fi fi-sr-user"></i>
+                                            사원조회
+                                    </a></li> 
+                                    <li>
+                                        <a href="<c:url value='/enrollment/enrollMemList'/>"><i class="fi fi-sr-graduation-cap"></i>
+                                            사원 강의관리
+                                    </a></li> 
+                                </c:if>
 
+                                <c:if test="${loginUser.role eq 'S'}">
+                                    <li>
+                                        <a href="<c:url value='/adminAssignment/list'/>"><i class="fi fi-sr-document"></i>
+                                            과제 전체 관리
+                                    </a></li> 
+                                </c:if>
 
-
+                                <c:if test="${loginUser.role eq 'N'}">
+                                    <li>
+                                        <a href="<c:url value='/assignment/list'/>"><i class="fi fi-sr-document"></i>
+                                            사원 과제
+                                    </a></li> 
+                                </c:if>
+                            </ul>
+                        </nav>
+                    </c:when>
+                </c:choose>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -196,4 +196,8 @@ public class CourseDao {
 		return sqlSession.update("courseMapper.upsertChapterProgress", map);
 	}
 
+	public int updateCourseStatus(SqlSessionTemplate sqlSession) {
+		return sqlSession.update("courseMapper.updateCourseStatus");
+	}
+
 }

@@ -11,10 +11,12 @@
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
-
+    
     .assignment-empty {
         text-align: center;
         color: #666;
@@ -345,7 +347,7 @@
                 </c:choose>
             </div>
         </div>
-    <!-- ====== /영상 플레이어 ====== -->
+        <!-- ====== /영상 플레이어 ====== -->
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -421,7 +423,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
 
         <!-- 과제 목록 테이블 -->
         <div class="modal fade" id="assignmentDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -463,51 +464,42 @@
                 </div>
             </div>
         </div>
-        
-        
-        <br><br><br><br>
-        
-       <br><br>
 
-<h2 align="center">댓글</h2>
+        <h2 align="center">댓글</h2>
 
-<input type="hidden" id="chapterId" value="${chapter.chapterId}">
+        <input type="hidden" id="chapterId" value="${chapter.chapterId}">
 
-<div id="replyList"></div>
+        <div id="replyList"></div>
 
-<div style="margin-top:20px;">
-    <textarea id="replyContent" class="form-control" rows="3" placeholder="댓글을 입력해주세요."></textarea>
-    <br>
-    
-    <div class="d-flex gap-2" style="display: flex !important;">
-        <button type="button" id="insertReplyBtn" class="btn btn-primary mr-2">
-            댓글 등록
-        </button>
-        
-        <button type="button" id="clearReplyBtn" class="btn btn-outline-secondary" onclick="$('#replyContent').val('');">
-            작성 취소
-        </button>
-    </div>
-</div>
-<br><br>
-
-        
-        <br><br><br><br>
-        
+        <div style="margin-top:20px;">
+            <textarea id="replyContent" class="form-control" rows="3" placeholder="댓글을 입력해주세요." maxlength="333"></textarea>
+            <br>
+            
+            <div class="d-flex gap-2" style="display: flex !important;">
+                <button type="button" id="insertReplyBtn" class="btn btn-primary mr-2">
+                    댓글 등록
+                </button>
+                
+                <button type="button" id="clearReplyBtn" class="btn btn-outline-secondary" onclick="$('#replyContent').val('');">
+                    작성 취소
+                </button>
+            </div>
+        </div>
 
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h2 align="center">통계</h2>
                 <div class="d-flex justify-content-end gap-2">
-                   <button type="button"
-                        id="sortByDeptBtn"
-                        class="btn btn-primary mr-1">
+                   <button type="button" id="DeptBtn" class="btn btn-primary mr-1">
                         부서별
                     </button>
-                    <button type="button"
-                        id="sortByPositionBtn"
-                        class="btn btn-secondary mr-1">
+                    <button type="button" id="PostBtn" class="btn btn-secondary mr-4">
                         직급별
+                    </button>
+                    <button type="button" id="submit" class="btn btn-warning mr-1">
+                        적용
+                    </button>
+
                     </button>
                 </div>
             </div>
@@ -525,6 +517,7 @@
                         </div>
                     </div>
                     
+
                     <br>
                     <h5>총 과제 제출률</h5>
                     <div class="progress" style="height: 30px;">
@@ -538,23 +531,76 @@
                     <br>
 
                     <div id="selectDept">
-                        
+                        <label><input type="checkbox" name="dept" value="D01">인사팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D02">개발팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D03">디자인팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D04">영업팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D05">마케팅팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D06">운영팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D07">품질관리팀</div></label>
+                        <label><input type="checkbox" name="dept" value="D08">전략기획팀</div></label>
                     </div>
-
-                    <div id="selectPosition" style="display:none;">
-
+                    <!--
+                    <div id="selectPost"> // 처음에 안보여져 있어야 함
+                        <label><input type="checkbox" name="post" value="P01">사원</div></label>
+                        <label><input type="checkbox" name="post" value="P02">주임</div></label>
+                        <label><input type="checkbox" name="post" value="P03">대리</div></label>
+                        <label><input type="checkbox" name="post" value="P04">과장</div></label>
+                        <label><input type="checkbox" name="post" value="P05">차장</div></label>
+                        <label><input type="checkbox" name="post" value="P06">부장</div></label>
                     </div>
-                <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
+                    -->
+
+                    <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
                         class="d-flex justify-content-center align-items-center">
-                        <canvas id="courseChart"></canvas>
+                        <canvas id="courseChart">조회된 데이터가 없습니다.</canvas>
+                    </div>
                 </div>
             </div>
-
+        </div>
     </div>
+                        
 
     <script>
 
-        
+        $("#PostBtn").click(function() {
+            $("#DeptBtn").removeClass("btn-primary").addClass("btn-secondary");
+            $(this).removeClass("btn-secondary").addClass("btn-primary");
+        });
+
+        $("#DeptBtn").click(function() {
+            $("#PostBtn").removeClass("btn-primary").addClass("btn-secondary");
+            $(this).removeClass("btn-secondary").addClass("btn-primary");
+        });
+
+        $("#searchBtn").click(function(){
+
+            let positions = [];
+
+            $("input[name=position]:checked").each(function(){
+                positions.push($(this).val());
+            });
+
+            let departments = [];
+
+            $("input[name=department]:checked").each(function(){
+                departments.push($(this).val());
+            });
+
+            $.ajax({
+                url : "assignmentAverageFilter.ed",
+                type : "POST",
+                traditional : true,
+                data : {
+                    positions : positions,
+                    departments : departments
+                },
+                success : function(result){
+                    drawChart(result);
+                }
+            });
+
+        });
         
         new Chart(document.getElementById('courseChart'), {
             type: 'line',

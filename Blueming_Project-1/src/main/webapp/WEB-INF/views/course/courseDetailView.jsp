@@ -9,8 +9,10 @@
 <title>blueming</title>
 <style>
     .outer {
-        width : 90%;
-        margin : 0 auto;
+        float : center;
+        margin: 20px;
+        margin-left: 270px;
+        width : 80%;
     }
     #chapter-area>tbody>tr:hover {
         background-color: #f8f9fa;
@@ -44,11 +46,8 @@
                     <c:when test="${ sessionScope.loginUser.role eq 'S' }">
                         <div class="d-flex justify-content-end gap-2">
                             <form>
-                                <button type="button" class="btn btn-secondary" onclick="courseUpdate();">
+                                <button type="button" class="btn btn-secondary mr-1" onclick="courseUpdate();">
                                     강의 수정
-                                </button>
-                                <button type="button" class="btn btn-warning mr-1" onclick="">
-                                    강의 환경설정
                                 </button>
                             </form>
                             <form id="deleteForm" action="deleteCourse" method="post">
@@ -129,6 +128,7 @@
 
                 <!-- 총 이수율 -->
                 <div class="mb-5">
+                    <br>
                     <h5>총 이수율</h5>
 
                     <div class="progress" style="height: 30px;">
