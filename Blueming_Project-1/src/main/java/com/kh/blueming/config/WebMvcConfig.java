@@ -18,20 +18,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/",
-                        "/member/login",
-                        "/member/enrollForm1",
-                        "/member/enrollForm2",
-                        "/member/sendCodeForId",
-                        "/member/findId",
-                        "/member/findPwd",
-                        "/member/findPwdResult",
-                        "/member/resetPwd",
-                        "/member/resetPwdResult",
-                        "/member/logout",
-                        "/resources/**",
-                        "/error",
-                        "/error/**"
-                );
+                	    "/",
+                	    "/member/login",
+                	    "/member/enrollForm1",
+                	    "/member/enrollForm2",
+
+                	    "/member/sendCodeForId",
+
+                	    "/member/sendCodeForPwd",      // 추가
+
+                	    "/member/findId",
+                	    "/member/findPwd",
+                	    "/member/findPwdResult",
+
+                	    "/member/verifyPwdCode",       // 추가
+                	    "/member/resetPassword",       // 추가
+
+                	    "/member/resetPwd",
+                	    "/member/resetPwdResult",
+
+                	    "/member/logout",
+                	    "/resources/**",
+                	    "/error",
+                	    "/error/**"
+                	);
     }
 }
