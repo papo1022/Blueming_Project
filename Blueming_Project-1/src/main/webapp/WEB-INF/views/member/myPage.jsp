@@ -103,14 +103,16 @@
 			<br><br>
 
 			<div align="center">
-				<button type="submit"
-						class="btn btn-primary btn-sm">정보변경</button>
+				<button type="button"
+					        class="btn btn-primary btn-sm"
+					        data-toggle="modal"
+					        data-target="#updateInfoModal">
+					    정보변경
+				</button>
 				<button type="button"
 						class="btn btn-warning btn-sm"
 						data-toggle="modal" data-target="#updatePwdForm">비밀번호변경</button>
-				<button type="button"
-						class="btn btn-danger btn-sm"
-						data-toggle="modal" data-target="#deleteForm">회원탈퇴</button>
+				
 			</div>
 
 		</form>
@@ -121,64 +123,7 @@
 
 	<br><br>
 	
-	<!-- 비밀번호변경과 회원탈퇴는 모달창을 이용해서 구현해볼 예정!! -->
-	
-	<!-- 회원탈퇴용 모달창 -->
-	<!-- The Modal -->
-	<div class="modal" id="deleteForm">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	
-	      <!-- Modal Header -->
-	      <div class="modal-header">
-	        <h4 class="modal-title">회원 탈퇴</h4>
-	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	      </div>
-	
-	      <!-- Modal body -->
-	      <div class="modal-body" align="center">
-	      
-	      	<b>
-	      		탈퇴 후 복구가 불가능합니다. <br>
-	      		정말로 탈퇴하시겠습니까? <br><br>
-	      	</b>
-	      
-	      	<!-- 
-	      		* 회원 탈퇴 기능 구현
-	      		- 현재 이 회원의 비밀번호를 입력 후 탈퇴하기 버튼 클릭 시
-	      		  http://localhost:8006/myweb/member/delete 로 POST 방식으로 요청
-	      	-->
-	      	<form action="/blueming/member/delete" method="post">
-	      		
-				<!-- 
-					* 회원 탈퇴 요청 시 필요한 데이터
-					- 현재 이 회원의 비밀번호
-				-->	      		
-				
-				<table>
-					<tr>
-						<th>비밀번호</th>
-						<td>
-							<input type="password" name="loginPwd" required>
-						</td>
-					</tr>
-				</table>
-				
-				<br><br>
-				
-				<div align="center">
-					<button type="submit" class="btn btn-danger btn-sm">
-						탈퇴하기
-					</button>
-				</div>
-	      		
-	      	</form>
-	      	
-	      </div>
-	
-	    </div>
-	  </div>
-	</div>
+
 	
 	<!-- 비번변경용 모달창 -->
 	<!-- The Modal -->
@@ -245,6 +190,7 @@
 	        	</div>
 	        	
 	        </form>
+
 	        
 	        <script>
 	        	// 변경할 비밀번호 유효성 검사용 함수
@@ -274,6 +220,46 @@
 	    </div>
 	  </div>
 	</div>
-
+					        <!-- 정보 변경 확인 모달 -->
+				<div class="modal fade" id="updateInfoModal">
+				    <div class="modal-dialog modal-dialog-centered">
+				        <div class="modal-content">
+				
+				            <!-- 헤더 -->
+				            <div class="modal-header">
+				                <h5 class="modal-title">정보 변경 확인</h5>
+				                <button type="button" class="close" data-dismiss="modal">
+				                    &times;
+				                </button>
+				            </div>
+				
+				            <!-- 내용 -->
+				            <div class="modal-body text-center">
+				                입력한 정보로 변경하시겠습니까?
+				            </div>
+				
+				            <!-- 버튼 -->
+				            <div class="modal-footer">
+				                <button type="button"
+				                        class="btn btn-secondary"
+				                        data-dismiss="modal">
+				                    취소
+				                </button>
+				
+				                <button type="button"
+				                        class="btn btn-primary"
+				                        onclick="submitMyPageForm();">
+				                    확인
+				                </button>
+				            </div>
+				
+				        </div>
+				    </div>
+				</div>
+				<script>
+    function submitMyPageForm() {
+        document.getElementById("mypage-form").submit();
+    }
+</script>
 </body>
 </html>
