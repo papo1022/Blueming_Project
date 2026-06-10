@@ -26,8 +26,7 @@ h2{
     margin-bottom:20px;
 }
 
-/* 검색영역 */
-
+/* 검색 */
 .search-box{
     background:white;
     padding:20px;
@@ -59,7 +58,6 @@ h2{
 }
 
 /* 테이블 */
-
 .assignment-table{
     width:100%;
     border-collapse:collapse;
@@ -71,6 +69,7 @@ h2{
     background:#4A90E2;
     color:white;
     height:50px;
+    user-select:none;
 }
 
 .assignment-table td{
@@ -84,22 +83,35 @@ h2{
     cursor:pointer;
 }
 
-.sort-link{
+/* 정렬 버튼 */
+.sort-btn{
     color:white;
     text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-weight:600;
+    padding:4px 8px;
+    border-radius:6px;
+    transition:.2s;
 }
 
-.sort-link:hover{
-    text-decoration:underline;
+.sort-btn:hover{
+    background:rgba(255,255,255,0.2);
 }
 
+/* 현재 정렬 강조 */
+.sort-active{
+    background:rgba(255,255,255,0.25);
+}
+
+/* 점수 */
 .score{
     color:#E74C3C;
     font-weight:bold;
 }
 
 /* 페이징 */
-
 .paging-area{
     margin-top:40px;
     text-align:center;
@@ -107,34 +119,24 @@ h2{
 
 .paging-area a,
 .paging-area span{
-
     display:inline-flex;
     justify-content:center;
     align-items:center;
-
     width:40px;
     height:40px;
-
     margin:0 4px;
-
     border:1px solid #ddd;
     border-radius:8px;
-
     background:white;
     color:#555;
-
     text-decoration:none;
-
     font-weight:600;
-
-    transition:all .2s ease;
 }
 
 .paging-area a:hover{
     background:#4A90E2;
     color:white;
     border-color:#4A90E2;
-    transform:translateY(-2px);
 }
 
 .paging-area .current{
@@ -158,204 +160,227 @@ h2{
 
 <div class="container">
 
-    <h2>📚 과제 채점 현황</h2>
+<h2>📚 과제 채점 현황</h2>
 
-    <div class="search-box">
+<div class="search-box">
 
-        <form action="${pageContext.request.contextPath}/adminAssignment/list"
-              method="get">
+<form action="${pageContext.request.contextPath}/adminAssignment/list" method="get">
 
-            <select name="condition">
+    <select name="condition">
+        <option value="name" <c:if test="${condition eq 'name'}">selected</c:if>>이름</option>
+        <option value="department" <c:if test="${condition eq 'department'}">selected</c:if>>부서</option>
+        <option value="position" <c:if test="${condition eq 'position'}">selected</c:if>>직급</option>
+    </select>
 
-                <option value="name"
-                    <c:if test="${condition eq 'name'}">selected</c:if>>
-                    이름
-                </option>
+    <input type="text" name="keyword" value="${keyword}" placeholder="검색어 입력">
 
-                <option value="department"
-                    <c:if test="${condition eq 'department'}">selected</c:if>>
-                    부서
-                </option>
+    <button type="submit">검색</button>
 
-                <option value="position"
-                    <c:if test="${condition eq 'position'}">selected</c:if>>
-                    직급
-                </option>
+</form>
 
-            </select>
+</div>
 
-            <input type="text"
-                   name="keyword"
-                   value="${keyword}"
-                   placeholder="검색어 입력">
+<table class="assignment-table">
 
-            <button type="submit">검색</button>
+<tr>
 
-        </form>
+<%-- 정렬 링크 공통 방식: sort + order(asc/desc) --%>
 
-    </div>
+<c:set var="baseQuery" value="condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}" />
 
-    <table class="assignment-table">
+<th>
+    <a class="sort-btn ${sort eq 'memberId' ? 'sort-active' : ''}"
+       href="?sort=memberId&order=${sort eq 'memberId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        사번
+        <c:choose>
+            <c:when test="${sort eq 'memberId' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'memberId' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-        <tr>
+<th>
+    <a class="sort-btn ${sort eq 'loginId' ? 'sort-active' : ''}"
+       href="?sort=loginId&order=${sort eq 'loginId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        아이디
+        <c:choose>
+            <c:when test="${sort eq 'loginId' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'loginId' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=memberId&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    사번
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'name' ? 'sort-active' : ''}"
+       href="?sort=name&order=${sort eq 'name' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        이름
+        <c:choose>
+            <c:when test="${sort eq 'name' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'name' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=loginId&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    아이디
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'departmentId' ? 'sort-active' : ''}"
+       href="?sort=departmentId&order=${sort eq 'departmentId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        부서
+        <c:choose>
+            <c:when test="${sort eq 'departmentId' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'departmentId' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=name&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    이름
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'positionId' ? 'sort-active' : ''}"
+       href="?sort=positionId&order=${sort eq 'positionId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        직급
+        <c:choose>
+            <c:when test="${sort eq 'positionId' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'positionId' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=departmentId&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    부서
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'assignmentTitle' ? 'sort-active' : ''}"
+       href="?sort=assignmentTitle&order=${sort eq 'assignmentTitle' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        과제명
+        <c:choose>
+            <c:when test="${sort eq 'assignmentTitle' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'assignmentTitle' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=positionId&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    직급
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'startDate' ? 'sort-active' : ''}"
+       href="?sort=startDate&order=${sort eq 'startDate' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        시작일
+        <c:choose>
+            <c:when test="${sort eq 'startDate' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'startDate' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=assignmentTitle&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    과제명
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'dueDate' ? 'sort-active' : ''}"
+       href="?sort=dueDate&order=${sort eq 'dueDate' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        마감일
+        <c:choose>
+            <c:when test="${sort eq 'dueDate' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'dueDate' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=startDate&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    시작일
-                </a>
-            </th>
+<th>
+    <a class="sort-btn ${sort eq 'score' ? 'sort-active' : ''}"
+       href="?sort=score&order=${sort eq 'score' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
+        점수
+        <c:choose>
+            <c:when test="${sort eq 'score' and order eq 'asc'}">▲</c:when>
+            <c:when test="${sort eq 'score' and order eq 'desc'}">▼</c:when>
+            <c:otherwise>⇅</c:otherwise>
+        </c:choose>
+    </a>
+</th>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=dueDate&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    마감일
-                </a>
-            </th>
+</tr>
 
-            <th>
-                <a class="sort-link"
-                   href="?sort=score&condition=${condition}&keyword=${keyword}&cpage=${pi.currentPage}">
-                    점수
-                </a>
-            </th>
+<c:forEach var="a" items="${list}">
 
-        </tr>
+<tr onclick="location.href='${pageContext.request.contextPath}/adminAssignment/detail?memberId=${a.memberId}&assignmentId=${a.assignmentId}'">
 
-        <c:forEach var="a" items="${list}">
+    <td>${a.memberId}</td>
+    <td>${a.loginId}</td>
+    <td>${a.name}</td>
 
-            <tr onclick="location.href='${pageContext.request.contextPath}/adminAssignment/detail?memberId=${a.memberId}&assignmentId=${a.assignmentId}'">
+    <td>
+        <c:choose>
+            <c:when test="${a.departmentId eq 'D01'}">인사팀</c:when>
+            <c:when test="${a.departmentId eq 'D02'}">개발팀</c:when>
+            <c:when test="${a.departmentId eq 'D03'}">디자인팀</c:when>
+            <c:when test="${a.departmentId eq 'D04'}">영업팀</c:when>
+            <c:when test="${a.departmentId eq 'D05'}">마케팅팀</c:when>
+            <c:when test="${a.departmentId eq 'D06'}">운영팀</c:when>
+            <c:when test="${a.departmentId eq 'D07'}">품질관리팀</c:when>
+            <c:when test="${a.departmentId eq 'D08'}">전략기획팀</c:when>
+            <c:otherwise>부서없음</c:otherwise>
+        </c:choose>
+    </td>
 
-                <td>${a.memberId}</td>
-                <td>${a.loginId}</td>
-                <td>${a.name}</td>
+    <td>
+        <c:choose>
+            <c:when test="${a.positionId eq 'P01'}">사원</c:when>
+            <c:when test="${a.positionId eq 'P02'}">주임</c:when>
+            <c:when test="${a.positionId eq 'P03'}">대리</c:when>
+            <c:when test="${a.positionId eq 'P04'}">과장</c:when>
+            <c:when test="${a.positionId eq 'P05'}">차장</c:when>
+            <c:when test="${a.positionId eq 'P06'}">부장</c:when>
+            <c:otherwise>직급없음</c:otherwise>
+        </c:choose>
+    </td>
 
-                <td>
-                    <c:choose>
-                        <c:when test="${a.departmentId eq 'D01'}">인사팀</c:when>
-                        <c:when test="${a.departmentId eq 'D02'}">개발팀</c:when>
-                        <c:when test="${a.departmentId eq 'D03'}">디자인팀</c:when>
-                        <c:when test="${a.departmentId eq 'D04'}">영업팀</c:when>
-                        <c:when test="${a.departmentId eq 'D05'}">마케팅팀</c:when>
-                        <c:when test="${a.departmentId eq 'D06'}">운영팀</c:when>
-                        <c:when test="${a.departmentId eq 'D07'}">품질관리팀</c:when>
-                        <c:when test="${a.departmentId eq 'D08'}">전략기획팀</c:when>
-                        <c:otherwise>부서없음</c:otherwise>
-                    </c:choose>
-                </td>
+    <td>${a.assignmentTitle}</td>
+    <td>${a.startDate}</td>
+    <td>${a.dueDate}</td>
 
-                <td>
-                    <c:choose>
-                        <c:when test="${a.positionId eq 'P01'}">사원</c:when>
-                        <c:when test="${a.positionId eq 'P02'}">주임</c:when>
-                        <c:when test="${a.positionId eq 'P03'}">대리</c:when>
-                        <c:when test="${a.positionId eq 'P04'}">과장</c:when>
-                        <c:when test="${a.positionId eq 'P05'}">차장</c:when>
-                        <c:when test="${a.positionId eq 'P06'}">부장</c:when>
-                        <c:otherwise>직급없음</c:otherwise>
-                    </c:choose>
-                </td>
+    <td class="score">
+        <c:choose>
+            <c:when test="${empty a.score}">미채점</c:when>
+            <c:otherwise>${a.score}</c:otherwise>
+        </c:choose>
+    </td>
 
-                <td>${a.assignmentTitle}</td>
-                <td>${a.startDate}</td>
-                <td>${a.dueDate}</td>
+</tr>
 
-                <td class="score">
-                    <c:choose>
-                        <c:when test="${empty a.score}">
-                            미채점
-                        </c:when>
-                        <c:otherwise>
-                            ${a.score}
-                        </c:otherwise>
-                    </c:choose>
-                </td>
+</c:forEach>
 
-            </tr>
+</table>
 
-        </c:forEach>
+<div class="paging-area">
 
-    </table>
+<c:if test="${pi.currentPage ne 1}">
+    <a class="move"
+       href="?cpage=${pi.currentPage-1}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">
+        ◀ 이전
+    </a>
+</c:if>
 
-    <div class="paging-area">
+<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
 
-        <c:if test="${pi.currentPage ne 1}">
-            <a class="move"
-               href="?cpage=${pi.currentPage-1}&condition=${condition}&keyword=${keyword}&sort=${sort}">
-                ◀ 이전
+    <c:choose>
+        <c:when test="${p eq pi.currentPage}">
+            <span class="current">${p}</span>
+        </c:when>
+        <c:otherwise>
+            <a href="?cpage=${p}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">
+                ${p}
             </a>
-        </c:if>
+        </c:otherwise>
+    </c:choose>
 
-        <c:forEach var="p"
-                   begin="${pi.startPage}"
-                   end="${pi.endPage}">
+</c:forEach>
 
-            <c:choose>
+<c:if test="${pi.currentPage ne pi.maxPage}">
+    <a class="move"
+       href="?cpage=${pi.currentPage+1}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">
+        다음 ▶
+    </a>
+</c:if>
 
-                <c:when test="${p eq pi.currentPage}">
-                    <span class="current">${p}</span>
-                </c:when>
-
-                <c:otherwise>
-                    <a href="?cpage=${p}&condition=${condition}&keyword=${keyword}&sort=${sort}">
-                        ${p}
-                    </a>
-                </c:otherwise>
-
-            </c:choose>
-
-        </c:forEach>
-
-        <c:if test="${pi.currentPage ne pi.maxPage}">
-            <a class="move"
-               href="?cpage=${pi.currentPage+1}&condition=${condition}&keyword=${keyword}&sort=${sort}">
-                다음 ▶
-            </a>
-        </c:if>
-
-    </div>
+</div>
 
 </div>
 
