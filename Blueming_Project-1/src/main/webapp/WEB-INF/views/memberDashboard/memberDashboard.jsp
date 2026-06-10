@@ -100,10 +100,10 @@
             <%-- 프로필 카드 --%>
             <div class="profile-card">
                 <svg class="profile-avatar" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
-				    <circle cx="44" cy="44" r="44" fill="#e8eaf0"/>
-				    <circle cx="44" cy="36" r="16" fill="#c4c5c6"/>
-				    <ellipse cx="44" cy="80" rx="26" ry="18" fill="#c4c5c6"/>
-				</svg>
+	    <circle cx="44" cy="44" r="44" fill="#e8eaf0"/>
+	    <circle cx="44" cy="36" r="16" fill="#c4c5c6"/>
+	    <ellipse cx="44" cy="80" rx="26" ry="18" fill="#c4c5c6"/>
+	</svg>
                 <div class="profile-name">${profile.name}</div>
                 <div class="profile-email">${profile.email}</div>
                 <div style="font-size:14px; color:#888; margin-top:2px;">
