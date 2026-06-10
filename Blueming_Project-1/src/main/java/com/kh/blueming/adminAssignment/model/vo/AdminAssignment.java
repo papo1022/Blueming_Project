@@ -36,7 +36,7 @@ public class AdminAssignment {
     private String departmentId;
     private String positionId;
     
-    private String fileId;
+    private Integer fileId;
     private String originalName;
     private String changedName;
     private String filePath;

@@ -10,7 +10,7 @@ INSERT INTO MEMBER (
 ) VALUES (
     (SELECT NVL(MAX(MEMBER_ID), 0) + 1 FROM MEMBER),
     'user01',
-    'user01',
+    '$2a$10$htzD22N9nwae8U4UmqieF.l.mUXLpKDOYT1ZtFC4ekDonjx2LFUsm',
     '테스트사원',
     'user01@test.com',
     '010-0000-0000',

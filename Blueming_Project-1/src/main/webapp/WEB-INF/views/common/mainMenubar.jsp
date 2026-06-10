@@ -18,55 +18,12 @@
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" 
+      href="${pageContext.request.contextPath}/resources/css/menubar.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<style>
-
-    /* 왼쪽 사이드바
-.nav-area {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 220px;
-    height: 100vh;
-    background-color: #1976d2;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-}
-/* 메뉴 한 줄 
-.menu {
-    width: 100%;
-    height: 50px;
-}
-
-/* 메뉴 링크 
-.menu a {
-    display: block;
-    width: 100%;
-    height: 100%;
-    line-height: 50px;
-    padding-left: 25px;
-    color: white;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.menu a:hover {
-    background-color: #1565c0;
-    color: white;
-}
-
-.menu a:hover {
-    color: white;
-    font-size: 18px;
-    text-decoration: none;
-} */
-    
-</style>
 </head>
 <body>
     <c:url var="homeUrl" value="/"/>

@@ -68,10 +68,9 @@
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    
-    <div class="outer">
-        <h1 align="center">강의 등록</h1>
-    <form action="addCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+    <h1 align="center">강의 등록</h1>
+
+    <form id="courseAddForm" action="addCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
         <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
         <table class="table">
             <tr>
@@ -261,6 +260,17 @@
         populateSelect("posSelector", posOptions, "직급 선택");
         onRuleTypeChange();
         renderTargetRules();
+
+        document.getElementById("courseAddForm").addEventListener("reset", function() {
+            window.setTimeout(function() {
+                targetRules.length = 0;
+                document.getElementById("ruleTypeSelector").value = "ALL";
+                document.getElementById("deptSelector").value = "";
+                document.getElementById("posSelector").value = "";
+                onRuleTypeChange();
+                renderTargetRules();
+            }, 0);
+        });
     </script>
 </body>
 </html>

@@ -23,6 +23,19 @@
         height: 220px;
         resize: none;
     }
+
+    .field-error {
+        width: 80%;
+        margin: 6px auto 0;
+        color: #d93025;
+        font-size: 13px;
+        text-align: left;
+        min-height: 18px;
+    }
+
+    .is-invalid {
+        border-color: #d93025;
+    }
 </style>
 </head>
 <body>
@@ -34,7 +47,7 @@
     <br><br>
 
     <div class="outer">
-        <form id="assignmentForm" action="/blueming/assignment/add" method="post" align="center">
+        <form id="assignmentForm" action="/blueming/assignment/add" method="post" align="center" novalidate>
             <input type="hidden" name="chapterId" value="${chapter.chapterId}">
             <table class="table">
                 <tr>
@@ -43,7 +56,10 @@
                 </tr>
                 <tr>
                     <td>* 과제명</td>
-                    <td><input type="text" id="assignmentTitle" name="assignmentTitle" required></td>
+                    <td>
+                        <input type="text" id="assignmentTitle" name="assignmentTitle">
+                        <div class="field-error" id="assignmentTitleError"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>과제 설명</td>
@@ -51,15 +67,24 @@
                 </tr>
                 <tr>
                     <td>* 시작일</td>
-                    <td><input type="date" id="startDate" name="startDate" required></td>
+                    <td>
+                        <input type="date" id="startDate" name="startDate">
+                        <div class="field-error" id="startDateError"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>* 마감일</td>
-                    <td><input type="date" id="dueDate" name="dueDate" required></td>
+                    <td>
+                        <input type="date" id="dueDate" name="dueDate">
+                        <div class="field-error" id="dueDateError"></div>
+                    </td>
                 </tr>
                 <tr>
                     <td>* 만점</td>
-                    <td><input type="number" id="maxScore" name="maxScore" min="0" required></td>
+                    <td>
+                        <input type="number" id="maxScore" name="maxScore" min="1">
+                        <div class="field-error" id="maxScoreError"></div>
+                    </td>
                 </tr>
             </table>
             <br><br>
@@ -71,9 +96,80 @@
     </div>
 
     <script>
+        function setFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorBox = document.getElementById(fieldId + "Error");
+
+            if (field) {
+                field.classList.toggle("is-invalid", !!message);
+            }
+
+            if (errorBox) {
+                errorBox.textContent = message || "";
+            }
+        }
+
+        function validateAssignmentForm() {
+            const titleField = document.getElementById("assignmentTitle");
+            const startDateField = document.getElementById("startDate");
+            const dueDateField = document.getElementById("dueDate");
+            const maxScoreField = document.getElementById("maxScore");
+            let firstInvalidField = null;
+
+            setFieldError("assignmentTitle", "");
+            setFieldError("startDate", "");
+            setFieldError("dueDate", "");
+            setFieldError("maxScore", "");
+
+            if (!titleField.value.trim()) {
+                setFieldError("assignmentTitle", "과제명을 입력해주세요.");
+                firstInvalidField = firstInvalidField || titleField;
+            }
+
+            if (!startDateField.value) {
+                setFieldError("startDate", "시작일을 입력해주세요.");
+                firstInvalidField = firstInvalidField || startDateField;
+            }
+
+            if (!dueDateField.value) {
+                setFieldError("dueDate", "마감일을 입력해주세요.");
+                firstInvalidField = firstInvalidField || dueDateField;
+            }
+
+            if (!maxScoreField.value.trim()) {
+                setFieldError("maxScore", "만점을 입력해주세요.");
+                firstInvalidField = firstInvalidField || maxScoreField;
+            } else if (Number(maxScoreField.value) < 1) {
+                setFieldError("maxScore", "만점은 1 이상 입력해주세요.");
+                firstInvalidField = firstInvalidField || maxScoreField;
+            }
+
+            if (startDateField.value && dueDateField.value && dueDateField.value < startDateField.value) {
+                setFieldError("dueDate", "마감일은 시작일보다 빠를 수 없습니다.");
+                firstInvalidField = firstInvalidField || dueDateField;
+            }
+
+            return firstInvalidField;
+        }
+
         function submitAssignmentForm() {
+            const form = document.getElementById("assignmentForm");
+            if (!form) {
+                return;
+            }
+
+            const firstInvalidField = validateAssignmentForm();
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+                return;
+            }
+
             if (confirm("과제를 등록하시겠습니까?")) {
-                document.getElementById("assignmentForm").submit();
+                if (form.requestSubmit) {
+                    form.requestSubmit();
+                } else {
+                    form.submit();
+                }
             }
         }
 

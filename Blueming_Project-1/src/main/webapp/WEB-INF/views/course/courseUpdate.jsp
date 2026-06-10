@@ -72,8 +72,7 @@
     
     
     <div class="outer">
-        <h1 align="center">강의 수정</h1>
-        <form action="updateCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+        <form id="courseUpdateForm" action="updateCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}">
             <input type="hidden" name="courseId" value="${requestScope.c.courseId}">
             <br>
@@ -279,6 +278,14 @@
             </c:otherwise>
         </c:choose>
 
+        const initialTargetRules = targetRules.map(function(rule) {
+            return {
+                targetType: rule.targetType,
+                targetValue: rule.targetValue,
+                label: rule.label
+            };
+        });
+
         function validateForm() {
             const startDate = new Date(document.querySelector('input[name="startDate"]').value);
             const endDate = new Date(document.querySelector('input[name="endDate"]').value);
@@ -299,6 +306,25 @@
         populateSelect("posSelector", posOptions, "직급 선택");
         onRuleTypeChange();
         renderTargetRules();
+
+        document.getElementById("courseUpdateForm").addEventListener("reset", function() {
+            window.setTimeout(function() {
+                targetRules.length = 0;
+                for (let i = 0; i < initialTargetRules.length; i++) {
+                    targetRules.push({
+                        targetType: initialTargetRules[i].targetType,
+                        targetValue: initialTargetRules[i].targetValue,
+                        label: initialTargetRules[i].label
+                    });
+                }
+
+                document.getElementById("ruleTypeSelector").value = "ALL";
+                document.getElementById("deptSelector").value = "";
+                document.getElementById("posSelector").value = "";
+                onRuleTypeChange();
+                renderTargetRules();
+            }, 0);
+        });
     </script>
 </body>
 </html>
