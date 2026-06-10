@@ -214,9 +214,9 @@ body{
 				
 				        <c:choose>
 				
-				            <c:when test="${not empty assignment.submittedFileName}">
+                            <c:when test="${not empty assignment.submittedFileName and not empty assignment.submissionId}">
 				
-				                <a href="${pageContext.request.contextPath}/adminAssignment/download?fileId=${assignment.submittedFileId}">
+                                <a href="${pageContext.request.contextPath}/adminAssignment/download?submissionId=${assignment.submissionId}">
 				
 				                    📎 ${assignment.submittedFileName}
 				

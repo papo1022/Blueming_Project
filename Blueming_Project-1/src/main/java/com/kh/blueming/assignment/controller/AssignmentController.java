@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,34 @@ public class AssignmentController {
         return loginUser != null
             && course != null
             && ("S".equals(loginUser.getRole()) || loginUser.getMemberId() == course.getMemberId());
+    }
+
+    private String validateAssignmentInput(Assignment assignment) {
+        if (assignment == null) {
+            return "잘못된 요청입니다.";
+        }
+
+        if (assignment.getAssignmentTitle() == null || assignment.getAssignmentTitle().trim().isEmpty()) {
+            return "과제명을 입력해주세요.";
+        }
+
+        if (assignment.getStartDate() == null) {
+            return "시작일을 입력해주세요.";
+        }
+
+        if (assignment.getDueDate() == null) {
+            return "마감일을 입력해주세요.";
+        }
+
+        if (assignment.getDueDate().before(assignment.getStartDate())) {
+            return "마감일은 시작일보다 빠를 수 없습니다.";
+        }
+
+        if (assignment.getMaxScore() <= 0) {
+            return "만점은 1 이상 입력해주세요.";
+        }
+
+        return null;
     }
 
     @GetMapping("list")
@@ -103,10 +132,21 @@ public class AssignmentController {
     }
 
     @PostMapping("add")
-    public String addAssignment(Assignment assignment, Model model, HttpSession session) {
+    public String addAssignment(Assignment assignment, BindingResult bindingResult, Model model, HttpSession session) {
         Member loginUser = (Member) session.getAttribute("loginUser");
         if (loginUser == null) {
             model.addAttribute("errorMsg", "로그인이 필요합니다.");
+            return "common/errorPage";
+        }
+
+        if (bindingResult.hasErrors()) {
+            int chapterId = assignment != null ? assignment.getChapterId() : 0;
+            if (chapterId > 0) {
+                session.setAttribute("alertMsg", "필수 항목을 모두 입력해주세요.");
+                return "redirect:/assignment/addView?chapterId=" + chapterId;
+            }
+
+            model.addAttribute("errorMsg", "요청 값이 올바르지 않습니다.");
             return "common/errorPage";
         }
 
@@ -120,6 +160,12 @@ public class AssignmentController {
         if (!canManageCourse(loginUser, course)) {
             model.addAttribute("errorMsg", "과제를 등록할 권한이 없습니다.");
             return "common/errorPage";
+        }
+
+        String validationMessage = validateAssignmentInput(assignment);
+        if (validationMessage != null) {
+            session.setAttribute("alertMsg", validationMessage);
+            return "redirect:/assignment/addView?chapterId=" + chapter.getChapterId();
         }
 
         assignment.setCourseId(chapter.getCourseId());
@@ -137,10 +183,21 @@ public class AssignmentController {
     }
 
     @PostMapping("update")
-    public String updateAssignment(Assignment assignment, Model model, HttpSession session) {
+    public String updateAssignment(Assignment assignment, BindingResult bindingResult, Model model, HttpSession session) {
         Member loginUser = (Member) session.getAttribute("loginUser");
         if (loginUser == null) {
             model.addAttribute("errorMsg", "로그인이 필요합니다.");
+            return "common/errorPage";
+        }
+
+        if (bindingResult.hasErrors()) {
+            int assignmentId = assignment != null ? assignment.getAssignmentId() : 0;
+            if (assignmentId > 0) {
+                session.setAttribute("alertMsg", "필수 항목을 모두 입력해주세요.");
+                return "redirect:/assignment/updateView?assignmentId=" + assignmentId;
+            }
+
+            model.addAttribute("errorMsg", "요청 값이 올바르지 않습니다.");
             return "common/errorPage";
         }
 
@@ -155,6 +212,12 @@ public class AssignmentController {
         if (!canManageCourse(loginUser, course)) {
             model.addAttribute("errorMsg", "과제를 수정할 권한이 없습니다.");
             return "common/errorPage";
+        }
+
+        String validationMessage = validateAssignmentInput(assignment);
+        if (validationMessage != null) {
+            session.setAttribute("alertMsg", validationMessage);
+            return "redirect:/assignment/updateView?assignmentId=" + origin.getAssignmentId();
         }
 
         assignment.setChapterId(origin.getChapterId());

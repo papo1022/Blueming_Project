@@ -84,8 +84,23 @@ public class AdminAssignmentDao {
             SqlSessionTemplate sqlSession,
             int fileId) {
 
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("fileId", fileId);
+
         return sqlSession.selectOne(
                 "adminAssignmentMapper.selectFile",
-                fileId);
+                map);
     }
+
+        public AdminAssignment selectFileBySubmissionId(
+                        SqlSessionTemplate sqlSession,
+                        int submissionId) {
+
+                HashMap<String, Integer> map = new HashMap<>();
+                map.put("submissionId", submissionId);
+
+                return sqlSession.selectOne(
+                                "adminAssignmentMapper.selectFileBySubmissionId",
+                                map);
+        }
 }

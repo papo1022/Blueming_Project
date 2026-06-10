@@ -289,7 +289,7 @@
                         <div class="video-section">
 
                             <div class="player-shell" id="chapterPlayerShell">
-                                <video id="chapterVideo" controls preload="metadata"
+                                <video id="chapterVideo" preload="metadata"
                                     src="${pageContext.request.contextPath}/${videoAttachment.filePath}${videoAttachment.changedName}">
                                     브라우저가 video 태그를 지원하지 않습니다.
                                 </video>
@@ -516,11 +516,12 @@
                 <div class="mb-5">
                     <h5>총 이수율</h5>
                     <input type="hidden" id="courseId" value="${chapter.courseId}">
-                    <input type="hidden" id="chapterId" value="${chapter.chapterId}">
+                    <input type="hidden" id="chapterIdStat" value="${chapter.chapterId}">
                     <div class="progress" style="height: 30px;">
-                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                        <div id="totalCourseProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
                             role="progressbar"
-                            style="width: ${String.format('%.2f', chapter.avgProgress)}%;">
+                            style="width: 0%;"
+                            data-rate="${chapter.avgProgress}">
                             <span align="center" class="text-small">${String.format("%.2f", chapter.avgProgress)}%</span>
                         </div>
                     </div>
@@ -528,10 +529,10 @@
                     <br>
                     <h5>총 과제 제출률</h5>
                     <div class="progress" style="height: 30px;">
-                        <input type="hidden" id="chapterId" value="${chapter.chapterId}">
-                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
+                        <div id="totalAssignmentProgressBar" class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
                             role="progressbar"
-                            style="width: ${String.format('%.2f', chapter.avgAssignmentSubmissionRate)}%;">
+                            style="width: 0%;"
+                            data-rate="${chapter.avgAssignmentSubmissionRate}">
                             <span align="center" class="text-small">${String.format("%.2f", chapter.avgAssignmentSubmissionRate)}%</span>
                         </div>
                     </div>
@@ -554,28 +555,44 @@
 
     <script>
 
+        function onReady(fn) {
+            if (window.jQuery) {
+                window.jQuery(fn);
+                return;
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", fn);
+            } else {
+                fn();
+            }
+        }
+
         
         
-        new Chart(document.getElementById('courseChart'), {
-            type: 'line',
-            data: {
-                labels: [
-                    <c:forEach var="ch" items="${chapterList}" varStatus="status">
-                        '${ch.chapterTitle}'
-                        <c:if test="${!status.last}">,</c:if>
-                    </c:forEach>
-                ],
-                datasets: [{
-                    label: '수강률',
-                    data: [
+        const chartCanvas = document.getElementById('courseChart');
+        if (chartCanvas && typeof Chart !== 'undefined') {
+            new Chart(chartCanvas, {
+                type: 'line',
+                data: {
+                    labels: [
                         <c:forEach var="ch" items="${chapterList}" varStatus="status">
-                            ${ch.avgProgress}
+                            '${ch.chapterTitle}'
                             <c:if test="${!status.last}">,</c:if>
                         </c:forEach>
-                    ]
-                }]
-            }
-        });
+                    ],
+                    datasets: [{
+                        label: '수강률',
+                        data: [
+                            <c:forEach var="ch" items="${chapterList}" varStatus="status">
+                                ${ch.avgProgress}
+                                <c:if test="${!status.last}">,</c:if>
+                            </c:forEach>
+                        ]
+                    }]
+                }
+            });
+        }
 
         function chapterDelete(){
             if(confirm("정말로 챕터를 삭제하시겠습니까?")){
@@ -595,10 +612,20 @@
             window.location.href = "/blueming/assignment/updateView?assignmentId=" + assignmentId;
         }
 
-        $(function() {
+        onReady(function() {
             // 초기 진도 바 너비 적용
             const bar = document.getElementById("compRateBar");
             if (bar) bar.style.width = (bar.dataset.rate || 0) + "%";
+
+            const totalCourseProgressBar = document.getElementById("totalCourseProgressBar");
+            if (totalCourseProgressBar) {
+                totalCourseProgressBar.style.width = (totalCourseProgressBar.dataset.rate || 0) + "%";
+            }
+
+            const totalAssignmentProgressBar = document.getElementById("totalAssignmentProgressBar");
+            if (totalAssignmentProgressBar) {
+                totalAssignmentProgressBar.style.width = (totalAssignmentProgressBar.dataset.rate || 0) + "%";
+            }
 
             const playerShell = document.getElementById("chapterPlayerShell");
             const btnPlayPause = document.getElementById("btnPlayPause");
@@ -787,11 +814,11 @@
                 }
 
                 // 이전 시청 위치로 복원
-      if (lastPos > 1) {               const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
-           
+                const lastPos = parseFloat("${not empty existingProgress ? existingProgress.lastPositionSeconds : 0}") || 0;
+                if (lastPos > 1) {
                     video.addEventListener("loadedmetadata", function() {
                         video.currentTime = lastPos;
-                    }, {once: true});
+                    }, { once: true });
                 }
 
                 // 시청한 구간을 Set으로 추적 (1초 단위)
@@ -922,7 +949,7 @@
         });
         
      // 1. 페이지 로드 시 댓글 목록 불러오기
-        $(function(){
+        onReady(function(){
             loadReplyList();
         });
         
