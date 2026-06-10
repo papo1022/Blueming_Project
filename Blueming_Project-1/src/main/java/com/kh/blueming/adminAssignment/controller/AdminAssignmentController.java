@@ -46,13 +46,17 @@ public class AdminAssignmentController {
             @RequestParam(value="sort", required=false)
             String sort,
 
+            @RequestParam(value="order", required=false)
+            String order,   // ⭐⭐⭐ 이거 추가
+
             Model model) {
 
-        HashMap<String, String> map = new HashMap<>();
+    	HashMap<String, String> map = new HashMap<>();
 
-        map.put("condition", condition);
-        map.put("keyword", keyword);
-        map.put("sort", sort);
+    	map.put("condition", condition);
+    	map.put("keyword", keyword);
+    	map.put("sort", sort);
+    	map.put("order", order); 
 
         int listCount =
                 adminAssignmentService.selectListCount(map);
@@ -65,9 +69,7 @@ public class AdminAssignmentController {
                         10);
 
         ArrayList<AdminAssignment> list =
-                adminAssignmentService.selectAssignmentList(
-                        map,
-                        pi);
+                adminAssignmentService.selectAssignmentList(map, pi);
 
         model.addAttribute("list", list);
         model.addAttribute("pi", pi);
@@ -75,10 +77,10 @@ public class AdminAssignmentController {
         model.addAttribute("condition", condition);
         model.addAttribute("keyword", keyword);
         model.addAttribute("sort", sort);
+        model.addAttribute("order", order); // ✨ [이 줄을 추가하세요!] JSP에서 ▲/▼ 표시 및 토글 링크 생성에 필요합니다.
 
         return "adminAssignment/assignmentList";
     }
-    
     
     
 

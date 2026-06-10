@@ -27,7 +27,7 @@
 		WHERE N.STATUS = 'Y'
 		ORDER BY N.NOTICE_ID DESC
 	</select>
-	<insert id="insertNotice">
+<insert id="insertNotice">
     INSERT INTO NOTICE(
         NOTICE_ID,
         NOTICE_TITLE,
@@ -35,13 +35,12 @@
         MEMBER_ID
     )
     VALUES(
-        SEQ_NNO.NEXTVAL,
+        (SELECT NVL(MAX(NOTICE_ID), 0) + 1 FROM NOTICE),
         #{noticeTitle},
         #{content},
         #{memberId}
     )
-		</insert>
-		
+</insert>
 	<update id="increaseCount" parameterType="_int">
 		UPDATE NOTICE
 		   SET COUNT = COUNT + 1
