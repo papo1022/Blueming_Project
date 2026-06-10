@@ -1,0 +1,157 @@
+@charset "UTF-8";
+
+/* --- 전체 레이아웃---  */
+
+.main-wrapper {
+    display: flex;
+    min-height: 100vh;
+    border: 2px solid red;
+}
+
+
+/* --- 왼쪽 컬럼 --- */
+
+.left-col {
+    flex: 1;
+    padding: 32px;
+    border: 2px solid blue;
+}
+
+/* 인사말 + 검색바 가로 배치 */
+.greeting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid green;
+}
+
+.greeting-text {
+    border: 1px dashed green;
+}
+
+.greeting-text h1 { margin: 0; }
+.greeting-text p  { margin: 0; }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px dashed green;
+}
+
+/* 강의 목록 타이틀 */
+.section-title {
+    border: 1px dashed blue;
+}
+
+/* 강의 카드 그리드 */
+.course-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    border: 1px dashed blue;
+}
+
+/* 개별 강의 카드 */
+.course-card {
+    border: 2px solid orange;
+}
+
+/* 카드 상단: 아이콘 + 도넛 */
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px dashed orange;
+}
+
+.card-icon   { border: 1px dashed orange; }
+
+.donut-wrap {
+    position: relative;
+    border: 1px dashed orange;
+}
+
+.donut-wrap svg { display: block; }
+
+.donut-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px dashed orange;
+}
+
+.card-title-text { border: 1px dashed orange; }
+.card-dday       { border: 1px dashed orange; }
+
+
+/* --- 오른쪽 컬럼 --- */
+
+.right-col {
+    width: 320px;
+    flex-shrink: 0;
+    padding: 32px;
+    border: 2px solid purple;
+}
+
+.right-col-title { border: 1px dashed purple; }
+
+/* 프로필 카드 */
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid purple;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border: 1px dashed purple;
+}
+
+.profile-name  { border: 1px dashed purple; }
+.profile-email { border: 1px dashed purple; }
+
+/* 달력 */
+.calendar-card { border: 2px solid purple; }
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px dashed purple;
+}
+
+.calendar-month { border: 1px dashed purple; }
+
+/* 요일 헤더 7칸 */
+.calendar-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px dashed purple;
+}
+
+/* 날짜 셀 7칸 */
+.calendar-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px dashed purple;
+}
+
+.calendar-dates .today { border: 2px solid purple; }
+
+/* 과제 섹션 */
+.assignment-section       { border: 2px solid purple; }
+.assignment-section-title { border: 1px dashed purple; }
+
+/* 과제 항목: 제목 + 버튼 가로 배치 */
+.assignment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px dashed purple;
+}
+
+.btn-submit   { border: 1px dashed purple; }
+.btn-unsubmit { border: 1px dashed purple; }

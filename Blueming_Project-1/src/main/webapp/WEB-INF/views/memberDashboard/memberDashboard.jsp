@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Member Dashboard</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
 </head>
 <body>
