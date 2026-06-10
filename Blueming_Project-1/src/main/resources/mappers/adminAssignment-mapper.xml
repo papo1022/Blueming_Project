@@ -157,17 +157,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectListCount"
+        parameterType="map"
         resultType="_int">
 
     SELECT COUNT(*)
-
     FROM MEMBER M
-
     JOIN ASSIGNMENT_SUBMISSION S
-      ON M.MEMBER_ID = S.MEMBER_ID
-
+        ON M.MEMBER_ID = S.MEMBER_ID
     JOIN ASSIGNMENT A
-      ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+        ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
+
+    WHERE 1=1
+
+    <if test="condition == 'name' and keyword != null and keyword != ''">
+        AND M.NAME LIKE '%' || #{keyword} || '%'
+    </if>
+
+    <if test="condition == 'department' and keyword != null and keyword != ''">
+        AND (
+            (#{keyword} LIKE '%인사%' AND M.DEPARTMENT_ID = 'D01')
+            OR (#{keyword} LIKE '%개발%' AND M.DEPARTMENT_ID = 'D02')
+            OR (#{keyword} LIKE '%디자인%' AND M.DEPARTMENT_ID = 'D03')
+            OR (#{keyword} LIKE '%영업%' AND M.DEPARTMENT_ID = 'D04')
+            OR (#{keyword} LIKE '%마케팅%' AND M.DEPARTMENT_ID = 'D05')
+            OR (#{keyword} LIKE '%운영%' AND M.DEPARTMENT_ID = 'D06')
+            OR (#{keyword} LIKE '%품질%' AND M.DEPARTMENT_ID = 'D07')
+            OR (#{keyword} LIKE '%전략%' AND M.DEPARTMENT_ID = 'D08')
+        )
+    </if>
+
+    <if test="condition == 'position' and keyword != null and keyword != ''">
+        AND (
+            (#{keyword} LIKE '%사원%' AND M.POSITION_ID = 'P01')
+            OR (#{keyword} LIKE '%주임%' AND M.POSITION_ID = 'P02')
+            OR (#{keyword} LIKE '%대리%' AND M.POSITION_ID = 'P03')
+            OR (#{keyword} LIKE '%과장%' AND M.POSITION_ID = 'P04')
+            OR (#{keyword} LIKE '%차장%' AND M.POSITION_ID = 'P05')
+            OR (#{keyword} LIKE '%부장%' AND M.POSITION_ID = 'P06')
+        )
+    </if>
 
 </select>
 
