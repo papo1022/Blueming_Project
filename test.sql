@@ -180,9 +180,6 @@ FROM (
     SELECT LEVEL AS id FROM dual CONNECT BY LEVEL <= 300
 );
 
--- ------------------------------------------------------------
--- 4) 강의 80건
--- ------------------------------------------------------------
 INSERT INTO COURSE (
     COURSE_ID, COURSE_TITLE, DESCRIPTION, MEMBER_ID, STATUS,
     START_DATE, END_DATE, TOTAL_HOURS, FILE_ID, CREATE_DATE, UPDATED_DATE
@@ -254,6 +251,18 @@ SELECT
 FROM (
     SELECT LEVEL AS id FROM dual CONNECT BY LEVEL <= 600
 );
+
+-- 6-1) hrmaster (MEMBER_ID=2, ROLE='R') 수강 등록
+-- course-mapper.xml ROLE IN ('N','R') 수정에 맞춰 전체 강의 80건 등록
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, MEMBER_ID, COURSE_ID, STATUS, START_DATE, COMPLETED_DATE)
+SELECT
+    600 + ROWNUM,
+    2,
+    COURSE_ID,
+    'Y',
+    DATE '2026-02-01',
+    NULL
+FROM COURSE;
 
 -- ------------------------------------------------------------
 -- 7) 챕터 400건 (강의당 5개)

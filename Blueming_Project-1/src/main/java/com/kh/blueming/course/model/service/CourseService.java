@@ -62,8 +62,13 @@ public class CourseService {
 		return courseDao.selectAttachmentByFileId(sqlSession, fileId);
 	}
 	
+	public ArrayList<Chapter> selectChapterList(int courseId, Integer memberId, boolean isAdmin) {
+		return courseDao.selectChapterList(sqlSession, courseId, memberId, isAdmin);
+	}
+
+	/** 내부 처리용(삭제 등) — 수강률 분기 불필요 */
 	public ArrayList<Chapter> selectChapterList(int courseId) {
-		return courseDao.selectChapterList(sqlSession, courseId);
+		return courseDao.selectChapterList(sqlSession, courseId, null, true);
 	}
 	
 	public Chapter selectChapter(int chapterId) {
@@ -299,7 +304,7 @@ public class CourseService {
 		courseDao.deleteEnrollmentByCourseId(sqlSession, courseId);
 		courseDao.deleteCourseTargetsByCourseId(sqlSession, courseId);
 		
-		ArrayList<Chapter> chapterList = courseDao.selectChapterList(sqlSession, courseId);
+		ArrayList<Chapter> chapterList = courseDao.selectChapterList(sqlSession, courseId, null, true);
 		courseDao.deleteAllChapter(sqlSession, courseId);
 		
 		for(Chapter ch : chapterList) {
