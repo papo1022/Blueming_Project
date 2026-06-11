@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,7 +60,7 @@
                             <div class="card-icon">
                                 <i class="fi fi-sr-book-alt"></i>
                             </div>
-                            <%-- 도넛 차트: stroke-dasharray = (progressRate/100) * 138.2 --%>
+                            <%-- 도넛 차트 --%>
                             <div class="donut-wrap">
                                 <svg viewBox="0 0 58 58">
                                     <circle class="donut-bg" cx="29" cy="29" r="22"/>
