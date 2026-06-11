@@ -245,8 +245,8 @@
 
             <div class="top-controls">
                 <div id="search-area" align="left">
-                    <form action="/blueming/course/list" method="get">
-                        <input type="search" name="keyword" value="${ keyword }" id="keyword-input">
+                    <form id="course-search-form" action="/blueming/course/list" method="get">
+                        <input type="search" name="keyword" value="${ keyword }" id="keyword-input" placeholder="강의명 또는 강의설명 검색">
                         <input type="hidden" name="sort" value="${ sort }" id="sort-hidden-input">
                         <input type="hidden" name="mineOnly" value="${mineOnly}" id="mineOnly-hidden-input">
                         <button type="submit" class="btn btn-primary">검색</button>
@@ -395,6 +395,18 @@
             $("#course-grid").append(resultStr);
         }
 
+        function shouldLoadMoreByViewport() {
+            const $loadingArea = $("#loading-area");
+            if ($loadingArea.length === 0) {
+                return false;
+            }
+
+            const loadingTop = $loadingArea.offset().top;
+            const viewportBottom = $(window).scrollTop() + $(window).height();
+
+            return viewportBottom >= (loadingTop - 200);
+        }
+
         function loadCourseList() {
             if (isLoading || !hasMore) {
                 return;
@@ -450,7 +462,7 @@
                     isLoading = false;
                     $("#loading-area").hide();
 
-                    if (hasMore && $(document).height() <= $(window).height()) {
+                    if (hasMore && shouldLoadMoreByViewport()) {
                         loadCourseList();
                     }
                 }
@@ -469,6 +481,17 @@
                 mineOnly = $mineOnlyCheckbox.is(":checked");
                 $mineOnlyCheckbox.prop("checked", mineOnly);
             }
+
+            $("#course-search-form").on("submit", function() {
+                if ($mineOnlyCheckbox.length > 0) {
+                    mineOnly = $mineOnlyCheckbox.is(":checked");
+                } else {
+                    mineOnly = false;
+                }
+
+                $("#mineOnly-hidden-input").val(mineOnly);
+                $("#sort-hidden-input").val(sort);
+            });
 
             applySortButtonState();
 
@@ -511,11 +534,17 @@
                     return;
                 }
 
-                const scrollTop = $(window).scrollTop();
-                const windowHeight = $(window).height();
-                const docHeight = $(document).height();
+                if (shouldLoadMoreByViewport()) {
+                    loadCourseList();
+                }
+            });
 
-                if (scrollTop + windowHeight >= docHeight - 200) {
+            $(window).on("resize", function() {
+                if (!hasMore || isLoading) {
+                    return;
+                }
+
+                if (shouldLoadMoreByViewport()) {
                     loadCourseList();
                 }
             });

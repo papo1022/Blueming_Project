@@ -131,13 +131,16 @@
                     <br>
                     <h5>총 이수율</h5>
 
-                    <div class="progress" style="height: 30px;">
-                        <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
-                            role="progressbar"
-                            style="width: 0%;">
-                            <span align="center" id="totalProgress" class="text-big">0%</span>
-                            
+                    <div style="position: relative; height: 30px;">
+                        <div class="progress" style="height: 30px; margin-bottom: 0;">
+                            <div id="totalProgressBar" class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                                role="progressbar"
+                                style="width: 0%;">
+                            </div>
                         </div>
+                        <span id="totalProgress" class="text-big"
+                              style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: bold; white-space: nowrap; pointer-events: none;"
+                              >0%</span>
                     </div>
                 </div>
 
@@ -183,7 +186,7 @@
                         <tr>
                             <th width="10%">챕터</th>
                             <th width="40%">제목</th>
-                            <th width="50%">모든 수강생 이수율</th>
+                            <th width="50%">이수율</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -193,12 +196,17 @@
                                 <td>${ch.chapterOrder}</td>
                                 <td>${ch.chapterTitle}</td>
                                 <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar progress-bar-striped bg-info progress-bar-animated rounded-pill"
-                                            role="progressbar"
-                                            style="width: ${String.format('%.2f', ch.avgProgress)}%;">
-                                            <span align="center" class="text-small">${String.format("%.2f", ch.avgProgress)}%</span>
+                                    <div style="position: relative; height: 20px;">
+                                        <div class="progress" style="height: 20px; margin-bottom: 0;">
+                                            <div class="progress-bar progress-bar-striped bg-info progress-bar-animated rounded-pill chapter-progress-bar"
+                                                role="progressbar"
+                                                style="width: 0%;"
+                                                data-rate="${ch.avgProgress}">
+                                            </div>
                                         </div>
+                                        <span class="text-small chapter-progress-text"
+                                              style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; pointer-events: none;"
+                                              >0.00%</span>
                                     </div>
                                 </td>
                             </tr>
@@ -236,8 +244,34 @@
         }
 
         window.$(function() {
+            initChapterProgressBars();
             totalProgress();
         });
+
+        function initChapterProgressBars() {
+            $(".chapter-progress-bar").each(function() {
+                const rawRate = parseFloat($(this).data("rate"));
+                const rate = Number.isFinite(rawRate) ? Math.max(0, Math.min(100, rawRate)) : 0;
+                $(this).css("width", rate.toFixed(2) + "%");
+
+                const label = rate.toFixed(2) + "%";
+                const $wrap = $(this).closest("div[style*='position: relative']");
+                const $text = $wrap.find(".chapter-progress-text");
+                $text.text(label);
+
+                // 텍스트가 바 안에 들어갈 수 있으면 바 안쪽에, 아니면 바 오른쪽 여백에 배치
+                const barPx = $(this).width();
+                const textPx = $text.outerWidth();
+                const PADDING = 8;
+                if (barPx >= textPx + PADDING) {
+                    // 바 안에 표시 (흰 글자)
+                    $text.css({ left: rate / 2 + "%", color: "#fff", transform: "translate(-50%, -50%)" });
+                } else {
+                    // 바 오른쪽 여백에 표시 (어두운 글자)
+                    $text.css({ left: rate + "%", color: "#555", transform: "translate(4px, -50%)" });
+                }
+            });
+        }
         
         function totalProgress(){
             let totalProgress = 0;
@@ -246,9 +280,33 @@
                 totalProgress += ${ch.avgProgress};
                 count++;
             </c:forEach>
-            totalProgress = Math.round(totalProgress / count).toFixed(2);
-            document.getElementById("totalProgress").textContent = totalProgress + "%";
-            document.getElementById("totalProgressBar").style.width = totalProgress + "%";
+            if (count === 0) {
+                document.getElementById("totalProgress").textContent = "0.00%";
+                document.getElementById("totalProgressBar").style.width = "0%";
+                return;
+            }
+
+            totalProgress = (totalProgress / count).toFixed(2);
+            const bar = document.getElementById("totalProgressBar");
+            const label = document.getElementById("totalProgress");
+            bar.style.width = totalProgress + "%";
+            label.textContent = totalProgress + "%";
+
+            // 텍스트가 바 안에 들어갈 수 있으면 안쪽(흰색), 아니면 바 오른쪽 여백(어두운색)
+            requestAnimationFrame(function() {
+                const barPx = bar.offsetWidth;
+                const textPx = label.offsetWidth;
+                const PADDING = 8;
+                if (barPx >= textPx + PADDING) {
+                    label.style.left = (parseFloat(totalProgress) / 2) + "%";
+                    label.style.color = "#fff";
+                    label.style.transform = "translate(-50%, -50%)";
+                } else {
+                    label.style.left = totalProgress + "%";
+                    label.style.color = "#333";
+                    label.style.transform = "translate(6px, -50%)";
+                }
+            });
         }
 
         new Chart(document.getElementById('courseChart'), {
