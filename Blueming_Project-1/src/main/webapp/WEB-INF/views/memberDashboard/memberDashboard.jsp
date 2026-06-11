@@ -23,35 +23,35 @@
             <%-- 인사말 + 검색 --%>
             <div class="greeting-row">
                 <div class="greeting-text">
-                    <h1>안녕하세요, ${profile.name} 님!</h1>
+                    <p id="greeting">안녕하세요, ${profile.name} 님!</p>
                     <p>오늘의 교육 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
-                    <i class="fi fi-rr-search"></i>
-                    <input type="text" placeholder="검색할 강의를 입력해 주세요.">
-                </div>
+	                <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요."> <i class="fi fi-rr-search"></i>
+	            </div>
             </div>
 
             <%-- 강의 목록 --%>
             <div class="section-title">강의 목록</div>
             <div class="course-grid">
+            
                 <c:forEach var="course" items="${courseList}" varStatus="status">
 
                     <%-- 카드 색상: 완료=green, 마감=gray, 나머지는 순환 --%>
                     <c:choose>
-                        <c:when test="${course.courseStatus == 'DONE'}">
-                            <c:set var="theme" value="theme-green"/>
-                        </c:when>
-                        <c:when test="${course.courseStatus == 'CLOSED'}">
-                            <c:set var="theme" value="theme-gray"/>
-                        </c:when>
-                        <c:when test="${status.index % 2 == 0}">
-                            <c:set var="theme" value="theme-red"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="theme" value="theme-yellow"/>
-                        </c:otherwise>
-                    </c:choose>
+					    <c:when test="${course.courseStatus == 'DONE'}">
+					        <c:set var="theme" value="theme-green"/>
+					    </c:when>
+					    <c:when test="${course.courseStatus == 'CLOSED'}">
+					        <c:set var="theme" value="theme-gray"/>
+					    </c:when>
+					    <c:when test="${course.dDay <= 7}">
+					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 긴박 --%>
+					    </c:when>
+					    <c:otherwise>
+					        <c:set var="theme" value="theme-yellow"/> <%-- 여유 있음 --%>
+					    </c:otherwise>
+					</c:choose>
 
                     <div class="course-card ${theme}">
 
@@ -74,6 +74,7 @@
 
                         <%-- 카드 하단: 제목 + D-day --%>
                         <div class="card-title-text">${course.courseTitle}</div>
+                        
                         <c:choose>
                             <c:when test="${course.courseStatus == 'DONE'}">
                                 <div class="card-dday">완료</div>
@@ -88,6 +89,7 @@
 
                     </div>
                 </c:forEach>
+                
             </div>
 
         </div><%-- /left-col --%>

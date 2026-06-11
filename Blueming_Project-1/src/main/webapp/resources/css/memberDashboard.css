@@ -15,7 +15,6 @@
     margin-left: 260px; /* nav-area 너비와 동일한 크기임 */
     display: flex;
     min-height: 100vh;
-    border: 2px solid red;
 }
 
 
@@ -24,7 +23,6 @@
 .left-col {
     flex: 1;
     padding: 32px;
-    border: 2px solid blue;
 }
 
 /* 인사말 + 검색바 가로 배치 */
@@ -32,25 +30,41 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid green;
 }
 
-.greeting-text {
-    border: 1px dashed green;
-}
+.greeting-text p { margin: 0; }
 
-.greeting-text h1 { margin: 0; }
-.greeting-text p  { margin: 0; }
+.greeting-text #greeting {
+	font-weight: bold;
+    font-size: 20px;
+}
 
 .search-bar {
     display: flex;
     align-items: center;
-    border: 1px dashed green;
+    width: 350px;
+    height: 60px;
+    border: 1px solid #c4c5c6; 
+    border-radius: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#search-input {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    outline: none;
 }
 
 /* 강의 목록 타이틀 */
 .section-title {
-    border: 1px dashed blue;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 /* 강의 카드 그리드 */
@@ -93,6 +107,28 @@
 
 .card-title-text { border: 1px dashed orange; }
 .card-dday       { border: 1px dashed orange; }
+
+/* 테마 색상 */
+.theme-red    { background-color: #fde8e8; }
+.theme-yellow { background-color: #fef9e7; }
+.theme-green  { background-color: #e8f8f0; }
+.theme-gray   { background-color: #f0f0f0; }
+
+/* 도넛, 아이콘, D-day 텍스트 색상도 테마별로 달라짐 */
+.theme-red    .donut-fill { stroke: #e57373; }
+.theme-yellow .donut-fill { stroke: #f4b400; }
+.theme-green  .donut-fill { stroke: #4caf50; }
+.theme-gray   .donut-fill { stroke: #9e9e9e; }
+
+.theme-red    .card-dday { color: #e57373; }
+.theme-yellow .card-dday { color: #f4b400; }
+.theme-green  .card-dday { color: #4caf50; }
+.theme-gray   .card-dday { color: #9e9e9e; }
+
+.theme-red    .card-icon { background-color: #e57373; color: white; }
+.theme-yellow .card-icon { background-color: #f4b400; color: white; }
+.theme-green  .card-icon { background-color: #4caf50; color: white; }
+.theme-gray   .card-icon { background-color: #9e9e9e; color: white; }
 
 
 /* --- 오른쪽 컬럼 --- */
