@@ -23,7 +23,7 @@
 </style>
 </head>
 <body>
-	<jsp:include page="../common/menubar.jsp"/>
+	<jsp:include page="../common/mainMenubar.jsp"/>
 
 	<div class="update-container">
 		<h2>사원 정보 수정</h2>
@@ -135,8 +135,9 @@
 					</select>
 				</div>
 			</div>
-			
-			<div class="update-row" id="leaveDateRow" style="${member.status == 'R' ? '' : 'display:none;'}">
+
+			<fmt:formatDate var="fmtRetireDate" value="${member.retireDate}" pattern="yyyy-MM-dd"/>
+			<div class="update-row" id="leaveDateRow" style="display:none;">
 				<div class="update-label">휴직기간</div>
 				<div class="update-value leave-date-group">
 					<input type="date" id="viewLeaveStartDate">
@@ -144,22 +145,13 @@
 					<input type="date" id="viewLeaveEndDate">
 				</div>
 			</div>
-			
-			<div class="update-row" id="retireDateRow" style="${member.status == 'N' ? '' : 'display:none;'}">
-			    <div class="update-label">퇴사일</div>
-			   	 	<div class="update-value">
-			        <input type="date" name="retireDate" id="retireDateInput" value="<fmt:formatDate value='${member.retireDate}' pattern='yyyy-MM-dd'/>">
-			    </div>
-			</div>
-			
-			<div class="btn-group">
-			    <button type="button" class="btn btn-primary" onclick="submitUpdateForm();">저장하기</button>
-			    <button type="button" class="btn btn-secondary" onclick="location.href='/blueming/memberlist'">취소</button>
-			</div>
-			
-		</form>
-	</div>
 
+			<div class="update-row" id="retireDateRow" style="display:none;">
+				<div class="update-label">퇴사일</div>
+				<div class="update-value">
+					<input type="date" name="retireDate" id="retireDateInput" value="${fmtRetireDate}">
+				</div>
+			</div>
 	<script>
 		// DB에서 가져온 8자리 숫자(YYYYMMDD)를 HTML5 <input type="date"> 포맷(YYYY-MM-DD)으로 파싱
 		// 🛡️ 안전하게 치환된 자바스크립트 변수 할당
@@ -174,6 +166,8 @@
 		    if(endNum && endNum.length === 8) {
 		        document.getElementById("viewLeaveEndDate").value = endNum.substring(0,4) + '-' + endNum.substring(4,6) + '-' + endNum.substring(6,8);
 		    }
+
+		    toggleLeaveInput();
 		}
 
 		function toggleLeaveInput() {

@@ -84,7 +84,11 @@ function selectReplyList(){
                 if(r.deptName) html += "<br><span style='font-size:11px;color:#888;'>" + r.deptName + "</span>";
                 html += "</td><td><div id='contentArea_" + r.replyId + "'>" + content + "</div>";
                 
-                if(r.originalName) html += "<div style='margin-top:5px;color:#007bff;font-size:12px;'>📎 " + r.originalName + "</div>";
+                if(r.originalName && r.replyId) {
+                    html += "<div style='margin-top:5px;font-size:12px;'>"
+                         + "<a href='${pageContext.request.contextPath}/reply/download?replyId=" + r.replyId + "' style='color:#007bff;'>📎 " + r.originalName + "</a>"
+                         + "</div>";
+                }
                 
                 html += "<div style='margin-top:5px;font-size:11px;color:#999;'>" + r.createdDate;
                 if(loginMemberId == r.memberId || loginUserRole == "S") html += "<span class='reply-btn' style='color:red;' onclick='deleteReply(" + r.replyId + ")'>삭제</span>";

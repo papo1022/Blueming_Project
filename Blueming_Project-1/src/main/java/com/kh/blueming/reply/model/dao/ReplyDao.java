@@ -63,4 +63,11 @@ public class ReplyDao {
                 "replyMapper.selectLastFileId");
     }
 
+    // 댓글 기준 첨부파일 조회
+    public Reply selectAttachmentByReplyId(int replyId) {
+        return sqlSession.selectOne(
+                "replyMapper.selectAttachmentByReplyId",
+                replyId);
+    }
+
 }
