@@ -103,10 +103,8 @@
             <%-- 프로필 카드 --%>
             <div class="profile-card">
                 <svg class="profile-avatar" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
-	    <circle cx="44" cy="44" r="44" fill="#e8eaf0"/>
-	    <circle cx="44" cy="36" r="16" fill="#c4c5c6"/>
-	    <ellipse cx="44" cy="80" rx="26" ry="18" fill="#c4c5c6"/>
-	</svg>
+				    <circle cx="44" cy="44" r="44" fill="#c4c5c6"/>
+				</svg>
                 <div class="profile-name">${profile.name}</div>
                 <div class="profile-email">${profile.email}</div>
                 <div style="font-size:14px; color:#888; margin-top:2px;">
@@ -117,9 +115,15 @@
             <%-- 달력 (JS로 동적 렌더링) --%>
             <div class="calendar-card">
                 <div class="calendar-header">
-                    <button id="cal-prev">&#8249;</button>
+                    <button id="cal-prev">
+                    	<i class="fi fi-rr-angle-left"></i>
+					</button>
+					
                     <span class="calendar-month" id="cal-month"></span>
-                    <button id="cal-next">&#8250;</button>
+                    
+                    <button id="cal-next">
+                    	<i class="fi fi-rr-angle-right"></i>
+                    </button>
                 </div>
                 <div class="calendar-days-header">
                     <span>일</span><span>월</span><span>화</span>
@@ -156,32 +160,42 @@
         const monthEl = document.getElementById('cal-month');
         const datesEl = document.getElementById('cal-dates');
         const today   = new Date();
-        let   cur     = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        // 현재 기준이 되는 주의 일요일을 구하기 위한 변수
+        let currentWeekSunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
 
         function render() {
-            const y = cur.getFullYear();
-            const m = cur.getMonth();
-            monthEl.textContent = y + '년 ' + (m + 1) + '월';
-
-            const firstDay  = new Date(y, m, 1).getDay();
-            const lastDate  = new Date(y, m + 1, 0).getDate();
-            const isThisMon = (y === today.getFullYear() && m === today.getMonth());
+            const y = currentWeekSunday.getFullYear();
+            const m = currentWeekSunday.getMonth();
+            monthEl.textContent = (m + 1) + '월';
 
             let html = '';
-            for (let i = 0; i < firstDay; i++) html += '<span></span>';
-            for (let d = 1; d <= lastDate; d++) {
-                const isToday = isThisMon && d === today.getDate();
+            
+            // 일요일(0)부터 토요일(6)까지 7일간의 날짜를 반복 생성
+            for (let i = 0; i < 7; i++) {
+                const iterDate = new Date(currentWeekSunday.getFullYear(), currentWeekSunday.getMonth(), currentWeekSunday.getDate() + i);
+                
+                const d = iterDate.getDate();
+                const isToday = (iterDate.getFullYear() === today.getFullYear() &&
+                                 iterDate.getMonth() === today.getMonth() &&
+                                 iterDate.getDate() === today.getDate());
+                
+                // 오늘 날짜인 경우 'today' 클래스 추가
                 html += '<span class="' + (isToday ? 'today' : '') + '">' + d + '</span>';
             }
+            
             datesEl.innerHTML = html;
         }
 
+        // 이전 주 이동 (7일 차감)
         document.getElementById('cal-prev').addEventListener('click', function () {
-            cur.setMonth(cur.getMonth() - 1);
+            currentWeekSunday.setDate(currentWeekSunday.getDate() - 7);
             render();
         });
+        
+        // 다음 주 이동 (7일 증가)
         document.getElementById('cal-next').addEventListener('click', function () {
-            cur.setMonth(cur.getMonth() + 1);
+            currentWeekSunday.setDate(currentWeekSunday.getDate() + 7);
             render();
         });
 
