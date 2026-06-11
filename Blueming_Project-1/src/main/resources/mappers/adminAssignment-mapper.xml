@@ -148,19 +148,6 @@
 
 	</select>
 	
-	<select id="selectListCount"
-        resultType="_int">
 
-        SELECT COUNT(*)
-
-        FROM MEMBER M
-
-        JOIN ASSIGNMENT_SUBMISSION S
-        ON M.MEMBER_ID = S.MEMBER_ID
-
-        JOIN ASSIGNMENT A
-        ON S.ASSIGNMENT_ID = A.ASSIGNMENT_ID
-
-    </select>
 
 </mapper>
