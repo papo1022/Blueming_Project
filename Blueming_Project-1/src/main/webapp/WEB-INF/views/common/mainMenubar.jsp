@@ -90,7 +90,7 @@
 	                                </a>
 	                            </li>
                                 <li>
-                                    <a href="<c:url value='/adminAssignment/list'/>">
+                                    <a href="<c:url value='/assignment/admin/list'/>">
                                         <i class="fi fi-sr-document"></i>
                                         과제 관리
                                     </a>
