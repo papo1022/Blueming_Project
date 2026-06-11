@@ -75,11 +75,11 @@
         <table class="table">
             <tr>
                 <td>* 강의명</td>
-                <td><input type="text" name="courseTitle" id="courseTitle" maxlength="30" required></td>
+                <td><input type="text" name="courseTitle" id="courseTitle" maxlength="90" required></td>
             </tr>
             <tr>
                 <td>* 강의 설명</td>
-                <td><textarea name="description" id="description" required maxlength="666"></textarea></td>
+                <td><textarea name="description" id="description" required maxlength="2000"></textarea></td>
             </tr>
             <tr>
                 <td>* 강의 시작 시간</td>

@@ -57,13 +57,13 @@
                 <tr>
                     <td>* 과제명</td>
                     <td>
-                        <input type="text" id="assignmentTitle" name="assignmentTitle">
+                        <input type="text" id="assignmentTitle" name="assignmentTitle" maxlength="90">
                         <div class="field-error" id="assignmentTitleError"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>과제 설명</td>
-                    <td><textarea id="description" name="description"></textarea></td>
+                    <td><textarea id="description" name="description" maxlength="2000"></textarea></td>
                 </tr>
                 <tr>
                     <td>* 시작일</td>

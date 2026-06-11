@@ -162,6 +162,7 @@ body{
                         <input type="text"
                                name="noticeTitle"
                                value="${requestScope.n.noticeTitle}"
+                               maxlength="50"
                                required>
                     </td>
                 </tr>
@@ -170,6 +171,7 @@ body{
                     <th>내용</th>
                     <td>
                         <textarea name="content"
+                                  maxlength="2000"
                                   required>${requestScope.n.content}</textarea>
                     </td>
                 </tr>

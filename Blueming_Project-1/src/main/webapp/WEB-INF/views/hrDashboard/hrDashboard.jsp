@@ -8,9 +8,6 @@
 </head>
 <body>
 	
-	<%-- 공통 메뉴바 --%>
-	<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
-	
 	<div class="container-fluid mt-4">
 	    <div class="row">
 	

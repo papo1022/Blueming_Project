@@ -293,7 +293,7 @@ br{
 					<option value="content">내용</option>
 				</select>
 				
-				<input type="search" name="keyword" value="${ requestScope.keyword }">
+				<input type="search" name="keyword" value="${ requestScope.keyword }" maxlength="100">
 				<!-- 
 					- EL 구문은 꺼내올 응답데이터가 없다면 오류도 안내고 출력도 안하고 만다!!
 					- 그래서 boardListView.jsp 에서 일반게시글 목록 조회 와 일반게시글 검색 화면

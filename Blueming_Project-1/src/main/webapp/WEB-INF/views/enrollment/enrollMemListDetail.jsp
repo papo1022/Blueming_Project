@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer" align="center">
         <h2><c:out value="${c.COURSE_TITLE}" /> 강의 상세 정보</h2>
