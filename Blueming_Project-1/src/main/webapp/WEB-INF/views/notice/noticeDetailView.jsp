@@ -1,109 +1,253 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>공지사항 상세조회</title>
+
+<style>
+
+body{
+    background:#f5f7fb;
+    margin:0;
+    padding:0;
+    font-family:"맑은 고딕", sans-serif;
+}
+
+.outer{
+    margin-left:250px;
+    width:calc(100vw - 250px);
+    min-height:100vh;
+    padding:30px;
+    box-sizing:border-box;
+}
+
+/* 카드 */
+.notice-view{
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
+}
+
+/* 상단 민트바 */
+.notice-header{
+    height:32px;
+    background:#4fd1c5;
+}
+
+/* 본문 */
+.notice-body{
+    padding:40px;
+}
+
+/* 제목 */
+.notice-title{
+    font-size:32px;
+    font-weight:700;
+    color:#333;
+    margin-bottom:20px;
+}
+
+/* 작성자 정보 */
+.notice-info{
+    display:flex;
+    gap:30px;
+    color:#666;
+    font-size:14px;
+    padding-bottom:25px;
+    border-bottom:1px solid #ececec;
+}
+
+/* 내용 */
+.notice-content{
+    min-height:600px;
+    padding:35px 0;
+    line-height:2;
+    color:#444;
+    font-size:15px;
+    border-bottom:1px solid #ececec;
+    white-space:pre-wrap;
+}
+
+/* 버튼 */
+.notice-footer{
+    padding:25px;
+    text-align:center;
+}
+
+.btn-custom{
+    display:inline-block;
+    padding:12px 28px;
+    border:none;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    transition:.2s;
+}
+
+.btn-list{
+    background:#6c757d;
+    color:white;
+}
+
+.btn-list:hover{
+    background:#555;
+    color:white;
+}
+
+.btn-update{
+ background:#3b82f6;
+    color:white;
+}
+
+.btn-update:hover{
+       background:#2563eb;
+
+}
+
+/* 삭제하기 */
+.btn-delete{
+    background:#4fd1c5;
+    color:white;
+}
+
+.btn-delete:hover{
+    background:#38b2ac;
+}
+
+/* 반응형 */
+@media(max-width:768px){
+
+    .outer{
+        margin-left:0;
+        width:100%;
+        padding:15px;
+    }
+
+    .notice-title{
+        font-size:24px;
+    }
+
+    .notice-info{
+        flex-direction:column;
+        gap:8px;
+    }
+
+}
+
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 </head>
 <body>
-<jsp:include page="../common/mainMenubar.jsp" />
 
-	<div class="outer">
-	
-		<br>
-		<h2 align="center">공지사항 상세조회</h2>
-		<br>
+<jsp:include page="../common/mainMenubar.jsp"/>
 
-		<table id="detail-area" class="table">
-			<tr>
-				<th>제목</th>
-				<td colspan="3">
-					${ requestScope.n.noticeTitle }
-				</td>
-			</tr>
-			<tr>
-				<th>작성자</th>
-				<td>
-					<c:choose>
-    <c:when test="${requestScope.n.memberId == 1}">
-        시스템 관리자
-    </c:when>
-    <c:otherwise>
-        ${requestScope.n.memberId}
-    </c:otherwise>
-</c:choose>
-				</td>
-				<th>작성일</th>
-				<td>
-					${ requestScope.n.createdDate }
-				</td>
-			</tr>
-			<tr>
-				<th>내용</th>
-				<td colspan="3">
-					<p style="height : 300px;">
-						${ requestScope.n.content }
-					</p>
-				</td>
-			</tr>
-		</table>
+<div class="outer">
 
-		<br><br>
+    <div class="notice-view">
 
-		<div align="center">
-			<a href="/blueming/notice/list" 
-			   class="btn btn-secondary btn-sm">목록으로</a>
-			   
-			<!-- 
-				- 수정하기, 삭제하기 버튼은
-				  현재 이 페이지를 보는 사용자가 (즉 로그인한 사용자가)
-				  해당 글을 작성한 작성자일 경우에만 보여져야 하는 버튼임!!
-			-->	
-			<c:if test="${ (not empty sessionScope.loginUser) and (sessionScope.loginUser.memberId eq requestScope.n.memberId) }">
-				<a class="btn btn-warning btn-sm" onclick="postFormSubmit(1);">수정하기</a>
-				<a class="btn btn-danger btn-sm" onclick="postFormSubmit(2);">삭제하기</a>
-				<form id="postForm" action="" method="post">
-					<input type="hidden" name="nno" 
-										 value="${ requestScope.n.noticeId }">
-				</form>
-				<script>
-					function postFormSubmit(num) {
-						
-						if(num == 1) {
-							// > 수정하기 버튼을 클릭했음
-							
-							$("#postForm").prop("action", "/blueming/notice/updateForm").submit();
-							
-						} else {
-							// > 삭제하기 버튼을 클릭했음
-							
-							$("#postForm").prop("action", "/blueming/notice/delete").submit();
-							
-						}
-					}
-				</script>
-				<!-- 
-					- 수정하기와 삭제하기는 클릭 시 글번호가 노출되는 GET 방식 보다는
-					  POST 방식이 조금 더 보안 상 안전하다!!
-					- url 주소를 조작하여 여기 저기 게시글을 건들고 다닐 수 있기 때문
-					
-					1. 눈에 안보이게끔 nno 키값으로 해당 글번호를 넘길 수 있게
-					   form 태그와 input type="hidden" 을 배치함 (action 은 비워둠)
-					2. 수정하기와 삭제하기 버튼 클릭 시 실행시킬 함수를 정의
-					3. action 속성만 어떤 버튼이 클릭되었을 때 어디로 보낼건지 잘 설정 후
-					   submit 처리 진행
-				-->
-			</c:if>
-		</div>
+        <div class="notice-header"></div>
 
-		<br><br>
+        <div class="notice-body">
 
-	</div>
-	
-	<br><br>
+            <div class="notice-title">
+                ${requestScope.n.noticeTitle}
+            </div>
 
+            <div class="notice-info">
+
+                <span>
+                    <c:choose>
+                        <c:when test="${requestScope.n.memberId == 1}">
+                            관리자
+                        </c:when>
+                        <c:otherwise>
+                            ${requestScope.n.memberId}
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+
+                <span>
+                    ${requestScope.n.createdDate}
+                </span>
+
+            </div>
+
+            <div class="notice-content">
+${requestScope.n.content}
+            </div>
+
+        </div>
+
+        <div class="notice-footer">
+
+            <a href="/blueming/notice/list"
+               class="btn-custom btn-list">
+                목록으로
+            </a>
+
+            <c:if test="${(not empty sessionScope.loginUser)
+                        and (sessionScope.loginUser.memberId eq requestScope.n.memberId)}">
+
+                <button type="button"
+                        class="btn-custom btn-update"
+                        onclick="postFormSubmit(1)">
+                    수정하기
+                </button>
+
+                <button type="button"
+                        class="btn-custom btn-delete"
+                        onclick="postFormSubmit(2)">
+                    삭제하기
+                </button>
+
+                <form id="postForm" action="" method="post">
+                    <input type="hidden"
+                           name="nno"
+                           value="${requestScope.n.noticeId}">
+                </form>
+
+            </c:if>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function postFormSubmit(num){
+
+    if(num == 1){
+
+        $("#postForm")
+            .prop("action","/blueming/notice/updateForm")
+            .submit();
+
+    }else{
+
+        if(confirm("정말 삭제하시겠습니까?")){
+
+            $("#postForm")
+                .prop("action","/blueming/notice/delete")
+                .submit();
+
+        }
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>
