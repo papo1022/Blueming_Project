@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 상세 및 수강생 현황</title>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+	<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <style>
         .progress-bg { width: 100px; height: 10px; background: #eee; border-radius: 5px; display: inline-block; }
         .progress-bar { height: 100%; border-radius: 5px; }

@@ -6,6 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>사원 정보 수정</title>
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
 	.update-container { width: 600px; margin: 40px auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; }
 	.update-container h2 { text-align: center; margin-bottom: 30px; }
