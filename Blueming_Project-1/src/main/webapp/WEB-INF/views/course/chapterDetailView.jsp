@@ -411,7 +411,7 @@
                                         <c:if test="${sessionScope.loginUser.role eq 'S'}">
                                             <td>
                                                 <div class="assignment-actions">
-                                                    <button type="button" class="btn btn-sm btn-primary" onclick="">
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="goGradeAssignment(${assignment.assignmentId});">
                                                         채점
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-warning" onclick="updateAssignment(${assignment.assignmentId});">
@@ -674,6 +674,10 @@
 
         function updateAssignment(assignmentId) {
             window.location.href = "/blueming/assignment/updateView?assignmentId=" + assignmentId;
+        }
+
+        function goGradeAssignment(assignmentId) {
+            window.location.href = "/blueming/assignment/admin/list?assignmentId=" + assignmentId;
         }
 
         onReady(function() {
