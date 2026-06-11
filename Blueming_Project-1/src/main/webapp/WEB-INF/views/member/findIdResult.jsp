@@ -1,82 +1,115 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Blueming - 사원ID 찾기 결과</title>
 <style>
-	body {
-		margin: 0;
-		height: 100vh;
 
-		display: flex;
-		justify-content: center; /* 가로 가운데 */
-		align-items: center;     /* 세로 가운데 */
-		background-color: #f5f6f7;
-	}
+body {
+    margin: 0;
+    height: 100vh;
 
-	.result-area {
-		border: 1px solid #ccc;
-		padding: 40px 30px;
-		background: white;
-		border-radius: 8px;
-		box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-		min-width: 320px;
-	}
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-	.id-display-box {
-		background-color: #f8f9fa;
-		border: 1px dashed #03c75a;
-		padding: 20px;
-		margin: 20px 0;
-		font-size: 18px;
-		font-weight: bold;
-		color: #03c75a;
-		border-radius: 4px;
-		letter-spacing: 1px;
-	}
-	
-	.btn-area {
-		margin-top: 20px;
-	}
-	
-	/* 기존 로그인 화면의 버튼 스타일 유지용 임시 클래스 */
-	.btn-secondary {
-		background-color: #6c757d;
-		color: white;
-		border: none;
-		padding: 5px 10px;
-		cursor: pointer;
-		border-radius: 4px;
-	}
-	.btn-sm {
-		font-size: 14px;
-	}
-	.btn-secondary:hover {
-		background-color: #5a6268;
-	}
+    /* 첫 번째 화면과 동일한 배경 그라데이션 및 폰트 */
+    background: linear-gradient(135deg, #e8f4ff, #f7fbff);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.result-area {
+    width: 420px; /* 너비 통일 */
+    padding: 40px; /* 패딩 통일 */
+
+    background: #fff;
+    border-radius: 20px; /* 라운드 코너 통일 */
+
+    /* 동일한 블러 값과 블루톤 그림자 적용 */
+    box-shadow: 0 10px 30px rgba(25, 118, 210, 0.15);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.result-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1976d2; /* 메인 블루 컬러 */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.result-desc {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* 초록색 점선 박스를 브랜드 감성의 부드러운 블루 박스로 변경 */
+.id-display-box {
+    background-color: #f0f7ff;
+    border: 1px dashed #2196f3;
+    padding: 20px;
+    margin: 30px 0;
+    
+    font-size: 22px;
+    font-weight: 700;
+    color: #1565c0;
+    
+    border-radius: 12px;
+    letter-spacing: 1px;
+}
+
+.btn-area {
+    margin-top: 20px;
+}
+
+/* 첫 번째 화면의 '확인' 버튼과 동일한 스타일 적용 */
+.btn-primary {
+    width: 100%;
+    height: 45px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #1976d2;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+
 </style>
 </head>
 <body>
-		
-	<div class="result-area" align="center">
-		
-		<h2 style="margin-top: 0; color: #333;">사원 ID 찾기 완료</h2>
-		<p style="font-size: 13px; color: gray; margin-bottom: 25px;">
-			입력하신 본인확인 이메일 정보와<br>일치하는 사원 ID입니다.
-		</p>
+        
+    <div class="result-area">
+        
+        <div class="result-title">사원 ID 찾기 완료</div>
+        
+        <div class="result-desc">
+            입력하신 본인확인 이메일 정보와<br>일치하는 사원 ID입니다.
+        </div>
 
-		<div class="id-display-box">
-			${ loginId }
-		</div>
-		
-		<div class="btn-area">
-			<button type="button" class="btn btn-secondary btn-sm" 
-					onclick="location.href='/blueming/'">로그인 화면으로</button>
-		</div>
+        <div class="id-display-box">
+            ${ loginId }
+        </div>
+        
+        <div class="btn-area">
+            <button type="button" class="btn-primary" 
+                    onclick="location.href='/blueming/'">로그인 화면으로</button>
+        </div>
 
-	</div>	
+    </div>  
 
 </body>
 </html>
