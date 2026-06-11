@@ -246,7 +246,7 @@
             <div class="top-controls">
                 <div id="search-area" align="left">
                     <form id="course-search-form" action="/blueming/course/list" method="get">
-                        <input type="search" name="keyword" value="${ keyword }" id="keyword-input" placeholder="강의명 또는 강의설명 검색">
+                        <input type="search" name="keyword" value="${ keyword }" id="keyword-input" placeholder="강의명 또는 강의설명 검색" maxlength="100">
                         <input type="hidden" name="sort" value="${ sort }" id="sort-hidden-input">
                         <input type="hidden" name="mineOnly" value="${mineOnly}" id="mineOnly-hidden-input">
                         <button type="submit" class="btn btn-primary">검색</button>

@@ -201,6 +201,7 @@ body{
                     <input type="text"
                            id="name"
                            name="name"
+                              maxlength="100"
                            required>
                 </td>
             </tr>
@@ -212,6 +213,7 @@ body{
                         <input type="email"
                                id="email"
                                name="email"
+                               maxlength="100"
                                required>
 
                         <button type="button"
@@ -228,6 +230,7 @@ body{
 			        <input type="text"
 			               name="code"
 			               placeholder="6자리 인증번호 입력"
+                           maxlength="6"
 			               style="width: 100%;"> 
 			        <div class="auth-notice">
 			            이메일로 받은 인증번호를 입력해주세요.

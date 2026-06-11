@@ -45,7 +45,7 @@
                 </tr>
                 <tr>
                     <td>* 챕터명 </td>
-                    <td><input type="text" name="chapterTitle" id="chapterTitle" maxlength="30" required></td>
+                    <td><input type="text" name="chapterTitle" id="chapterTitle" maxlength="90" required></td>
                 </tr>
                 <tr>
                     <td>동영상 첨부파일</td>

@@ -255,30 +255,35 @@ body {
                     <div class="info-item">
                         <span class="label-title">아이디</span>
                         <input type="text" name="loginId" readonly class="view-input"
+                               maxlength="20"
                                value="${sessionScope.loginUser.loginId}">
                     </div>
 
                     <div class="info-item">
                         <span class="label-title">이름</span>
                         <input type="text" name="name" class="view-input"
+                               maxlength="100"
                                value="${sessionScope.loginUser.name}">
                     </div>
 
                     <div class="info-item">
                         <span class="label-title">전화번호</span>
                         <input type="text" name="phone" class="view-input"
+                               maxlength="13"
                                value="${sessionScope.loginUser.phone}">
                     </div>
 
                     <div class="info-item">
                         <span class="label-title">이메일</span>
                         <input type="email" name="email" class="view-input"
+                               maxlength="100"
                                value="${sessionScope.loginUser.email}">
                     </div>
 
                     <div class="info-item full-width">
                         <span class="label-title">주소</span>
                         <input type="text" name="address" class="view-input"
+                               maxlength="255"
                                value="${sessionScope.loginUser.address}">
                     </div>
 
@@ -359,19 +364,19 @@ function submitInfo() {
                         <tr>
                             <th>현재 비밀번호</th>
                             <td>
-                                <input type="password" name="loginPwd" required>
+                                <input type="password" name="loginPwd" maxlength="20" required>
                             </td>
                         </tr>
                         <tr>
                             <th>변경 비밀번호</th>
                             <td>
-                                <input type="password" name="updatePwd" required>
+                                <input type="password" name="updatePwd" maxlength="20" required>
                             </td>
                         </tr>
                         <tr>
                             <th>비밀번호 확인</th>
                             <td>
-                                <input type="password" name="checkPwd" required>
+                                <input type="password" name="checkPwd" maxlength="20" required>
                             </td>
                         </tr>
                     </table>

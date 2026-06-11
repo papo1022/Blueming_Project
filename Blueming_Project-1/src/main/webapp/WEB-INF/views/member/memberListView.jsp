@@ -33,7 +33,7 @@
                     <option value="name" ${requestScope.condition == 'name' ? 'selected' : ''}>이름</option>
                     <option value="status" ${requestScope.condition == 'status' ? 'selected' : ''}>상태</option>
                 </select>
-                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}">
+                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}" maxlength="100">
                 <input type="hidden" name="sortColumn" value="${requestScope.sortColumn}">
                 <input type="hidden" name="sortOrder" value="${requestScope.sortOrder}">
                 <button type="submit" class="btn btn-primary">검색</button>

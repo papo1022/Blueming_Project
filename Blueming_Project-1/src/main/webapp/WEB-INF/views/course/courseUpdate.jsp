@@ -79,11 +79,11 @@
             <table class="table">
                 <tr>
                     <td>* 강의명</td>
-                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.c.courseTitle}" maxlength="30" required></td>
+                    <td><input type="text" name="courseTitle" id="courseTitle" value="${requestScope.c.courseTitle}" maxlength="90" required></td>
                 </tr>
                 <tr>
                     <td>* 강의 설명</td>
-                    <td><textarea name="description" id="description" maxlength="666" required>${requestScope.c.description}</textarea></td>
+                    <td><textarea name="description" id="description" maxlength="2000" required>${requestScope.c.description}</textarea></td>
                 </tr>
                 <tr>
                     <td>* 강의 시작 시간</td>

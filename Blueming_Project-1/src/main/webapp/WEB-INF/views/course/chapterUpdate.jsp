@@ -49,7 +49,7 @@
                 </tr>
                 <tr>
                     <td>* 챕터명 </td>
-                    <td><input type="text" name="chapterTitle" id="chapterTitle" value="${ch.chapterTitle}" maxlength="30" required></td>
+                    <td><input type="text" name="chapterTitle" id="chapterTitle" value="${ch.chapterTitle}" maxlength="90" required></td>
                 </tr>
                 <tr>
                     <td>현재 업로드된 영상</td>

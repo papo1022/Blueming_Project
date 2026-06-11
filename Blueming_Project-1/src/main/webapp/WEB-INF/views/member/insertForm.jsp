@@ -30,26 +30,26 @@
             
             <div class="insert-row">
                 <div class="insert-label">로그인ID</div>
-                <div class="insert-value"><input type="text" name="loginId" id="loginId"  required>
+                <div class="insert-value"><input type="text" name="loginId" id="loginId" maxlength="20" required>
                 <span id="idMsg" style="color: red; font-size: 12px; display: none;"></span>
                 </div>
             </div>
             
             <div class="insert-row">
 			    <div class="insert-label">비밀번호</div>
-			    <div class="insert-value"><input type="password" name="loginPwd" id="loginPwd"  required>
+                <div class="insert-value"><input type="password" name="loginPwd" id="loginPwd" maxlength="20" required>
 			    <span id="pwdMsg" style="color: red; font-size: 12px; display: none;"></span>
 			    </div>
 			</div>
 			
 			<div class="insert-row">
                 <div class="insert-label">이름</div>
-                <div class="insert-value"><input type="text" name="name" required></div>
+                <div class="insert-value"><input type="text" name="name" maxlength="100" required></div>
             </div>
 			
 			<div class="insert-row">
 			    <div class="insert-label">이메일</div>
-			    <div class="insert-value"><input type="email" name="email" required></div>
+                <div class="insert-value"><input type="email" name="email" maxlength="100" required></div>
 			</div>
 			
 			<div class="insert-row">
@@ -68,7 +68,7 @@
 			
 			<div class="insert-row">
 			    <div class="insert-label">주소</div>
-			    <div class="insert-value"><input type="text" name="address" required></div>
+                <div class="insert-value"><input type="text" name="address" maxlength="255" required></div>
 			</div>
 			
             <div class="insert-row">

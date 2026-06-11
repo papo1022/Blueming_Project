@@ -20,7 +20,7 @@
     <table style="width:100%;">
         <tr>
             <td>
-                <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none;" placeholder="댓글을 입력하세요."></textarea>
+                <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none;" placeholder="댓글을 입력하세요." maxlength="1000"></textarea>
                 <div style="margin-top:5px;">
                     <input type="file" id="mainReplyFile" style="display:none;" onchange="showFileName(this,'mainFileName')">
                     <button type="button" onclick="$('#mainReplyFile').click();">파일첨부</button>
@@ -98,7 +98,7 @@ function selectReplyList(){
 
                 if(!isChild){
                     html += "<div id='reForm_" + r.replyId + "' class='re-input-area'>"
-                         + "<textarea id='reContent_" + r.replyId + "' rows='2' style='width:100%;resize:none;' placeholder='답글을 입력하세요.'></textarea>"
+                         + "<textarea id='reContent_" + r.replyId + "' rows='2' style='width:100%;resize:none;' placeholder='답글을 입력하세요.' maxlength='1000'></textarea>"
                          + "<div style='margin-top:5px;'><input type='file' id='reFile_" + r.replyId + "' style='display:none;' onchange=\"showFileName(this,'reFileName_" + r.replyId + "')\">"
                          + "<button type='button' onclick=\"$('#reFile_" + r.replyId + "').click();\">파일첨부</button>"
                          + "<span id='reFileName_" + r.replyId + "' class='file-name'>선택된 파일 없음</span></div>"

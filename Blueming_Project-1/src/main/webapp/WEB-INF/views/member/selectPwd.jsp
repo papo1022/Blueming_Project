@@ -16,7 +16,7 @@
 				<tr>
 					<th>* 아이디</th>
 					<td>
-						<input type="text" name="loginId" maxlength="12" required>
+						<input type="text" name="loginId" maxlength="20" required>
 					</td>
 					
 				</tr>

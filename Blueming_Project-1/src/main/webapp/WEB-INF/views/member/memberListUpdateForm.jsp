@@ -42,21 +42,21 @@
 <div class="update-row">
     <div class="update-label">로그인ID</div>
     <div class="update-value">
-        <input type="text" name="loginId" value="<c:out value='${member.loginId}' />" readonly style="background-color: #e9ecef;">
+		<input type="text" name="loginId" value="<c:out value='${member.loginId}' />" maxlength="20" readonly style="background-color: #e9ecef;">
     </div>
 </div>
 
 <div class="update-row">
     <div class="update-label">이름</div>
     <div class="update-value">
-        <input type="text" name="name" value="<c:out value='${member.name}' />" required>
+		<input type="text" name="name" value="<c:out value='${member.name}' />" maxlength="100" required>
     </div>
 </div>
 
 <div class="update-row">
     <div class="update-label">이메일</div>
     <div class="update-value">
-        <input type="email" name="email" value="<c:out value='${member.email}' />">
+		<input type="email" name="email" value="<c:out value='${member.email}' />" maxlength="100">
     </div>
 </div>
 
@@ -74,7 +74,7 @@
 <div class="update-row">
     <div class="update-label">주소</div>
     <div class="update-value">
-        <input type="text" name="address" value="<c:out value='${member.address}' />">
+		<input type="text" name="address" value="<c:out value='${member.address}' />" maxlength="255">
     </div>
 </div>
 			
