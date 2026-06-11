@@ -1,4 +1,4 @@
-package com.kh.blueming.adminAssignment.controller;
+package com.kh.blueming.assignment.controller;
 
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.kh.blueming.adminAssignment.model.service.AdminAssignmentService;
-import com.kh.blueming.adminAssignment.model.vo.AdminAssignment;
+import com.kh.blueming.assignment.model.service.AdminAssignmentService;
+import com.kh.blueming.assignment.model.vo.AdminAssignment;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/adminAssignment")
+@RequestMapping("/assignment/admin")
 public class AdminAssignmentController {
 
     @Autowired
@@ -85,7 +85,7 @@ public class AdminAssignmentController {
         model.addAttribute("sort", sort);
         model.addAttribute("order", order); // ✨ [이 줄을 추가하세요!] JSP에서 ▲/▼ 표시 및 토글 링크 생성에 필요합니다.
 
-        return "adminAssignment/assignmentList";
+        return "assignment/assignmentList";
     }
     
     
@@ -103,7 +103,7 @@ public class AdminAssignmentController {
 
         model.addAttribute("assignment", assignment);
 
-        return "adminAssignment/assignmentDetail";
+        return "assignment/assignmentDetail";
     }
 
     @PostMapping("/updateScore")
@@ -115,7 +115,7 @@ public class AdminAssignmentController {
                 submissionId,
                 score);
 
-        return "redirect:/adminAssignment/list";
+        return "redirect:/assignment/admin/list";
     }
     
     @GetMapping("/download")

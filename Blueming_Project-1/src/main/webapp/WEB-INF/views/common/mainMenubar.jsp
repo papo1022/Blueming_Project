@@ -78,7 +78,7 @@
 
                                 <c:if test="${loginUser.role eq 'S'}">
                                     <li>
-                                        <a href="<c:url value='/adminAssignment/list'/>"><i class="fi fi-sr-document"></i>
+                                        <a href="<c:url value='/assignment/admin/list'/>"><i class="fi fi-sr-document"></i>
                                             과제 전체 관리
                                     </a></li> 
                                 </c:if>

@@ -1,4 +1,4 @@
-package com.kh.blueming.adminAssignment.model.vo;
+package com.kh.blueming.assignment.model.vo;
 
 import java.sql.Date;
 

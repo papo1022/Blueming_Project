@@ -1,4 +1,4 @@
-package com.kh.blueming.adminAssignment.model.dao;
+package com.kh.blueming.assignment.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,7 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.kh.blueming.adminAssignment.model.vo.AdminAssignment;
+import com.kh.blueming.assignment.model.vo.AdminAssignment;
 import com.kh.blueming.common.model.vo.PageInfo;
 
 @Repository
