@@ -454,7 +454,7 @@
             <div class="top-controls">
                 <div id="search-area" align="left">
                     <form action="/blueming/assignment/list" method="get">
-                        <input type="search" name="keyword" value="${keyword}" id = "keyword-input">
+                        <input type="search" name="keyword" value="${keyword}" id = "keyword-input" placeholder="과제명/강의명/챕터명 검색">
                         <input type="hidden" name="targetType" value="${targetType}" id="targetType-hidden-input">
                         <input type="hidden" name="mineOnly" value="${mineOnly}" id="mineOnly-hidden-input">
                         <button type="submit" class="btn btn-primary">검색</button>

@@ -52,9 +52,9 @@ public class NoticeController {
 		int boardLimit; // 한 페이지에 보여질 게시글의 최대 갯수 (즉, 한 페이지당 몇개씩 볼거냐)
 		
 		// 위의 4개의 변수들로 계산해서 구해야 하는 3개의 변수
-		int maxPage; // 가장 마지막 페이지가 몇 번 페이지인지 (즉, 총 페이지 수)
-		int startPage; // 페이지 하단에 보여질 페이징바의 시작수
-		int endPage; // 페이지 하단에 보여질 페이징바의 끝수
+		// int maxPage; // 가장 마지막 페이지가 몇 번 페이지인지 (즉, 총 페이지 수)
+		// int startPage; // 페이지 하단에 보여질 페이징바의 시작수
+		// int endPage; // 페이지 하단에 보여질 페이징바의 끝수
 		
 		// * listCount : 총 게시글의 갯수
 		// > BOARD 테이블의 유효한 데이터의 갯수를 COUNT 함수로 세오기!!
