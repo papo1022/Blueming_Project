@@ -148,24 +148,6 @@
 	padding-top: 15px;
 }
 
-/* 마이페이지 / 로그아웃 */
-.profile-links {
-    display: flex;
-    gap: 15px;
-}
-
-.profile-links a {
-    text-decoration: none;
-    color: #c4c5c6;
-    font-size: 12px;
-    transition: color 0.2s;
-}
-
-.profile-links a:hover {
-    color: #333333; /* 마우스 오버시 진해짐 */
-    text-decoration: underline;
-}
-
 /* 프로필 카드 */
 .profile-card {
     display: flex;

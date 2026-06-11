@@ -54,33 +54,46 @@
 	
 	        </div>
 	
-	        <%-- 오른쪽: 프로필 + 연차 승인 대기 --%>
+	        <%-- 오른쪽: 달력 + 공지사항 --%>
 	        <div class="col-md-4">
-	
-	            <%-- 프로필 --%>
-	            <div class="card mb-4">
-	                <div class="card-body text-center">
-	                    <h5>${profile.departmentName} ${profile.name}</h5>
-	                    <p class="text-muted">${profile.email}</p>
-	                </div>
-	            </div>
-	
-	            <%-- 연차 승인 대기 (껍데기- 추후 구현) --%>
-	            <h5>연차 승인 대기</h5>
-	            <div class="list-group">
-	                <div class="list-group-item">
-	                    <p class="mb-1">김소희 / 반차</p>
-	                    <small class="text-muted">2026.06.01 ~ 2026.06.01</small>
-	                </div>
-	                <div class="list-group-item">
-	                    <p class="mb-1">이정우 / 연차</p>
-	                    <small class="text-muted">2026.06.17 ~ 2026.06.18</small>
-	                </div>
-	                <div class="list-group-item">
-	                    <p class="mb-1">박희연 / 병가</p>
-	                    <small class="text-muted">2026.06.04 ~ 2026.06.05</small>
-	                </div>
-	            </div>
+		        <%-- 달력 JS --%>
+			    <script>
+			    (function () {
+			        const monthEl = document.getElementById('cal-month');
+			        const datesEl = document.getElementById('cal-dates');
+			        const today   = new Date();
+			        let   cur     = new Date(today.getFullYear(), today.getMonth(), 1);
+			
+			        function render() {
+			            const y = cur.getFullYear();
+			            const m = cur.getMonth();
+			            monthEl.textContent = y + '년 ' + (m + 1) + '월';
+			
+			            const firstDay  = new Date(y, m, 1).getDay();
+			            const lastDate  = new Date(y, m + 1, 0).getDate();
+			            const isThisMon = (y === today.getFullYear() && m === today.getMonth());
+			
+			            let html = '';
+			            for (let i = 0; i < firstDay; i++) html += '<span></span>';
+			            for (let d = 1; d <= lastDate; d++) {
+			                const isToday = isThisMon && d === today.getDate();
+			                html += '<span class="' + (isToday ? 'today' : '') + '">' + d + '</span>';
+			            }
+			            datesEl.innerHTML = html;
+			        }
+			
+			        document.getElementById('cal-prev').addEventListener('click', function () {
+			            cur.setMonth(cur.getMonth() - 1);
+			            render();
+			        });
+			        document.getElementById('cal-next').addEventListener('click', function () {
+			            cur.setMonth(cur.getMonth() + 1);
+			            render();
+			        });
+			
+			        render();
+			    })();
+			    </script>
 	
 	        </div>
 	    </div>
