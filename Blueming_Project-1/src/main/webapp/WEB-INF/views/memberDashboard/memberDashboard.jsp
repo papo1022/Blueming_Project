@@ -46,10 +46,10 @@
 					        <c:set var="theme" value="theme-gray"/>
 					    </c:when>
 					    <c:when test="${course.dDay <= 7}">
-					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 긴박 --%>
+					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 빨강 --%>
 					    </c:when>
 					    <c:otherwise>
-					        <c:set var="theme" value="theme-yellow"/> <%-- 여유 있음 --%>
+					        <c:set var="theme" value="theme-yellow"/> <%-- 여유 있음: 노랑 --%>
 					    </c:otherwise>
 					</c:choose>
 
