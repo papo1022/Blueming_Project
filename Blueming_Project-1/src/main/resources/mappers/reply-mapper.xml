@@ -4,94 +4,168 @@
 
 <mapper namespace="replyMapper">
 
-    <select id="selectReplyList" parameterType="_int" resultType="com.kh.blueming.reply.model.vo.Reply">
-    SELECT 
-        R.REPLY_ID AS "replyId",
-        R.CHAPTER_ID AS "chapterId",
-        R.MEMBER_ID AS "memberId",
-        R.CONTENT AS "content",
-        R.FILE_ID AS "fileId",
-        TO_CHAR(R.CREATED_DATE, 'YYYY-MM-DD HH24:MI') AS "createdDate",
-        M.NAME AS "name",
-        D.DEPARTMENT_NAME AS "deptName",
-        P.POSITION_NAME AS "positionName",
-        F.ORIGINAL_NAME AS "originalName" -- 🌟 파일 테이블의 원본 이름
-    FROM REPLY R
-    JOIN MEMBER M ON (R.MEMBER_ID = M.MEMBER_ID)
-    LEFT JOIN DEPARTMENT D ON (M.DEPARTMENT_ID = D.DEPARTMENT_ID)
-    LEFT JOIN POSITION P ON (M.POSITION_ID = P.POSITION_ID)
-    LEFT JOIN ATTACHMENT F ON (R.FILE_ID = F.FILE_ID) -- 🌟 조인
-    WHERE R.CHAPTER_ID = #{chapterId} 
-      AND R.STATUS = 'Y'
-    START WITH R.PARENT_REPLY_ID IS NULL
-    CONNECT BY PRIOR R.REPLY_ID = R.PARENT_REPLY_ID
-    ORDER SIBLINGS BY R.REPLY_ID ASC
-</select>
+    <!-- 댓글 목록 조회 -->
+    <select id="selectReplyList"
+            parameterType="_int"
+            resultType="com.kh.blueming.reply.model.vo.Reply">
 
-    <insert id="insertReply" parameterType="com.kh.blueming.reply.model.vo.Reply">
-    <selectKey keyProperty="replyId" resultType="_int" order="BEFORE">
-        SELECT NVL(MAX(REPLY_ID), 0) + 1 FROM REPLY
-    </selectKey>
+        SELECT
+            R.REPLY_ID            AS "replyId",
+            R.CHAPTER_ID          AS "chapterId",
+            R.MEMBER_ID           AS "memberId",
+            R.PARENT_REPLY_ID     AS "parentReplyId",
+            R.FILE_ID             AS "fileId",
+            R.CONTENT             AS "content",
+            R.IS_PRIVATE          AS "isPrivate",
+            R.STATUS              AS "status",
 
-    INSERT INTO REPLY (
-        REPLY_ID, CHAPTER_ID, MEMBER_ID, PARENT_REPLY_ID, FILE_ID, CONTENT, IS_PRIVATE
-    ) VALUES (
-        #{replyId}, 
-        #{chapterId}, 
-        #{memberId}, 
-        <choose>
-            <when test="parentReplyId != null and parentReplyId != 0">#{parentReplyId}</when>
-            <otherwise>NULL</otherwise>
-        </choose>,
-        <choose>
-            <when test="fileId != null and fileId != 0">#{fileId}</when>
-            <otherwise>NULL</otherwise>
-        </choose>,
-        #{content}, 
-        NVL(#{isPrivate}, 'N')
-    )
-</insert>
+            TO_CHAR(R.CREATED_DATE,'YYYY-MM-DD HH24:MI') AS "createdDate",
+            TO_CHAR(R.UPDATED_DATE,'YYYY-MM-DD HH24:MI') AS "updatedDate",
 
-<insert id="insertAttachment" parameterType="com.kh.blueming.attachment.model.vo.Attachment">
-    INSERT INTO ATTACHMENT (
-        FILE_ID, 
-        ORIGINAL_NAME, 
-        CHANGED_NAME, 
-        FILE_PATH, 
-        FILE_SIZE, 
-        TYPE, 
-        MEMBER_ID, 
-        STATUS
-    ) VALUES (
-        (SELECT NVL(MAX(FILE_ID), 0) + 1 FROM ATTACHMENT), 
-        #{originalName}, 
-        #{changedName}, 
-        #{filePath}, 
-        #{fileSize}, 
-        #{type}, 
-        #{memberId}, 
-        'Y'
-    )
-</insert>
+            M.NAME                AS "name",
+            D.DEPARTMENT_NAME     AS "deptName",
+            P.POSITION_NAME       AS "positionName",
 
-    <update id="deleteReply" parameterType="_int">
-        UPDATE REPLY 
+            F.ORIGINAL_NAME       AS "originalName"
+
+        FROM REPLY R
+        JOIN MEMBER M
+          ON R.MEMBER_ID = M.MEMBER_ID
+
+        LEFT JOIN DEPARTMENT D
+          ON M.DEPARTMENT_ID = D.DEPARTMENT_ID
+
+        LEFT JOIN POSITION P
+          ON M.POSITION_ID = P.POSITION_ID
+
+        LEFT JOIN ATTACHMENT F
+          ON R.FILE_ID = F.FILE_ID
+
+        WHERE R.CHAPTER_ID = #{chapterId}
+          AND R.STATUS = 'Y'
+
+        START WITH R.PARENT_REPLY_ID IS NULL
+        CONNECT BY PRIOR R.REPLY_ID = R.PARENT_REPLY_ID
+
+        ORDER SIBLINGS BY R.REPLY_ID ASC
+
+    </select>
+
+
+    <!-- 댓글 등록 -->
+    <insert id="insertReply"
+            parameterType="com.kh.blueming.reply.model.vo.Reply">
+
+        <selectKey keyProperty="replyId"
+                   resultType="_int"
+                   order="BEFORE">
+            SELECT NVL(MAX(REPLY_ID),0) + 1
+              FROM REPLY
+        </selectKey>
+
+        INSERT INTO REPLY
+        (
+            REPLY_ID,
+            CHAPTER_ID,
+            MEMBER_ID,
+            PARENT_REPLY_ID,
+            FILE_ID,
+            CONTENT,
+            IS_PRIVATE
+        )
+        VALUES
+        (
+            #{replyId},
+            #{chapterId},
+            #{memberId},
+            #{parentReplyId,jdbcType=NUMERIC},
+            #{fileId,jdbcType=NUMERIC},
+            #{content},
+            NVL(#{isPrivate}, 'N')
+        )
+
+    </insert>
+
+
+    <!-- 첨부파일 등록 -->
+    <insert id="insertAttachment"
+            parameterType="com.kh.blueming.attachment.model.vo.Attachment">
+
+        INSERT INTO ATTACHMENT
+        (
+            FILE_ID,
+            ORIGINAL_NAME,
+            CHANGED_NAME,
+            FILE_PATH,
+            FILE_SIZE,
+            TYPE,
+            MEMBER_ID,
+            STATUS
+        )
+        VALUES
+        (
+            (SELECT NVL(MAX(FILE_ID),0)+1 FROM ATTACHMENT),
+            #{originalName},
+            #{changedName},
+            #{filePath},
+            #{fileSize},
+            #{type},
+            #{memberId},
+            'Y'
+        )
+
+    </insert>
+
+
+    <!-- 마지막 파일번호 조회 -->
+    <select id="selectLastFileId"
+            resultType="_int">
+
+        SELECT NVL(MAX(FILE_ID),0)
+          FROM ATTACHMENT
+
+    </select>
+
+
+    <!-- 댓글 삭제 -->
+    <update id="deleteReply"
+            parameterType="_int">
+
+        UPDATE REPLY
            SET STATUS = 'N',
                UPDATED_DATE = SYSDATE
          WHERE REPLY_ID = #{replyId}
+
     </update>
 
 
-	<update id="updateReply" parameterType="com.kh.blueming.reply.model.vo.Reply">
+    <!-- 댓글 수정 -->
+    <update id="updateReply"
+            parameterType="com.kh.blueming.reply.model.vo.Reply">
+
         UPDATE REPLY
-           SET CONTENT = #{content}, 
-            UPDATED_DATE = SYSDATE 
-            WHERE REPLY_ID = #{replyId}       
+           SET CONTENT = #{content},
+               UPDATED_DATE = SYSDATE
+         WHERE REPLY_ID = #{replyId}
+
     </update>
-    
-    <select id="selectLastFileId" resultType="_int">
-    SELECT NVL(MAX(FILE_ID), 0) FROM ATTACHMENT
+
+
+<select id="selectReply"
+        parameterType="_int"
+        resultType="com.kh.blueming.reply.model.vo.Reply">
+
+    SELECT
+        REPLY_ID        AS "replyId",
+        MEMBER_ID       AS "memberId",
+        CHAPTER_ID      AS "chapterId",
+        PARENT_REPLY_ID AS "parentReplyId",
+        FILE_ID         AS "fileId",
+        CONTENT         AS "content",
+        IS_PRIVATE      AS "isPrivate",
+        STATUS          AS "status"
+    FROM REPLY
+    WHERE REPLY_ID = #{replyId}
+
 </select>
-    
-    
 </mapper>
