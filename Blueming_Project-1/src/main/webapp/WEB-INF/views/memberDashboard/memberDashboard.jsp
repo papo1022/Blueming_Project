@@ -99,6 +99,9 @@
         <div class="right-col">
 
             <div class="right-col-title">내 프로필</div>
+            
+            <%-- userInfo include --%>
+            <jsp:include page="../common/userInfo.jsp" />
 
             <%-- 프로필 카드 --%>
             <div class="profile-card">

@@ -148,6 +148,26 @@
 	padding-top: 15px;
 }
 
+/* 마이페이지 / 로그아웃 */
+.profile-links {
+    display: flex;
+    gap: 15px;
+}
+
+.right-col-header {
+    display: flex;
+    justify-content: space-between; /* 타이틀은 왼쪽 끝, 인클루드된 링크는 오른쪽 끝 */
+    align-items: center;            /* 수직 중앙 정렬 */
+    padding-top: 15px;
+    padding-bottom: 20px;
+}
+
+/* 기존 패딩 제거 (부모 헤더가 여백을 제어함) */
+.right-col-title {
+	font-weight: bold;
+	font-size: 20px;
+}
+
 /* 프로필 카드 */
 .profile-card {
     display: flex;

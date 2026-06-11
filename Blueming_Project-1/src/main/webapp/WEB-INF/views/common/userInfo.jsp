@@ -30,28 +30,7 @@
 
 <!-- Latest compiled JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
- 
-  <style>
-    #user-info {
-    position: fixed;
-    top: 20px;
-    right: 30px;
 
-    text-align: right;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-
-    z-index: 1000;
-}
-
-#user-info a {
-    text-decoration: none;
-    color: black;
-    font-size: 12px;
-    margin-left: 10px;
-}
-</style>
 </head>
 <body>
 
