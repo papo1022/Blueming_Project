@@ -885,11 +885,10 @@
                     }, { once: true });
                 }
 
-                // 시청한 구간을 Set으로 추적 (1초 단위)
-                const watchedSet = new Set();
                 const savedWatchedSeconds = parseInt("${not empty existingProgress ? existingProgress.watchedSeconds : 0}") || 0;
                 let maxWatchedSeconds = Math.max(savedWatchedSeconds, Math.floor(lastPos));
                 let lastSentWatchedSeconds = savedWatchedSeconds;
+                let lastSentPositionSeconds = Math.floor(lastPos);
                 let saveTimer = null;
                 let hasShownRateLimitNotice = false;
 
@@ -918,10 +917,13 @@
                     }
 
                     const cur = Math.floor(video.currentTime);
-                    watchedSet.add(cur);
 
-                    // 과거 구간으로 이동해도 누적 시청 시간은 감소하지 않도록 유지
-                    maxWatchedSeconds = Math.max(maxWatchedSeconds, watchedSet.size);
+                    // 이미 저장된 시청 시간은 유지하고, 그 이후로 실제 재생된 지점만 누적한다.
+                    if (cur > savedWatchedSeconds) {
+                        maxWatchedSeconds = Math.max(maxWatchedSeconds, cur);
+                    } else {
+                        maxWatchedSeconds = Math.max(maxWatchedSeconds, savedWatchedSeconds);
+                    }
                 });
 
                 // checkpoint 저장 주기 (부하를 줄이기 위해 10초)
@@ -949,10 +951,12 @@
                     const watched  = onEnded ? duration : Math.max(maxWatchedSeconds, savedWatchedSeconds);
 
                     if (duration <= 0) return;
-                    if (!onEnded && watched <= lastSentWatchedSeconds) return;
+                    if (!onEnded && watched <= lastSentWatchedSeconds && lastPos <= lastSentPositionSeconds) return;
 
                     const prevSentWatchedSeconds = lastSentWatchedSeconds;
+                    const prevSentPositionSeconds = lastSentPositionSeconds;
                     lastSentWatchedSeconds = watched;
+                    lastSentPositionSeconds = lastPos;
 
                     $.ajax({
                         url: "${pageContext.request.contextPath}/course/saveProgress",
@@ -974,6 +978,8 @@
                                     maxWatchedSeconds = Math.max(maxWatchedSeconds, parseInt(res.watchedSeconds) || 0);
                                     lastSentWatchedSeconds = Math.max(lastSentWatchedSeconds, maxWatchedSeconds);
                                 }
+
+                                lastSentPositionSeconds = Math.max(lastSentPositionSeconds, lastPos);
                             } else if (res.message) {
                                 console.warn("progress save skipped:", res.message);
                             }
@@ -981,6 +987,7 @@
                         error: function() {
                             // 실패 시 재전송 기회를 위해 마지막 전송값 롤백
                             lastSentWatchedSeconds = prevSentWatchedSeconds;
+                            lastSentPositionSeconds = prevSentPositionSeconds;
                         }
                     });
                 }
