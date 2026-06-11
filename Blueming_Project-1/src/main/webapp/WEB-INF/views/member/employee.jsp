@@ -9,6 +9,6 @@
 </head>
 <body>
 <jsp:include page="../common/mainMenubar.jsp" />
-<jsp:include page="../memberDashboard/memberDashboard.jsp" />
+<jsp:include page="/dashboard/main" />
 </body>
 </html>
