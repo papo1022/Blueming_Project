@@ -311,7 +311,7 @@ body{
                                name="score"
                                min="0"
                                max="${assignment.maxScore}"
-                               value="${assignment.score}">
+                               value="${assignment.score}"  >
 
                         / ${assignment.maxScore} 점
 
