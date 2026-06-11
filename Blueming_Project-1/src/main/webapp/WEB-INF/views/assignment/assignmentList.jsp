@@ -196,7 +196,7 @@ body{
     <h2>📚 과제 채점 현황</h2>
 
     <div id="search-area">
-        <form action="${pageContext.request.contextPath}/adminAssignment/list" method="get">
+        <form action="${pageContext.request.contextPath}/assignment/admin/list" method="get">
             <%-- 검색창을 눌러도 정렬 상태가 유지되도록 숨은 필드 추가 --%>
             <input type="hidden" name="sort" value="${sort}">
             <input type="hidden" name="order" value="${order}">
@@ -386,7 +386,7 @@ body{
             let memberId = $(this).data("member");
             let assignmentId = $(this).data("assignment");
             
-            location.href = "${pageContext.request.contextPath}/adminAssignment/detail?memberId=" + memberId + "&assignmentId=" + assignmentId;
+            location.href = "${pageContext.request.contextPath}/assignment/admin/detail?memberId=" + memberId + "&assignmentId=" + assignmentId;
         });
     });
 </script>

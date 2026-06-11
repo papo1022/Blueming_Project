@@ -122,7 +122,7 @@ body{
 
     <div class="card">
 
-        <form action="${pageContext.request.contextPath}/adminAssignment/updateScore"
+          <form action="${pageContext.request.contextPath}/assignment/admin/updateScore"
               method="post">
 
             <input type="hidden"
@@ -216,7 +216,7 @@ body{
 				
                             <c:when test="${not empty assignment.submittedFileName and not empty assignment.submissionId}">
 				
-                                <a href="${pageContext.request.contextPath}/adminAssignment/download?submissionId=${assignment.submissionId}">
+                                <a href="${pageContext.request.contextPath}/assignment/admin/download?submissionId=${assignment.submissionId}">
 				
 				                    📎 ${assignment.submittedFileName}
 				
@@ -260,7 +260,7 @@ body{
                     채점 완료
                 </button>
 
-                <a href="${pageContext.request.contextPath}/adminAssignment/list"
+                <a href="${pageContext.request.contextPath}/assignment/admin/list"
                    class="btn-list">
                     목록으로
                 </a>
