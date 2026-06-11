@@ -154,18 +154,16 @@
     gap: 15px;
 }
 
-.right-col-header {
-    display: flex;
-    justify-content: space-between; /* 타이틀은 왼쪽 끝, 인클루드된 링크는 오른쪽 끝 */
-    align-items: center;            /* 수직 중앙 정렬 */
-    padding-top: 15px;
-    padding-bottom: 20px;
+.profile-links a {
+    text-decoration: none;
+    color: #c4c5c6;
+    font-size: 12px;
+    transition: color 0.2s;
 }
 
-/* 기존 패딩 제거 (부모 헤더가 여백을 제어함) */
-.right-col-title {
-	font-weight: bold;
-	font-size: 20px;
+.profile-links a:hover {
+    color: #333333; /* 마우스 오버시 진해짐 */
+    text-decoration: underline;
 }
 
 /* 프로필 카드 */
