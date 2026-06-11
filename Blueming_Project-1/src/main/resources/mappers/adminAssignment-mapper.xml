@@ -33,7 +33,7 @@
 
     <select id="selectAssignmentList"
             parameterType="map"
-            resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+            resultType="com.kh.blueming.assignment.model.vo.AdminAssignment">
         SELECT
             M.MEMBER_ID AS memberId,
             M.LOGIN_ID AS loginId,
@@ -83,7 +83,7 @@
 
     <select id="selectAssignmentDetail"
             parameterType="map"
-            resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+            resultType="com.kh.blueming.assignment.model.vo.AdminAssignment">
         SELECT
             M.MEMBER_ID AS memberId,
             M.LOGIN_ID AS loginId,
@@ -117,7 +117,7 @@
     
     <select id="selectFile"
         parameterType="map"
-        resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+        resultType="com.kh.blueming.assignment.model.vo.AdminAssignment">
 
         SELECT
                         FILE_ID AS fileId,
@@ -132,7 +132,7 @@
 
         <select id="selectFileBySubmissionId"
                 parameterType="map"
-                resultType="com.kh.blueming.adminAssignment.model.vo.AdminAssignment">
+                resultType="com.kh.blueming.assignment.model.vo.AdminAssignment">
 
                 SELECT
                         F.FILE_ID AS fileId,
@@ -148,6 +148,4 @@
 
 	</select>
 	
-
-
 </mapper>
