@@ -61,18 +61,18 @@
 
     .target-rule-item:last-child {
         margin-bottom: 0;
-    }
+    } 
 
 </style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/courseStyle.css">
 </head>
 <body>
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    
-    
     <div class="outer">
         <form id="courseUpdateForm" action="updateCourse" align="center" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+            <h1 class="page-title">강의 수정</h1>
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}">
             <input type="hidden" name="courseId" value="${requestScope.c.courseId}">
             <br>

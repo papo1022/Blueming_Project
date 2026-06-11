@@ -10,7 +10,6 @@
         float : center;
         margin: 20px;
         margin-left: 270px;
-        width : 80%;
     }
 
     #courseTitle {
@@ -23,18 +22,15 @@
         height : 300px;
         resize : none;
     }
-
-    #chapterTitle{
-        width : 80%;
-    }
 </style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/courseStyle.css">
 </head>
 <body>
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
     <div class="outer" id="detail-area">
-        <h1 align="center">챕터 추가</h1>
+        <h1 class="page-title">챕터 추가</h1>
         <form action="addChapter" align="center" method="post" enctype="multipart/form-data">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
             <input type="hidden" name="courseId" value="${courseId}">

@@ -26,19 +26,14 @@
         resize : none;
     }
 
-    #chapterTitle{
-        width : 80%;
-    }
 </style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/courseStyle.css">
 <body>
 
     <jsp:include page="../common/mainMenubar.jsp" />
 
-    <br><br>
-    <h1 align="center">챕터 수정</h1>
-    <br><br>
-
     <div class="outer" id="detail-area">
+        <h1 class="page-title">챕터 수정</h1>
         <form action="updateChapter" align="center" method="post" enctype="multipart/form-data">
             <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
             <input type="hidden" name="chapterId" value="${ch.chapterId}">
@@ -68,7 +63,7 @@
                     <td><input type="file" accept="video/*" name="video"><input type="checkbox" name="deleteVideo" value="Y">기존 영상 삭제</td>
                 </tr>
                 <tr>
-                    <label style="color: red;">
+                    <div class="alert alert-warning">
                         주의! 기존 영상 삭제를 선택한 경우 파일을 업로드 해도
                         기존 영상이 삭제되고 새로 업로드한 영상이 등록되지 않습니다.
                     </label>
