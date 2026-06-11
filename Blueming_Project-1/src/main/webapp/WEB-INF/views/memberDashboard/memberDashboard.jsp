@@ -6,13 +6,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Member Dashboard</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
 </head>
 <body>
 
     <%-- 공통 메뉴바 (sidebar 역할) --%>
-    <jsp:include page="/WEB-INF/views/common/menubar.jsp" />
+    <jsp:include page="/WEB-INF/views/common/mainMenubar.jsp" />
 
     <%-- MAIN WRAPPER --%>
     <div class="main-wrapper">
@@ -27,8 +27,8 @@
                     <p>오늘의 교육 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
-                    <i class="fi fi-sr-search"></i>
-                    <input type="text" placeholder="강의 검색...">
+                    <i class="fi fi-rr-search"></i>
+                    <input type="text" placeholder="검색할 강의를 입력해 주세요.">
                 </div>
             </div>
 

@@ -18,8 +18,6 @@
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-<link rel="stylesheet" 
-      href="${pageContext.request.contextPath}/resources/css/menubar.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -43,58 +41,85 @@
 
     <!-- 메뉴바 -->
     <div class="wrapper">
-        <div class="nav-area">
-            <div class="menu">
-                <a href="${homeUrl}"><i class="fi fi-sr-computer"></i>
-                &nbsp;&nbsp;대시보드
-            </a><div>
-                <c:choose>
-                    <c:when test="${not empty loginUser}">
-                        <nav class="sidebar-nav">
-                            <ul>
+    
+		<div class="nav-area">
+		    <a class="dashboard-logo" href="${homeUrl}">
+		        <i class="fi fi-sr-computer"></i>
+		        대시보드
+		    </a>
+		    
+		    <div class="menu">
+		        <c:if test="${not empty loginUser}">
+		            <nav class="sidebar-nav">
+		                <ul>
+                            <li>
+                                <a href="<c:url value='/notice/list'/>">
+                                    <i class="fi fi-sr-megaphone"></i>
+                                    공지사항
+                                </a>
+                            </li>
+
+							<%-- HR팀 메뉴 --%>
+                            <c:if test="${loginUser.role eq 'R'}">
                                 <li>
-                                    <a href="<c:url value='/notice/list'/>"><i class="fi fi-sr-megaphone"></i>
-                                        공지
-                                </a></li>
+                                    <a href="<c:url value='/assignment/list'/>">
+                                        <i class="fi fi-sr-document"></i>
+                                        과제
+                                    </a>
+                                </li>
                                 <li>
-                                    <a href="<c:url value='/course/list'/>"><i class="fi fi-sr-graduation-cap"></i>
-                                        코스
-                                </a></li>
+                                    <a href="<c:url value='/memberlist'/>">
+                                        <i class="fi fi-sr-user"></i>
+                                        사원 관리
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<c:url value='/enrollment/enrollMemList'/>">
+                                        <i class="fi fi-sr-graduation-cap"></i>
+                                        강의 현황 조회
+                                    </a>
+                                </li>
+                            </c:if>
 
-                                <c:if test="${loginUser.role eq 'R'}">
-                                    <li>
-                                        <a href="<c:url value='/assignment/list'/>"><i class="fi fi-sr-document"></i>
-                                            인사과의 과제
-                                    </a></li> 
-                                    <li>
-                                        <a href="<c:url value='/memberlist'/>"><i class="fi fi-sr-user"></i>
-                                            사원조회
-                                    </a></li> 
-                                    <li>
-                                        <a href="<c:url value='/enrollment/enrollMemList'/>"><i class="fi fi-sr-graduation-cap"></i>
-                                            사원 강의관리
-                                    </a></li> 
-                                </c:if>
+							<%-- 시스템 관리자 메뉴 --%>
+                            <c:if test="${loginUser.role eq 'S'}">
+                            	<li>
+	                                <a href="<c:url value='/course/list'/>">
+	                                    <i class="fi fi-sr-graduation-cap"></i>
+	                                    강의 관리
+	                                </a>
+	                            </li>
+                                <li>
+                                    <a href="<c:url value='/adminAssignment/list'/>">
+                                        <i class="fi fi-sr-document"></i>
+                                        과제 관리
+                                    </a>
+                                </li>
+                            </c:if>
 
-                                <c:if test="${loginUser.role eq 'S'}">
-                                    <li>
-                                        <a href="<c:url value='/adminAssignment/list'/>"><i class="fi fi-sr-document"></i>
-                                            과제 전체 관리
-                                    </a></li> 
-                                </c:if>
-
-                                <c:if test="${loginUser.role eq 'N'}">
-                                    <li>
-                                        <a href="<c:url value='/assignment/list'/>"><i class="fi fi-sr-document"></i>
-                                            사원 과제
-                                    </a></li> 
-                                </c:if>
-                            </ul>
-                        </nav>
-                    </c:when>
-                </c:choose>
+							<%-- 사원 메뉴 --%>
+                            <c:if test="${loginUser.role eq 'N'}">
+	                            <li>
+	                                <a href="<c:url value='/course/list'/>">
+	                                    <i class="fi fi-sr-graduation-cap"></i>
+	                                    강의
+	                                </a>
+	                            </li>
+                                <li>
+                                    <a href="<c:url value='/assignment/list'/>">
+                                        <i class="fi fi-sr-document"></i>
+                                        과제
+                                    </a>
+                                </li>
+                            </c:if>
+                        </ul>
+                    </nav>
+                </c:if>
             </div>
+            
         </div>
+        
     </div>
+    
 </body>
 </html>
