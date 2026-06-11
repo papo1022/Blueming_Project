@@ -1,4 +1,4 @@
-package com.kh.blueming.adminAssignment.model.service;
+package com.kh.blueming.assignment.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,8 +7,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kh.blueming.adminAssignment.model.dao.AdminAssignmentDao;
-import com.kh.blueming.adminAssignment.model.vo.AdminAssignment;
+import com.kh.blueming.assignment.model.dao.AdminAssignmentDao;
+import com.kh.blueming.assignment.model.vo.AdminAssignment;
 import com.kh.blueming.common.model.vo.PageInfo;
 
 @Service
