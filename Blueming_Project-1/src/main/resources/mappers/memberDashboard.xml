@@ -25,7 +25,7 @@
         SELECT C.COURSE_ID AS courseId,
                C.COURSE_TITLE AS courseTitle,
                C.END_DATE AS endDate,
-               CEIL(C.END_DATE - SYSDATE) AS dDay,
+               CEIL(C.END_DATE - SYSDATE) AS dday,
                NVL(PROG.PROGRESS_RATE, 0) AS progressRate,
                CASE
                    WHEN C.END_DATE &lt; SYSDATE THEN 'CLOSED'

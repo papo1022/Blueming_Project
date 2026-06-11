@@ -45,7 +45,7 @@
 					    <c:when test="${course.courseStatus == 'CLOSED'}">
 					        <c:set var="theme" value="theme-gray"/>
 					    </c:when>
-					    <c:when test="${course.dDay <= 7}">
+					    <c:when test="${course.dday <= 7}">
 					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 빨강 --%>
 					    </c:when>
 					    <c:otherwise>
@@ -83,7 +83,7 @@
                                 <div class="card-dday">마감</div>
                             </c:when>
                             <c:otherwise>
-                                <div class="card-dday">D-${course.dDay}</div>
+                                <div class="card-dday">D-${course.dday}</div>
                             </c:otherwise>
                         </c:choose>
 
