@@ -46,6 +46,7 @@ body {
     min-height: 650px; 
     border: 1px solid #e2e8f0;
     position: relative;
+    transform:translateX(180px);
 }
 
 /* 상단 디자인 헤더 밴드 */

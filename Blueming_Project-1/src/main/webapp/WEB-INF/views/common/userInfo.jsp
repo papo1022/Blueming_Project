@@ -74,7 +74,7 @@
 
     <br><br>
 
-    <a href="<c:url value='/member/myPage'/>">마이페이지</a>
+   
     <a href="<c:url value='/member/logout'/>">로그아웃</a>
 	    </c:when>
 	
