@@ -225,13 +225,33 @@ body {
     outline: none;
     border-color: #4fd1c5;
 }
+	/*메인 메뉴바 위치*/
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100vh;
+
+    background:#ffffff;
+    border-right:1px solid #e2e8f0;
+
+    overflow-y:auto;
+    z-index:999;
+
+    box-shadow:2px 0 10px rgba(0,0,0,.05);
+}
 </style>
 </head>
 <body>
 
-<div class="outer">
+	<div class="sidebar">
+	    <jsp:include page="../common/mainMenubar.jsp" />
+	</div>
 
-    <jsp:include page="../common/mainMenubar.jsp" />
+	<div class="outer">
+
+    
 
     <div class="mypage-container">
         <div class="profile-card">

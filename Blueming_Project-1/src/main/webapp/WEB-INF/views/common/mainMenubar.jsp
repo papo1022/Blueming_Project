@@ -111,7 +111,15 @@
                                         과제
                                     </a>
                                 </li>
+                                
                             </c:if>
+                            
+                             <li>
+                                <a href="<c:url value='../member/myPage'/>">
+                                    <i class="fi fi-sr-user"></i>
+                                    마이페이지
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </c:if>
