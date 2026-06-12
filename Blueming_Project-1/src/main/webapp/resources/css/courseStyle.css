@@ -1,48 +1,50 @@
 @charset "UTF-8";
 
-body{
-    background:#f4f6f9;
-    font-family:'Noto Sans KR', sans-serif;
+body {
+    background: #f4f6f9;
+    font-family: 'Noto Sans KR', sans-serif;
 }
 
-.outer{
-    margin-left:280px;
-    padding:30px;
-    width:calc(100% - 320px);
+.outer {
+    margin-left: 250px;
+    padding: 30px;
+    width: 80%;
+    max-width:1400px;
+    box-sizing: border-box;
 }
 
-#courseAddForm{
-    background:white;
-    border-radius:16px;
-    padding:40px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+#content-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
-h1{
-    font-size:42px;
-    font-weight:700;
-    color:#1f2937;
-    margin-bottom:40px;
+h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 40px;
 }
 
-.table{
-    width:100%;
-    border-collapse:collapse;
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.table tr{
-    border-top:1px solid #e5e7eb;
+.table tr {
+    border-top: 1px solid #e5e7eb;
 }
 
-.table td{
-    padding:20px;
-    vertical-align:top;
+.table td {
+    padding: 20px;
+    vertical-align: top;
 }
 
-.table td:first-child{
-    width:220px;
-    font-weight:600;
-    color:#374151;
+.table td:first-child {
+    width: 220px;
+    font-weight: 600;
+    color: #374151;
 }
 
 #courseTitle,
@@ -52,128 +54,119 @@ input[type="file"],
 input[type="text"],
 input[type="number"],
 input[type="file"],
-select{
+select {
 
-    width:100%;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    padding:12px 14px;
-    font-size:15px;
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 15px;
 
-    transition:all .2s;
+    transition: all .2s;
 }
 
-input[readonly]{
+input[readonly] {
 
-    background:#f3f4f6;
+    background: #eff6ff;
 
-    color:#6b7280;
+    border: 1px solid #93c5fd;
 
-    font-weight:600;
+    color: #1d4ed8;
 
-    cursor:not-allowed;
+    font-weight: 700;
+
+    text-align: center;
 }
 
-#description{
-    min-height:250px;
+#description {
+    min-height: 250px;
 }
 
 input:focus,
 textarea:focus,
-select:focus{
+select:focus {
 
-    outline:none;
+    outline: none;
 
-    border-color:#3b82f6;
+    border-color: #3b82f6;
 
     box-shadow:
-        0 0 0 4px rgba(59,130,246,.15);
+        0 0 0 4px rgba(59, 130, 246, .15);
 }
 
-#courseTitle,
-#description,
-input[type="date"],
-input[type="file"],
-select{
-
-    width:100%;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    padding:12px 14px;
-    font-size:15px;
-
-    transition:all .2s;
+#target-rule-area {
+    width: 100%;
 }
 
-#description{
-    min-height:250px;
+#target-rules-list {
+    margin-top: 15px;
+    min-height: 70px;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+
+    background: #f8fafc;
+    padding: 12px;
 }
 
-#target-rule-area{
-    width:100%;
+.btn-primary {
+
+    background: #2563eb;
+    border: none;
+
+    padding: 12px 30px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    transition: .2s;
 }
 
-#target-rules-list{
-    margin-top:15px;
-    min-height:70px;
-
-    border:1px dashed #cbd5e1;
-    border-radius:10px;
-
-    background:#f8fafc;
-    padding:12px;
+.btn-primary:hover {
+    transform: translateY(-2px);
 }
 
-.btn-primary{
+.btn-warning {
 
-    background:#2563eb;
-    border:none;
-
-    padding:12px 30px;
-
-    border-radius:8px;
-
-    font-weight:600;
-
-    transition:.2s;
+    padding: 12px 30px;
+    border-radius: 8px;
 }
 
-.btn-primary:hover{
-    transform:translateY(-2px);
+.buttons {
+    margin-top: 40px;
 }
 
-.btn-warning{
-
-    padding:12px 30px;
-    border-radius:8px;
+.page-title {
+    text-align: center;
+    position: relative;
 }
 
-.buttons{
-    margin-top:40px;
+.page-title::after {
+
+    content: "";
+
+    display: block;
+
+    width: 120px;
+    height: 4px;
+
+    background: #2563eb;
+
+    margin: 15px auto 0;
+
+    border-radius: 999px;
 }
 
-.page-title{
-    text-align:center;
-    position:relative;
-}
+#detail-area {
+    margin: 30px auto;
 
-.page-title::after{
+    background: white;
 
-    content:"";
+    border-radius: 20px;
 
-    display:block;
+    padding: 40px;
 
-    width:120px;
-    height:4px;
-
-    background:#2563eb;
-
-    margin:15px auto 0;
-
-    border-radius:999px;
-}
-
-#detail-area{
-    max-width:900px;
-    margin:0 auto;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .08);
 }

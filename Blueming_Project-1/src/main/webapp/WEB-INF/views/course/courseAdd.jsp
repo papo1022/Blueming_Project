@@ -7,7 +7,6 @@
             <meta charset="UTF-8">
             <title>Insert title here</title>
             <style>
-                
                 #courseTitle {
                     width: 80%;
                     margin: 10px;
@@ -75,7 +74,7 @@
 
 
             <div class="outer">
-                <form id="courseAddForm" action="addCourse" align="center" method="post" enctype="multipart/form-data"
+                <form id="content-card" action="addCourse" align="center" method="post" enctype="multipart/form-data"
                     onsubmit="return validateForm();">
                     <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
                     <h1 class="page-title">강의 등록</h1>
@@ -125,6 +124,9 @@
                     <div class="buttons" align="center">
                         <button type="submit" class="btn btn-primary">등록하기</button>
                         <button type="reset" class="btn btn-warning">초기화</button>
+                        <a href="${pageContext.request.contextPath}/course/list" class="btn btn-secondary">
+                            목록으로
+                        </a>
                     </div>
                 </form>
             </div>

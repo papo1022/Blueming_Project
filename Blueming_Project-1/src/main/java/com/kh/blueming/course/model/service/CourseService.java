@@ -413,8 +413,20 @@ public class CourseService {
 		return courseDao.upsertChapterProgress(sqlSession, map);
 	}
 
-
+	
+	@Transactional
 	public int updateCourseStatus() {
 		return courseDao.updateCourseStatus(sqlSession);
+	}
+	
+	@Transactional
+	public int orderChapter(int chapterId, int chapterOrder) {
+		
+		Chapter ch = new Chapter();
+		
+		ch.setChapterId(chapterId);
+		ch.setChapterOrder(chapterOrder);
+		
+		return courseDao.orderChapter(sqlSession, ch);
 	}
 }

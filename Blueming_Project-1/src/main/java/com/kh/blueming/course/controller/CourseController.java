@@ -777,14 +777,43 @@ public class CourseController {
 			isCompleted = "Y";
 		}
 
-		int rows = courseService.upsertChapterProgress(enrollmentId, chapterId,
-				watchedSeconds, lastPositionSeconds, chapCompRate, isCompleted);
+		int rows = courseService.upsertChapterProgress(enrollmentId, chapterId, watchedSeconds, lastPositionSeconds, chapCompRate, isCompleted);
 
 		result.put("success", rows > 0);
 		result.put("watchedSeconds", watchedSeconds);
 		result.put("chapCompRate", chapCompRate);
 		result.put("isCompleted", isCompleted);
 		return result;
+	}
+	
+	
+	//챕터 번호 수정 페이지로 이동
+	@GetMapping("chapterOrderView")
+    public ModelAndView chapterOrderForm(int courseId, ModelAndView mv, HttpSession session) {
+		ArrayList<Chapter> chapter = courseService.selectChapterList(courseId);
+
+    	mv.addObject("courseId", courseId)
+    		.addObject("chapterList", chapter)
+    	  .setViewName("course/chapterOrder");
+    	return mv;
+    }
+	
+	//챕터 번호 수정하기
+	@PostMapping("orderChapter")
+	public String orderChapter(int courseId, int[] chapterId, int[] chapterOrder, HttpSession session, Model model) {
+		int result = 1;
+		
+		for(int i=0; i<chapterOrder.length; i++) {
+			result *= courseService.orderChapter(chapterId[i], chapterOrder[i]);
+		}
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", "챕터 수정 완료");
+			return "redirect:/course/detail?courseId=" + courseId;
+		} else {
+			model.addAttribute("errorMsg", "수정에 실패했습니다.");
+			return "common/errorPage";
+		}
 	}
 
 

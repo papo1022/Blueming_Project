@@ -556,39 +556,46 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h2 align="center">통계</h2>
                     </div>
-                </div>
-                <div class="card-body">
-                    <!-- 총 이수율 -->
-                    <div class="mb-5">
-                        <h5>총 이수율</h5>
-                        <input type="hidden" id="courseId" value="${chapter.courseId}">
-                        <input type="hidden" id="chapterIdStat" value="${chapter.chapterId}">
-                        <div class="progress" style="height: 30px;">
-                            <div id="totalCourseProgressBar"
-                                class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
-                                role="progressbar" style="width: 0%;" data-rate="${chapter.avgProgress}">
-                                <span align="center" class="text-small">${String.format("%.2f",
-                                    chapter.avgProgress)}%</span>
+                    <div class="card-body">
+                        <!-- 총 이수율 -->
+                        <div class="mb-5">
+                            <h5>총 이수율</h5>
+                            <input type="hidden" id="courseId" value="${chapter.courseId}">
+                            <input type="hidden" id="chapterIdStat" value="${chapter.chapterId}">
+                            <div class="progress" style="height: 30px;">
+                                <div id="totalCourseProgressBar"
+                                    class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                                    role="progressbar" style="width: 0%;" data-rate="${chapter.avgProgress}">
+                                    <span align="center" class="text-small">${String.format("%.2f",
+                                        chapter.avgProgress)}%</span>
+                                </div>
                             </div>
-                        </div>
 
 
-                        <br>
-                        <h5>총 과제 제출률</h5>
-                        <div class="progress" style="height: 30px;">
-                            <div id="totalAssignmentProgressBar"
-                                class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
-                                role="progressbar" style="width: 0%;"
-                                data-rate="${chapter.avgAssignmentSubmissionRate}">
-                                <span align="center" class="text-small">${String.format("%.2f",
-                                    chapter.avgAssignmentSubmissionRate)}%</span>
+                            <br>
+                            <h5>총 과제 제출률</h5>
+                            <div class="progress" style="height: 30px;">
+                                <div id="totalAssignmentProgressBar"
+                                    class="progress-bar progress-bar-striped bg-danger progress-bar-animated rounded-pill"
+                                    role="progressbar" style="width: 0%;"
+                                    data-rate="${chapter.avgAssignmentSubmissionRate}">
+                                    <span align="center" class="text-small">${String.format("%.2f",
+                                        chapter.avgAssignmentSubmissionRate)}%</span>
+                                </div>
                             </div>
+                            <br>
                         </div>
-                        <br>
                     </div>
                 </div>
-            </div>
-            </div>
+                <br>
+                <div align="center">
+                    <a href="${pageContext.request.contextPath}/course/detail?courseId=${chapter.courseId}"
+                        class="btn btn-secondary">
+                        목록으로
+                    </a>
+                </div>
+                <br>
+                <br>
             </div>
 
 
