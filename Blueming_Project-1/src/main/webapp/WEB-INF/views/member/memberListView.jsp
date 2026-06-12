@@ -11,27 +11,45 @@
 <style>
     html, body { height: 100%; margin: 0; }
     .outer { display: flex; flex-direction: column; min-height: 80vh; padding: 20px; align-items: center; }
-    .table-container {/* 리스트 정보 */
-		position: fixed;
-		width: 1440px;
-		height: 89px;
-		left: 440px;
-		top: 240px;
-		
- }
-    .table tbody tr td:not(:last-child) { cursor: pointer; }
-    .table tbody tr:hover { background-color: #f5f5f5; }
-    .table thead th { cursor: pointer; background-color: #f8f9fa; user-select: none; }
-    /* 3. 페이징바는 맨 아래 바닥으로 고정 */
-.pagination-wrapper { 
-    position: fixed;
-    bottom: 120px; /* 화면 최하단 */
-    width: 130%;
-    height: 60px;
-    display: flex;
-    justify-content: right;
-    padding: 15px 0;
+    .table-container {
+    width: 1440px; /* 고정 너비 */
+    margin-left: 350px; 
+    margin-top:40px;
+    text-align:center;
+    border-radius:10px;
+	overflow:hidden;
 }
+
+	
+    .list tbody tr td:not(:last-child) {
+     cursor: pointer;
+
+     }
+    .list tbody tr:hover { background-color: #f5f5f5; }
+    .list thead th { cursor: pointer;  user-select: none; height:40px; background-color: #40E0D0;}
+    
+     .list tbody{
+    
+     margin:10px;
+     border : 1px solid lightgray;
+     }
+     
+     .list th{
+     padding:15px;
+     }
+     
+     .list td {
+    padding: 15px 10px; /* 위아래 15px, 좌우 10px로 간격 확장 */
+    text-align: center;
+    border: 1px solid #eee; /* 셀 하단 구분선 */
+	
+}
+
+	.pagination-wrapper { 
+	   margin-top:70px;	 
+	   margin-left:250px;
+	  
+	}
     .pagination-wrapper a, .pagination-wrapper span { display: inline-block; padding: 5px 12px; margin: 0 3px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; text-decoration: none; color: #333; }
     .disabled-btn { color: #ccc !important; }
 
@@ -43,6 +61,7 @@
         cursor: pointer;
         color: #555;         /* 아이콘 색상 */
         display: inline-flex;
+        
       
     }
 
@@ -51,19 +70,15 @@
     }
     
     .search-con{
-    /* 검색창 */
-
-box-sizing: border-box;
-position: fixed;
-width: 700px;
-height: 72px;
-left: 640px;
-top: 128px;
-
-
-border: 1px solid #D9D9D9;
-border-radius: 100px;
-    }
+		    /* 검색창 */
+		width:700px;
+		height:60px;
+		box-sizing: border-box;
+		border: 1px solid #D9D9D9;
+		border-radius: 100px;
+		margin-top:70px;
+		margin-left:250px;
+		    }
     .search-sel{
     /* 휴가 유형 박스 */
 	cursor:pointer;
@@ -86,25 +101,36 @@ border-radius: 100px;
 	}
 
     .add-user{
-   position:fixed;
-   border:none;
-   background:none;
    cursor: pointer;
-   left:80%;
-   top:150px;
+   margin-left:1400px;
+   
     }
     .add-user button i {
     font-size: 40px;         /* 아이콘 크기 조절 (원하는 만큼 숫자 변경) */
 
-
-}
+	}
     
-    .title{
-    position:fixed;
-    left:50%;
-    top:40px;
-    }
-
+		 .list {
+		    table-layout: fixed; 
+		    width: 100%;
+	
+		    
+		}
+		
+		.list th:nth-child(1) { width: 10%; }
+		.list th:nth-child(2) { width: 15%; }
+		.list th:nth-child(3) { width: 10%; }
+		.list th:nth-child(4) { width: 15%; }
+		.list th:nth-child(5) { width: 10%; }
+		.list th:nth-child(6) { width: 40%; }
+		
+		
+		/* 정렬 아이콘 영역을 고정하여 글자 밀림 방지 */
+		.sort-icon {
+		    display: inline-block;
+		    width: 15px; 
+		    text-align: center;
+		}
 
 </style>
 </head>
@@ -112,7 +138,7 @@ border-radius: 100px;
     <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer">
-        <h2 class="title">사원 조회</h2>
+        
         
         <div id="search-area">
        	
@@ -142,10 +168,12 @@ border-radius: 100px;
             <button type="button" onclick="goEnrollForm();">
                 <i class="fi fi-ss-user"></i>
             </button>
+            <br>
+            <h6>사원추가</h6>
         </div>
 
         <div class="table-container">
-            <table class="table table-bordered table-sm">
+            <table class="list">
                 <thead>
                     <tr>
                         <th onclick="clickSort('MEMBER_ID')">사원번호 ${requestScope.sortColumn == 'MEMBER_ID' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>

@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer" align="center">
         <h2><c:out value="${c.COURSE_TITLE}" /> 강의 상세 정보</h2>
@@ -34,7 +34,7 @@
         </div>
         
         <br>
-        <div style="margin: 20px 0;" align="left">
+        <div class="filter">
             <select id="deptFilter" onchange="filterByDept()">
 			    <option value="">전체 부서</option>
 			    <c:forEach var="dept" items="${deptList}">
@@ -119,7 +119,7 @@
     </div>
     <br>
     
-    <div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+    <div class="btn">
         <button type="button" class="btn btn-secondary" onclick="goList();">목록으로</button>
     </div>
 
