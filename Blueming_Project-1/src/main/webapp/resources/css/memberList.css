@@ -1,0 +1,92 @@
+/* 컨테이너: 화면 중앙 배치 */
+.container {
+    width: 600px;
+    margin: 50px auto;
+    background: #FFFFFF;
+    border: 1px solid #C4C5C6;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+   
+}
+
+
+.row {
+    display: flex;
+    width: 100%;
+    min-height: 70px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.label {
+    width: 180px;
+    flex-shrink: 0;
+
+    background-color: #40E0D0;
+    font-weight: bold;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0;
+}
+
+.value {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0 20px;
+}
+
+.content-wrapper {
+    flex: 1; /* 이 부분이 컨테이너의 남은 빈 공간을 전부 차지하게 함 */
+}
+/* 행 레이아웃: label과 value를 좌우 배치 */
+
+
+.row:first-child .label {
+    border-top-left-radius: 20px;
+}
+
+.last-row .label {
+    border-bottom-left-radius: 20px;
+}
+
+
+
+/* 입력창 및 선택창 */
+.value input, .value select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #C4C5C6;
+    border-radius: 10px;
+    box-sizing: border-box;
+    text-align:center;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    padding: 40px;
+	gap:10px;
+}
+.btn1, .btn2 {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-row {
+    border-bottom: none;
+}
+
+.btn1 { background-color: #40E0D0; }
+.btn2 { background-color: #D9D9D9; }

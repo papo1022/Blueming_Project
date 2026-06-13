@@ -7,23 +7,16 @@
 <head>
 <meta charset="UTF-8">
 <title>사원 상세정보</title>
-<style>
-    .detail-container { width: 600px; margin: 40px auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; }
-    .detail-container h2 { text-align: center; margin-bottom: 30px; }
-    .detail-row { display: flex; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    .detail-label { width: 30%; font-weight: bold; background-color: #f8f9fa; padding: 10px; }
-    .detail-value { width: 70%; padding: 10px; }
-    .btn-group { text-align: center; margin-top: 30px; }
-    .btn { padding: 10px 20px; margin: 0 5px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-    .btn-primary { background-color: #007bff; color: white; }
-    .btn-secondary { background-color: #6c757d; color: white; }
-</style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberList.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+
 </head>
 <body>
 	<jsp:include page="../common/mainMenubar.jsp"/>
 
-	<div class="detail-container">
-		<h2>사원 상세정보</h2>
+	<div class="container">
+		<div class="content-wrapper">
 
 		<c:choose>
 			<c:when test="${empty member}">
@@ -36,51 +29,52 @@
 					<c:otherwise><c:set var="roleName" value="사원" /></c:otherwise>
 				</c:choose>
 
-				<div class="detail-row">
-					<div class="detail-label">사원번호</div>
-					<div class="detail-value"><c:out value="${member.memberId}" /></div>
+				<div class="row">
+					<div class="label">사원번호</div>
+					<div class="value"><c:out value="${member.memberId}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">이름</div>
-					<div class="detail-value"><c:out value="${member.name}" /></div>
+				
+				<div class="row">
+					<div class="label">로그인ID</div>
+					<div class="value"><c:out value="${member.loginId}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">로그인ID</div>
-					<div class="detail-value"><c:out value="${member.loginId}" /></div>
+				<div class="row">
+					<div class="label">이름</div>
+					<div class="value"><c:out value="${member.name}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">이메일</div>
-					<div class="detail-value"><c:out value="${member.email}" /></div>
+				<div class="row">
+					<div class="label">이메일</div>
+					<div class="value"><c:out value="${member.email}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">연락처</div>
-					<div class="detail-value"><c:out value="${member.phone}" /></div>
+				<div class="row">
+					<div class="label">연락처</div>
+					<div class="value"><c:out value="${member.phone}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">주소</div>
-					<div class="detail-value"><c:out value="${member.address}" /></div>
+				<div class="row">
+					<div class="label">주소</div>
+					<div class="value"><c:out value="${member.address}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">부서</div>
-					<div class="detail-value"><c:out value="${member.deptName}" /></div>
+				<div class="row">
+					<div class="label">부서</div>
+					<div class="value"><c:out value="${member.deptName}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">직급</div>
-					<div class="detail-value"><c:out value="${member.positionName}" /></div>
+				<div class="row">
+					<div class="label">직급</div>
+					<div class="value"><c:out value="${member.positionName}" /></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">권한코드</div>
-					<div class="detail-value"><c:out value="${roleName}" /></div>
+				<div class="row">
+					<div class="label">권한코드</div>
+					<div class="value"><c:out value="${roleName}" /></div>
 				</div>
 
 				<%-- 입사일 및 상태 --%>
-				<div class="detail-row">
-					<div class="detail-label">입사일</div>
-					<div class="detail-value"><fmt:formatDate value="${member.hireDate}" pattern="yyyy-MM-dd"/></div>
+				<div class="row">
+					<div class="label">입사일</div>
+					<div class="value"><fmt:formatDate value="${member.hireDate}" pattern="yyyy-MM-dd"/></div>
 				</div>
-				<div class="detail-row">
-					<div class="detail-label">상태</div>
-					<div class="detail-value">
+				<div class="row last-row">
+					<div class="label">상태</div>
+					<div class="value">
 						<c:choose>
 							<c:when test="${member.status == 'Y'}">재직</c:when>
 							<c:when test="${member.status == 'R'}">휴직</c:when>
@@ -91,9 +85,9 @@
 
 				<%-- 추가 정보 (휴직/퇴사일) --%>
 				<c:if test="${member.status == 'R' or member.status == 'N'}">
-					<div class="detail-row">
-						<div class="detail-label">${member.status == 'R' ? '휴직기간' : '퇴사일'}</div>
-						<div class="detail-value">
+					<div class="row">
+						<div class="label">${member.status == 'R' ? '휴직기간' : '퇴사일'}</div>
+						<div class="value">
 							<c:choose>
 								<c:when test="${member.status == 'R'}">
 									<c:out value="${fn:substring(member.leaveStartDate,0,4)}-${fn:substring(member.leaveStartDate,4,6)}-${fn:substring(member.leaveStartDate,6,8)}" />
@@ -109,16 +103,28 @@
 				</c:if>
 			</c:otherwise>
 		</c:choose>
-
-		<div class="btn-group">
-			<button class="btn btn-primary" onclick="document.getElementById('editForm').submit()">수정</button>
-			<button class="btn btn-secondary" onclick="goMemberList();">목록</button>
+		
+		<div class="row btn-row">
+		<div class="value btn-group">
+			<button class="btn1" onclick="document.getElementById('editForm').submit()">수정</button>
+			<button class="btn2" onclick="goMemberList();">목록</button>
 		</div>
 
 		<form id="editForm" action="${pageContext.request.contextPath}/memberlist/updateForm" method="post">
 			<input type="hidden" name="memberId" value="<c:out value='${member.memberId}' />">
 		</form>
+		</div>
+		
+		
+		</div>
+		
+		
+		
 	</div>
+	
+	
+	
+	
 
 <script>
 function goMemberList() {
