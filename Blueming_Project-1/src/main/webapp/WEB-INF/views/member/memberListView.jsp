@@ -6,49 +6,174 @@
 <head>
 <meta charset="UTF-8">
 <title>사원 인사정보 관리</title>
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
     html, body { height: 100%; margin: 0; }
     .outer { display: flex; flex-direction: column; min-height: 80vh; padding: 20px; align-items: center; }
-    .table-container { flex: 1; width: 100%; max-width: 1000px; }
-    .table tbody tr td:not(:last-child) { cursor: pointer; }
-    .table tbody tr:hover { background-color: #f5f5f5; }
-    .table thead th { cursor: pointer; background-color: #f8f9fa; user-select: none; }
-    .pagination-wrapper { display: flex; justify-content: center; margin-top: 20px; padding-bottom: 20px; }
-    .pagination-wrapper a, .pagination-wrapper span { display: inline-block; padding: 5px 12px; margin: 0 3px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; text-decoration: none; color: #333; }
+    .table-container {
+    width: 1440px; /* 고정 너비 */
+    margin-left: 350px; 
+    margin-top:40px;
+    text-align:center;
+    border-radius:10px;
+	overflow:hidden;
+}
+
+	
+    .list tbody tr td:not(:last-child) {
+     cursor: pointer;
+
+     }
+    .list tbody tr:hover { background-color: #f5f5f5; }
+    .list thead th { cursor: pointer;  user-select: none; height:40px; background-color: #40E0D0;}
+    
+     .list tbody{
+    
+     margin:10px;
+     border : 1px solid lightgray;
+     }
+     
+     .list th{
+     padding:15px;
+     }
+     
+     .list td {
+    padding: 15px 10px; /* 위아래 15px, 좌우 10px로 간격 확장 */
+    text-align: center;
+    border: 1px solid #eee; /* 셀 하단 구분선 */
+	
+}
+
+	.pagination-wrapper { 
+	   margin-top:70px;	 
+	   margin-left:250px;
+	  
+	}
+    .pagination-wrapper a, .pagination-wrapper span { display: inline-block; padding: 5px 12px; margin: 0 3px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; text-decoration: none; color: #333; }
     .disabled-btn { color: #ccc !important; }
+
+    
+		.search-btn {
+        background: none;    /* 배경 제거 */
+        border: none;        /* 테두리 제거 */
+        padding: 5px;        /* 안쪽 여백 최소화 */
+        cursor: pointer;
+        color: #555;         /* 아이콘 색상 */
+        display: inline-flex;
+        
+      
+    }
+
+    .search-btn:hover {
+        color: #000;         /* 마우스 올렸을 때 색상 변화 (선택사항) */
+    }
+    
+    .search-con{
+		    /* 검색창 */
+		width:700px;
+		height:60px;
+		box-sizing: border-box;
+		border: 1px solid #D9D9D9;
+		border-radius: 100px;
+		margin-top:70px;
+		margin-left:250px;
+		    }
+    .search-sel{
+    /* 휴가 유형 박스 */
+	cursor:pointer;
+	width:15%;
+	height:100%;
+	background:transparent;
+	border: none;
+	overflow:hidden;
+	outline: none;
+	text-align-last: center;
+	    }
+
+		.input{
+		width:75%;
+		height:100%;
+		border:none;
+		outline: none;
+		text-align: center;
+
+	}
+
+    .add-user{
+   cursor: pointer;
+   margin-left:1400px;
+   
+    }
+    .add-user button i {
+    font-size: 40px;         /* 아이콘 크기 조절 (원하는 만큼 숫자 변경) */
+
+	}
+    
+		 .list {
+		    table-layout: fixed; 
+		    width: 100%;
+	
+		    
+		}
+		
+		.list th:nth-child(1) { width: 10%; }
+		.list th:nth-child(2) { width: 15%; }
+		.list th:nth-child(3) { width: 10%; }
+		.list th:nth-child(4) { width: 15%; }
+		.list th:nth-child(5) { width: 10%; }
+		.list th:nth-child(6) { width: 40%; }
+		
+		
+		/* 정렬 아이콘 영역을 고정하여 글자 밀림 방지 */
+		.sort-icon {
+		    display: inline-block;
+		    width: 15px; 
+		    text-align: center;
+		}
+
 </style>
 </head>
 <body>
     <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer">
-        <h2>사원 인사정보 관리</h2>
         
-        <div id="search-area" align="center" style="margin-bottom: 20px;">
-            <form id="search-form" action="${pageContext.request.contextPath}/memberlist" method="get">
-                <select name="condition" id="condition">
+        
+        <div id="search-area">
+       	
+            <form id="search-form" action="${pageContext.request.contextPath}/memberlist" method="get" class="search-con">
+                
+                
+                <select name="condition" id="condition" class="search-sel">
                     <option value="memberId" ${requestScope.condition == 'memberId' ? 'selected' : ''}>사원번호</option>
                     <option value="deptId" ${requestScope.condition == 'deptId' ? 'selected' : ''}>부서</option>
                     <option value="positionId" ${requestScope.condition == 'positionId' ? 'selected' : ''}>직급</option>
                     <option value="name" ${requestScope.condition == 'name' ? 'selected' : ''}>이름</option>
                     <option value="status" ${requestScope.condition == 'status' ? 'selected' : ''}>상태</option>
                 </select>
-                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}">
+                
+                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}" class="input" maxlength="100">
+                <button type="submit" class="search-btn"><i class="fi fi-rr-search"></i></button>
+                
+                 
                 <input type="hidden" name="sortColumn" value="${requestScope.sortColumn}">
                 <input type="hidden" name="sortOrder" value="${requestScope.sortOrder}">
-                <button type="submit" class="btn btn-primary">검색</button>
-                <button type="button" class="btn btn-secondary" onclick="resetSearch()">초기화</button>
+                
+
             </form>
         </div>
 
-        <div style="width: 100%; max-width: 1000px; display: flex; justify-content: flex-end; margin-bottom: 10px;">
-            <button type="button" class="btn btn-success" onclick="goEnrollForm();" style="font-weight: bold;">
-                + 사원 추가
+        <div class="add-user">
+            <button type="button" onclick="goEnrollForm();">
+                <i class="fi fi-ss-user"></i>
             </button>
+            <br>
+            <h6>사원추가</h6>
         </div>
 
         <div class="table-container">
-            <table class="table table-bordered table-sm">
+            <table class="list">
                 <thead>
                     <tr>
                         <th onclick="clickSort('MEMBER_ID')">사원번호 ${requestScope.sortColumn == 'MEMBER_ID' ? (requestScope.sortOrder == 'ASC' ? '▲' : '▼') : ''}</th>

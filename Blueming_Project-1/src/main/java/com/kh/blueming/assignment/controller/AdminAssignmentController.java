@@ -49,6 +49,9 @@ public class AdminAssignmentController {
             @RequestParam(value="keyword", required=false)
             String keyword,
 
+            @RequestParam(value="assignmentId", required=false)
+            Integer assignmentId,
+
             @RequestParam(value="sort", required=false)
             String sort,
 
@@ -61,6 +64,7 @@ public class AdminAssignmentController {
 
     	map.put("condition", condition);
     	map.put("keyword", keyword);
+        map.put("assignmentId", assignmentId == null ? null : String.valueOf(assignmentId));
     	map.put("sort", sort);
     	map.put("order", order); 
 
@@ -82,6 +86,7 @@ public class AdminAssignmentController {
 
         model.addAttribute("condition", condition);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("assignmentId", assignmentId);
         model.addAttribute("sort", sort);
         model.addAttribute("order", order); // ✨ [이 줄을 추가하세요!] JSP에서 ▲/▼ 표시 및 토글 링크 생성에 필요합니다.
 

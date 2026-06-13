@@ -1,16 +1,29 @@
 package com.kh.blueming.reply.controller;
 
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.reply.model.service.ReplyService;
@@ -136,5 +149,62 @@ public class ReplyController {
                 replyService.updateReply(r);
 
         return result > 0 ? "SUCCESS" : "FAIL";
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadReplyAttachment(
+            @RequestParam("replyId") int replyId,
+            HttpServletRequest request) {
+
+        Reply file = replyService.selectAttachmentByReplyId(replyId);
+        if (file == null
+                || file.getOriginalName() == null
+                || file.getChangedName() == null
+                || file.getFilePath() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "첨부파일 정보를 찾을 수 없습니다.");
+        }
+
+        String storedPath = file.getFilePath().trim();
+        Path resolvedPath;
+        Path storedAsPath = Paths.get(storedPath);
+        if (storedAsPath.isAbsolute()) {
+            resolvedPath = storedAsPath.resolve(file.getChangedName()).normalize();
+        } else {
+            String webPath = storedPath.startsWith("/") ? storedPath : "/" + storedPath;
+            String realDir = request.getServletContext().getRealPath(webPath);
+            if (realDir != null && !realDir.isBlank()) {
+                resolvedPath = Paths.get(realDir).resolve(file.getChangedName()).normalize();
+            } else {
+                resolvedPath = Paths.get(storedPath).resolve(file.getChangedName()).normalize();
+            }
+        }
+
+        Resource resource;
+        try {
+            resource = new UrlResource(resolvedPath.toUri());
+        } catch (MalformedURLException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "첨부파일 경로 처리 중 오류가 발생했습니다.",
+                    e);
+        }
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "첨부파일을 찾을 수 없습니다.");
+        }
+
+        String encodedName = URLEncoder.encode(
+                file.getOriginalName(),
+                StandardCharsets.UTF_8).replace("+", "%20");
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename*=UTF-8''" + encodedName)
+                .body(resource);
     }
 }

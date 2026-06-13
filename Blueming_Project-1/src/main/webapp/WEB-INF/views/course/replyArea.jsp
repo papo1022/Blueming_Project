@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+
 <style>
 .reply-wrap { width:100%; margin:30px auto; font-family:sans-serif; }
 .reply-list-table { width:100%; border-collapse:collapse; margin-top:20px; }
@@ -20,7 +23,7 @@
     <table style="width:100%;">
         <tr>
             <td>
-                <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none;" placeholder="댓글을 입력하세요."></textarea>
+                <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none;" placeholder="댓글을 입력하세요." maxlength="1000"></textarea>
                 <div style="margin-top:5px;">
                     <input type="file" id="mainReplyFile" style="display:none;" onchange="showFileName(this,'mainFileName')">
                     <button type="button" onclick="$('#mainReplyFile').click();">파일첨부</button>
@@ -84,7 +87,11 @@ function selectReplyList(){
                 if(r.deptName) html += "<br><span style='font-size:11px;color:#888;'>" + r.deptName + "</span>";
                 html += "</td><td><div id='contentArea_" + r.replyId + "'>" + content + "</div>";
                 
-                if(r.originalName) html += "<div style='margin-top:5px;color:#007bff;font-size:12px;'>📎 " + r.originalName + "</div>";
+                if(r.originalName && r.replyId) {
+                    html += "<div style='margin-top:5px;font-size:12px;'>"
+                         + "<a href='${pageContext.request.contextPath}/reply/download?replyId=" + r.replyId + "' style='color:#007bff;'>📎 " + r.originalName + "</a>"
+                         + "</div>";
+                }
                 
                 html += "<div style='margin-top:5px;font-size:11px;color:#999;'>" + r.createdDate;
                 if(loginMemberId == r.memberId || loginUserRole == "S") html += "<span class='reply-btn' style='color:red;' onclick='deleteReply(" + r.replyId + ")'>삭제</span>";
@@ -94,7 +101,7 @@ function selectReplyList(){
 
                 if(!isChild){
                     html += "<div id='reForm_" + r.replyId + "' class='re-input-area'>"
-                         + "<textarea id='reContent_" + r.replyId + "' rows='2' style='width:100%;resize:none;' placeholder='답글을 입력하세요.'></textarea>"
+                         + "<textarea id='reContent_" + r.replyId + "' rows='2' style='width:100%;resize:none;' placeholder='답글을 입력하세요.' maxlength='1000'></textarea>"
                          + "<div style='margin-top:5px;'><input type='file' id='reFile_" + r.replyId + "' style='display:none;' onchange=\"showFileName(this,'reFileName_" + r.replyId + "')\">"
                          + "<button type='button' onclick=\"$('#reFile_" + r.replyId + "').click();\">파일첨부</button>"
                          + "<span id='reFileName_" + r.replyId + "' class='file-name'>선택된 파일 없음</span></div>"

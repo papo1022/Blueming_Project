@@ -195,20 +195,20 @@ body{
             <tr>
                 <th>사원 ID</th>
                 <td>
-                    <input type="text" id="loginId" name="loginId" required>
+                    <input type="text" id="loginId" name="loginId" maxlength="20" required>
                 </td>
             </tr>
             <tr>
                 <th>이름</th>
                 <td>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" maxlength="100" required>
                 </td>
             </tr>
             <tr>
                 <th>이메일</th>
                 <td>
                     <div class="email-wrap">
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" maxlength="100" required>
                         <button type="button" id="btn-send-code">인증요청</button>
                     </div>
                 </td>
@@ -216,7 +216,7 @@ body{
             <tr class="auth-area">
                 <th>인증번호</th>
                 <td>
-                    <input type="text" name="code" placeholder="6자리 숫자 입력" style="width:100%;">
+                    <input type="text" name="code" placeholder="6자리 숫자 입력" style="width:100%;" maxlength="6">
                     <div class="auth-notice">
                         이메일로 받은 인증번호를 입력해주세요.
                     </div>

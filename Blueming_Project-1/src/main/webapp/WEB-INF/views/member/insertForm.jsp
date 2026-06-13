@@ -5,56 +5,50 @@
 <head>
 <meta charset="UTF-8">
 <title>사원 추가</title>
-<style>
-    .insert-container { width: 600px; margin: 40px auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; }
-    .insert-row { display: flex; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; align-items: center; }
-    .insert-label { width: 30%; font-weight: bold; background-color: #f8f9fa; padding: 10px; }
-    .insert-value { width: 70%; padding: 5px 10px; }
-    .insert-value input, .insert-value select { width: 100%; padding: 8px; box-sizing: border-box; }
-    .btn-group { text-align: center; margin-top: 30px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-    .btn-primary { background-color: #007bff; color: white; }
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberList.css">
+	<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+	<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
-}
-</style>
 </head>
 <body>
-    <div class="insert-container">
-        <h2>사원 추가</h2>
+	<jsp:include page="../common/mainMenubar.jsp" />
+
+    <div class="container">
+       
         <form id="enrollForm" action="${pageContext.request.contextPath}/memberlist/insert" method="post">
             
-            <div class="insert-row">
-			    <div class="insert-label">사원번호</div>
-			    <div class="insert-value"><input type="text" name="memberId" required></div>
+            <div class="row">
+			    <div class="label">사원번호</div>
+			    <div class="value"><input type="text" name="memberId" required></div>
 			</div>
             
             <div class="insert-row">
                 <div class="insert-label">로그인ID</div>
-                <div class="insert-value"><input type="text" name="loginId" id="loginId"  required>
+                <div class="insert-value"><input type="text" name="loginId" id="loginId" maxlength="20" required>
                 <span id="idMsg" style="color: red; font-size: 12px; display: none;"></span>
                 </div>
             </div>
             
             <div class="insert-row">
 			    <div class="insert-label">비밀번호</div>
-			    <div class="insert-value"><input type="password" name="loginPwd" id="loginPwd"  required>
+                <div class="insert-value"><input type="password" name="loginPwd" id="loginPwd" maxlength="20" required>
 			    <span id="pwdMsg" style="color: red; font-size: 12px; display: none;"></span>
 			    </div>
 			</div>
 			
 			<div class="insert-row">
                 <div class="insert-label">이름</div>
-                <div class="insert-value"><input type="text" name="name" required></div>
+                <div class="insert-value"><input type="text" name="name" maxlength="100" required></div>
             </div>
 			
 			<div class="insert-row">
 			    <div class="insert-label">이메일</div>
-			    <div class="insert-value"><input type="email" name="email" required></div>
+                <div class="insert-value"><input type="email" name="email" maxlength="100" required></div>
 			</div>
 			
-			<div class="insert-row">
-			    <div class="insert-label">전화번호</div>
-			    <div class="insert-value">
+			<div class="row">
+			    <div class="label">전화번호</div>
+			    <div class="value">
 			        <input type="tel" 
 			               name="phone" 
 			               id="phoneInput" 
@@ -68,12 +62,12 @@
 			
 			<div class="insert-row">
 			    <div class="insert-label">주소</div>
-			    <div class="insert-value"><input type="text" name="address" required></div>
+                <div class="insert-value"><input type="text" name="address" maxlength="255" required></div>
 			</div>
 			
-            <div class="insert-row">
-                <div class="insert-label">부서</div>
-                <div class="insert-value">
+            <div class="row">
+                <div class="label">부서</div>
+                <div class="value">
                     <select name="deptId" id="deptSelect" required>
                         <option value="">-- 부서 선택 --</option>
                         <c:forEach var="dept" items="${deptList}">
@@ -85,9 +79,9 @@
                 </div>
             </div>
             
-            <div class="insert-row">
-                <div class="insert-label">직급</div>
-                <div class="insert-value">
+            <div class="row">
+                <div class="label">직급</div>
+                <div class="value">
                     <select name="positionId" required>
                         <option value="">-- 직급 선택 --</option>
                         <c:forEach var="pos" items="${posList}">
@@ -99,9 +93,9 @@
                 </div>
             </div>
             
-            <div class="insert-row">
-                <div class="insert-label">권한코드</div>
-                <div class="insert-value">
+            <div class="row">
+                <div class="label">권한코드</div>
+                <div class="value">
                     <select name="role" id="role" required>
                         <option value="N">사원</option>
                         <option value="R">인사</option>
@@ -110,14 +104,16 @@
                 </div>
             </div>
             
-            <div class="insert-row">
-                <div class="insert-label">입사일</div>
-                <div class="insert-value"><input type="date" name="hireDate" required></div>
+            <div class="row last-row">
+                <div class="label">입사일</div>
+                <div class="value"><input type="date" name="hireDate" required></div>
             </div>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" onclick="submitEnrollForm();">등록</button>
-		        <button type="button" class="btn" onclick="history.back()">취소</button>
+		
+			<div class="row btn-row">
+            <div class="value btn-group">
+                <button type="button" class="btn1" onclick="submitEnrollForm();">등록</button>
+		        <button type="button" class="btn2" onclick="history.back()">취소</button>
+   		    </div>
    		    </div>
         </form>
     </div>

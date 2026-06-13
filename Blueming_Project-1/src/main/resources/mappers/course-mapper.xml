@@ -685,9 +685,16 @@
 		        #{enrollmentId}, #{chapterId}, #{watchedSeconds}, #{lastPositionSeconds}, #{chapCompRate}, #{isCompleted}
 		    )
 	</update>
+	
+	<!-- 오더 저장하기 -->
+	<update id="orderChapter">
+		UPDATE CHAPTER
+		SET CHAPTER_ORDER = #{chapterOrder}
+		WHERE CHAPTER_ID = #{chapterId}
+		  AND COURSE_ID = #{courseId}
+	</update>
 
 </mapper>
-
 
 
 

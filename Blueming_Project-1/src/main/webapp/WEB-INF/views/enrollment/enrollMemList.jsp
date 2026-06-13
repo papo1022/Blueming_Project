@@ -6,6 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>수강 정보 관리</title>
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <style>
     .outer { display: flex; flex-direction: column; min-height: 70vh; padding: 20px; align-items: center; }
     .table-container { flex: 1; width: 100%; max-width: 800px; }
@@ -30,7 +32,7 @@
                 <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
             </select>
         
-            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword">
+            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword" maxlength="100">
         
             <button type="submit">검색</button>
             <button type="button" onclick="clearSearchInput();">초기화</button>

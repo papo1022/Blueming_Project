@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 상세 및 수강생 현황</title>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+	<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <style>
         .progress-bg { width: 100px; height: 10px; background: #eee; border-radius: 5px; display: inline-block; }
         .progress-bar { height: 100%; border-radius: 5px; }
@@ -13,7 +15,7 @@
     </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+    <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer" align="center">
         <h2><c:out value="${c.COURSE_TITLE}" /> 강의 상세 정보</h2>
@@ -32,7 +34,7 @@
         </div>
         
         <br>
-        <div style="margin: 20px 0;" align="left">
+        <div class="filter">
             <select id="deptFilter" onchange="filterByDept()">
 			    <option value="">전체 부서</option>
 			    <c:forEach var="dept" items="${deptList}">
@@ -117,7 +119,7 @@
     </div>
     <br>
     
-    <div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+    <div class="btn">
         <button type="button" class="btn btn-secondary" onclick="goList();">목록으로</button>
     </div>
 
