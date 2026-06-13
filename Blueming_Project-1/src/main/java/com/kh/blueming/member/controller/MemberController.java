@@ -1,5 +1,7 @@
 package com.kh.blueming.member.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,11 +11,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kh.blueming.common.model.vo.PageInfo;
+import com.kh.blueming.common.template.Pageination;
 import com.kh.blueming.member.model.service.MemberService;
+import com.kh.blueming.member.model.service.OngoingCourseService;
 import com.kh.blueming.member.model.vo.Member;
+import com.kh.blueming.member.model.vo.OngoingCourse;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +37,9 @@ public class MemberController {
 	
 	@Autowired
 	private JavaMailSender mailSender;
+	
+	@Autowired
+	private OngoingCourseService ongoingCourseService;
 	
 	@GetMapping("login")
 	public String loginGet() {
@@ -303,11 +313,11 @@ public class MemberController {
 	@GetMapping("logout")
 	public String logoutMember(HttpSession session) {
 		
-
+		session.setAttribute("alertMsg", "성공적으로 로그아웃이 되었습니다.");
 		session.removeAttribute("loginUser");
 		
 		
-		session.setAttribute("alertMsg", "성공적으로 로그아웃이 되었습니다.");
+		
 		
 		
 		return "redirect:/";
@@ -315,14 +325,44 @@ public class MemberController {
 	}
 	
 	@GetMapping("myPage")
-	public ModelAndView myPage(ModelAndView mv) {
-		
-		
-		mv.setViewName("member/myPage");
-		
-		
-		return mv;
+	public ModelAndView myPage(
+	        @RequestParam(value="cpage", defaultValue="1") int currentPage,
+	        ModelAndView mv,
+	        HttpSession session) {
+
+	    Member loginUser =
+	            (Member)session.getAttribute("loginUser");
+
+	    int memberId = loginUser.getMemberId();
+
+	    // 전체 강의 수
+	    int listCount =
+	            ongoingCourseService.selectCourseCount(memberId);
+
+	    // 페이징 정보 생성
+	    PageInfo pi =
+	            Pageination.getPageInfo(
+	                    listCount,
+	                    currentPage,
+	                    5,   // 페이지번호 5개씩
+	                    5   // 한 페이지당 10개
+	            );
+
+	    // 현재 페이지 강의 조회
+	    List<OngoingCourse> courseList =
+	            ongoingCourseService.selectMyCourseList(
+	                    pi,
+	                    memberId);
+
+	    mv.addObject("pi", pi);
+	    mv.addObject("courseList", courseList);
+
+	    mv.setViewName("member/myPage");
+
+	    return mv;
 	}
+	
+	
 	
 	@PostMapping("updatePwd")
 	public String updatePwd(String loginId, String loginPwd, String updatePwd, HttpSession session) {
