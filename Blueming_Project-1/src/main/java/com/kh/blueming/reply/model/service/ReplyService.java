@@ -121,4 +121,8 @@ public class ReplyService {
     public Reply selectReply(int replyId) {
         return replyDao.selectReply(replyId);
     }
+
+    public Reply selectAttachmentByReplyId(int replyId) {
+        return replyDao.selectAttachmentByReplyId(replyId);
+    }
 }

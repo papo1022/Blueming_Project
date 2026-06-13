@@ -166,6 +166,7 @@ body{
                     <input type="text"
                            id="loginId"
                            name="loginId"
+                              maxlength="20"
                            required
                            value="${cookie.saveId.value}">
                 </td>
@@ -177,6 +178,7 @@ body{
                     <input type="password"
                            id="loginPwd"
                            name="loginPwd"
+                              maxlength="20"
                            required>
 
                     <div id="capslock-warning"

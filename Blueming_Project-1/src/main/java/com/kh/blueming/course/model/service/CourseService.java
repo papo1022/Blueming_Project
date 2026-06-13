@@ -418,8 +418,28 @@ public class CourseService {
 		return courseDao.upsertChapterProgress(sqlSession, map);
 	}
 
-
+	
+	@Transactional
 	public int updateCourseStatus() {
 		return courseDao.updateCourseStatus(sqlSession);
+	}
+	
+	@Transactional
+	public int reorderChapters(int courseId, int[] chapterIds, int[] chapterOrders) {
+		if (courseId <= 0 || chapterIds == null || chapterOrders == null || chapterIds.length != chapterOrders.length) {
+			return 0;
+		}
+
+		for (int i = 0; i < chapterIds.length; i++) {
+			Chapter ch = new Chapter();
+			ch.setCourseId(courseId);
+			ch.setChapterId(chapterIds[i]);
+			ch.setChapterOrder(chapterOrders[i]);
+			if (courseDao.orderChapter(sqlSession, ch) <= 0) {
+				throw new IllegalStateException("챕터 순서 변경에 실패했습니다.");
+			}
+		}
+
+		return 1;
 	}
 }

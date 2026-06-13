@@ -20,7 +20,7 @@
 </style>
 </head>
 <body>
-    <jsp:include page="../common/menubar.jsp"/>
+	<jsp:include page="../common/mainMenubar.jsp"/>
 
 	<div class="detail-container">
 		<h2>사원 상세정보</h2>

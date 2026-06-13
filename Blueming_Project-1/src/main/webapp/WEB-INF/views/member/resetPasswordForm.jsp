@@ -128,13 +128,13 @@ body{
 			<tr>
 				<th>새 비밀번호</th>
 				<td>
-				    <input type="password" id="newPwd" name="newPwd" placeholder="새 비밀번호 입력" required>
+                    <input type="password" id="newPwd" name="newPwd" placeholder="새 비밀번호 입력" maxlength="20" required>
 			    </td>
 			</tr>
 			<tr>
 				<th>비밀번호 확인</th>
 				<td>
-					<input type="password" id="newPwdCheck" placeholder="비밀번호 재입력" required>
+                    <input type="password" id="newPwdCheck" placeholder="비밀번호 재입력" maxlength="20" required>
 					<span id="pwd-msg"></span>
 				</td>
 			</tr>

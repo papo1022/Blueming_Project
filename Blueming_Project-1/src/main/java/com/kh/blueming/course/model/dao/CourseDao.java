@@ -204,4 +204,8 @@ public class CourseDao {
 		return sqlSession.update("courseMapper.updateCourseStatus");
 	}
 
+	public int orderChapter(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.update("courseMapper.orderChapter", ch);
+	}
+
 }

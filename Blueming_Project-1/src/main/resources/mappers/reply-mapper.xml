@@ -26,7 +26,9 @@
             D.DEPARTMENT_NAME     AS "deptName",
             P.POSITION_NAME       AS "positionName",
 
-            F.ORIGINAL_NAME       AS "originalName"
+            F.ORIGINAL_NAME       AS "originalName",
+            F.CHANGED_NAME        AS "changedName",
+            F.FILE_PATH           AS "filePath"
 
         FROM REPLY R
         JOIN MEMBER M
@@ -50,6 +52,26 @@
         ORDER SIBLINGS BY R.REPLY_ID ASC
 
     </select>
+
+        <select id="selectAttachmentByReplyId"
+                        parameterType="_int"
+                        resultType="com.kh.blueming.reply.model.vo.Reply">
+
+                SELECT
+                        R.REPLY_ID      AS "replyId",
+                        R.FILE_ID       AS "fileId",
+                        F.ORIGINAL_NAME AS "originalName",
+                        F.CHANGED_NAME  AS "changedName",
+                        F.FILE_PATH     AS "filePath"
+                FROM REPLY R
+                JOIN ATTACHMENT F
+                    ON R.FILE_ID = F.FILE_ID
+                WHERE R.REPLY_ID = #{replyId}
+                    AND R.FILE_ID IS NOT NULL
+                    AND R.STATUS = 'Y'
+                    AND F.STATUS = 'Y'
+
+        </select>
 
 
     <!-- 댓글 등록 -->

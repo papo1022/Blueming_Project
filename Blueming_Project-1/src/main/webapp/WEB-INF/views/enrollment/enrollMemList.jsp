@@ -30,7 +30,7 @@
                 <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
             </select>
         
-            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword">
+            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword" maxlength="100">
         
             <button type="submit">검색</button>
             <button type="button" onclick="clearSearchInput();">초기화</button>
