@@ -320,6 +320,12 @@ body {
     background:#3b82f6;
     color:white;
 }
+
+.right-panel{
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+}
 </style>
 </head>
 <body>
@@ -413,6 +419,8 @@ body {
         </div>
         
 </div>
+	<div class="right-panel">
+		
         <div class="course-card">
 
     <h3 style="margin-bottom: 15px; font-size: 18px; font-weight: 700;">
@@ -511,6 +519,27 @@ body {
 </div>
     </div>
 
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <button id="cal-prev">
+                    	<i class="fi fi-rr-angle-left"></i>
+					</button>
+					
+                    <span class="calendar-month" id="cal-month"></span>
+                    
+                    <button id="cal-next">
+                    	<i class="fi fi-rr-angle-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-days-header">
+                    <span>일</span><span>월</span><span>화</span>
+                    <span>수</span><span>목</span><span>금</span><span>토</span>
+                </div>
+                <div class="calendar-dates" id="cal-dates"></div>
+            </div>
+
+
+</div>
 </div>
 
 <div class="modal fade" id="updateInfoModal">
@@ -624,6 +653,67 @@ function validatePwd() {
 }
 </script>
 
+	
+
+          
+<script>
+(function () {
+    const monthEl = document.getElementById('cal-month');
+    const datesEl = document.getElementById('cal-dates');
+
+    let currentDate = new Date();
+
+    function render() {
+
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        monthEl.textContent = year + "년 " + (month + 1) + "월";
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+
+        const today = new Date();
+
+        let html = '';
+
+        // 앞 빈칸
+        for(let i = 0; i < firstDay; i++){
+            html += '<span class="empty"></span>';
+        }
+
+        // 날짜 출력
+        for(let day = 1; day <= lastDate; day++){
+
+            const isToday =
+                today.getFullYear() === year &&
+                today.getMonth() === month &&
+                today.getDate() === day;
+
+            html +=
+                '<span class="' +
+                (isToday ? 'today' : '') +
+                '">' +
+                day +
+                '</span>';
+        }
+
+        datesEl.innerHTML = html;
+    }
+
+    document.getElementById('cal-prev').addEventListener('click', function () {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        render();
+    });
+
+    document.getElementById('cal-next').addEventListener('click', function () {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        render();
+    });
+
+    render();
+})();
+</script>
 
 
 </body>
