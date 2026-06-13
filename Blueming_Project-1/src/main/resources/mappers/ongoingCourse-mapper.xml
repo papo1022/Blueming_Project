@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ongoingCourseMapper">
+
+<select id="selectMyCourseList"
+        parameterType="int"
+        resultType="com.kh.blueming.member.model.vo.OngoingCourse">
+
+    SELECT
+        COURSE_ID,
+        COURSE_TITLE,
+        DESCRIPTION,
+        MEMBER_ID,
+        STATUS,
+        START_DATE,
+        END_DATE,
+        TOTAL_HOURS
+    FROM COURSE
+    WHERE MEMBER_ID = #{memberId}
+    ORDER BY START_DATE DESC
+
+</select>
+
+<select id="selectCourseCount"
+        parameterType="int"
+        resultType="int">
+
+    SELECT COUNT(*)
+    FROM COURSE
+    WHERE MEMBER_ID = #{value}
+
+</select>
+
+</mapper>
