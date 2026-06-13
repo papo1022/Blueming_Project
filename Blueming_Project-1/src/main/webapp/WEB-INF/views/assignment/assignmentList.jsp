@@ -234,6 +234,7 @@ body{
             <%-- 검색창을 눌러도 정렬 상태가 유지되도록 숨은 필드 추가 --%>
             <input type="hidden" name="sort" value="${sort}">
             <input type="hidden" name="order" value="${order}">
+            <input type="hidden" name="assignmentId" value="${assignmentId}">
 
             <select name="condition">
                 <option value="name" <c:if test="${condition eq 'name'}">selected</c:if>>이름</option>
@@ -250,7 +251,7 @@ body{
         <thead>
             <tr>
                 <%-- 정렬 버튼들이 자연스럽게 녹아들도록 스타일을 입혔으며, 정렬 시 1페이지(cpage=1)로 리셋되도록 수정 --%>
-                <c:set var="baseQuery" value="condition=${condition}&keyword=${keyword}&cpage=1" />
+                <c:set var="baseQuery" value="condition=${condition}&keyword=${keyword}&assignmentId=${assignmentId}&cpage=1" />
                 <th>
                     <a class="sort-btn ${sort eq 'memberId' ? 'sort-active' : ''}"
                        href="?sort=memberId&order=${sort eq 'memberId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
@@ -376,7 +377,7 @@ body{
                 </c:when>
                 <c:otherwise>
                     <li class="page-item">
-                        <a class="page-link" href="?cpage=${pi.currentPage-1}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">&lt;</a>
+                        <a class="page-link" href="?cpage=${pi.currentPage-1}&condition=${condition}&keyword=${keyword}&assignmentId=${assignmentId}&sort=${sort}&order=${order}">&lt;</a>
                     </li>
                 </c:otherwise>
             </c:choose>
@@ -389,7 +390,7 @@ body{
                     </c:when>
                     <c:otherwise>
                         <li class="page-item">
-                            <a class="page-link" href="?cpage=${p}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">${p}</a>
+                            <a class="page-link" href="?cpage=${p}&condition=${condition}&keyword=${keyword}&assignmentId=${assignmentId}&sort=${sort}&order=${order}">${p}</a>
                         </li>
                     </c:otherwise>
                 </c:choose>
@@ -402,7 +403,7 @@ body{
                 </c:when>
                 <c:otherwise>
                     <li class="page-item">
-                        <a class="page-link" href="?cpage=${pi.currentPage+1}&condition=${condition}&keyword=${keyword}&sort=${sort}&order=${order}">&gt;</a>
+                        <a class="page-link" href="?cpage=${pi.currentPage+1}&condition=${condition}&keyword=${keyword}&assignmentId=${assignmentId}&sort=${sort}&order=${order}">&gt;</a>
                     </li>
                 </c:otherwise>
             </c:choose>

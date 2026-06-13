@@ -424,7 +424,7 @@
                                                     <td>
                                                         <div class="assignment-actions">
                                                             <button type="button" class="btn btn-sm btn-primary"
-                                                                onclick="">
+                                                                onclick="goGradeAssignment(${assignment.assignmentId});">
                                                                 채점
                                                             </button>
                                                             <button type="button" class="btn btn-sm btn-warning"
@@ -836,6 +836,10 @@
 
                 function updateAssignment(assignmentId) {
                     window.location.href = "/blueming/assignment/updateView?assignmentId=" + assignmentId;
+                }
+
+                function goGradeAssignment(assignmentId) {
+                    window.location.href = "/blueming/assignment/admin/list?assignmentId=" + assignmentId;
                 }
 
                 onReady(function () {

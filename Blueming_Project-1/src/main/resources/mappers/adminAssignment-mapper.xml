@@ -4,6 +4,9 @@
 <mapper namespace="adminAssignmentMapper">
 
     <sql id="searchCondition">
+        <if test="assignmentId != null and assignmentId != ''">
+            AND A.ASSIGNMENT_ID = #{assignmentId}
+        </if>
         <if test="condition == 'name' and keyword != null and keyword != ''">
             AND M.NAME LIKE '%' || #{keyword} || '%'
         </if>
