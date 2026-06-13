@@ -425,13 +425,21 @@ public class CourseService {
 	}
 	
 	@Transactional
-	public int orderChapter(int chapterId, int chapterOrder) {
-		
-		Chapter ch = new Chapter();
-		
-		ch.setChapterId(chapterId);
-		ch.setChapterOrder(chapterOrder);
-		
-		return courseDao.orderChapter(sqlSession, ch);
+	public int reorderChapters(int courseId, int[] chapterIds, int[] chapterOrders) {
+		if (courseId <= 0 || chapterIds == null || chapterOrders == null || chapterIds.length != chapterOrders.length) {
+			return 0;
+		}
+
+		for (int i = 0; i < chapterIds.length; i++) {
+			Chapter ch = new Chapter();
+			ch.setCourseId(courseId);
+			ch.setChapterId(chapterIds[i]);
+			ch.setChapterOrder(chapterOrders[i]);
+			if (courseDao.orderChapter(sqlSession, ch) <= 0) {
+				return 0;
+			}
+		}
+
+		return 1;
 	}
 }

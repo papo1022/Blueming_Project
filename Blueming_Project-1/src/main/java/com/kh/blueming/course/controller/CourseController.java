@@ -2,9 +2,11 @@ package com.kh.blueming.course.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -793,9 +795,17 @@ public class CourseController {
 	//챕터 번호 수정 페이지로 이동
 	@GetMapping("chapterOrderView")
     public ModelAndView chapterOrderForm(int courseId, ModelAndView mv, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		Course course = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, course)) {
+			mv.addObject("errorMsg", "챕터 목록을 변경할 권한이 없습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
 		ArrayList<Chapter> chapter = courseService.selectChapterList(courseId);
 
-    	mv.addObject("courseId", courseId)
+    	mv.addObject("course", course)
+    		.addObject("courseId", courseId)
     		.addObject("chapterList", chapter)
     	  .setViewName("course/chapterOrder");
     	return mv;
@@ -804,17 +814,48 @@ public class CourseController {
 	//챕터 번호 수정하기
 	@PostMapping("orderChapter")
 	public String orderChapter(int courseId, int[] chapterId, int[] chapterOrder, HttpSession session, Model model) {
-		int result = 1;
-		
-		for(int i=0; i<chapterOrder.length; i++) {
-			result *= courseService.orderChapter(chapterId[i], chapterOrder[i]);
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		Course course = courseService.selectCourse(courseId);
+		if (!canManageCourse(loginUser, course)) {
+			model.addAttribute("errorMsg", "챕터 목록을 변경할 권한이 없습니다.");
+			return "common/errorPage";
 		}
+
+		if (chapterId == null || chapterOrder == null || chapterId.length == 0 || chapterId.length != chapterOrder.length) {
+			model.addAttribute("errorMsg", "변경할 챕터 목록이 올바르지 않습니다.");
+			return "common/errorPage";
+		}
+
+		ArrayList<Chapter> chapters = courseService.selectChapterList(courseId);
+		if (chapters.size() != chapterId.length) {
+			model.addAttribute("errorMsg", "챕터 목록이 최신 상태가 아닙니다. 다시 시도해주세요.");
+			return "common/errorPage";
+		}
+
+		Set<Integer> validChapterIds = new HashSet<>();
+		for (Chapter chapter : chapters) {
+			validChapterIds.add(chapter.getChapterId());
+		}
+
+		Set<Integer> usedOrders = new HashSet<>();
+		for (int i = 0; i < chapterId.length; i++) {
+			if (!validChapterIds.remove(chapterId[i])) {
+				model.addAttribute("errorMsg", "잘못된 챕터 정보가 포함되어 있습니다.");
+				return "common/errorPage";
+			}
+			if (chapterOrder[i] < 1 || chapterOrder[i] > chapterId.length || !usedOrders.add(chapterOrder[i])) {
+				model.addAttribute("errorMsg", "챕터 순서는 1부터 " + chapterId.length + "까지 중복 없이 지정해야 합니다.");
+				return "common/errorPage";
+			}
+		}
+
+		int result = courseService.reorderChapters(courseId, chapterId, chapterOrder);
 		
 		if(result > 0) {
-			session.setAttribute("alertMsg", "챕터 수정 완료");
+			session.setAttribute("alertMsg", "챕터 목록 변경 완료");
 			return "redirect:/course/detail?courseId=" + courseId;
 		} else {
-			model.addAttribute("errorMsg", "수정에 실패했습니다.");
+			model.addAttribute("errorMsg", "챕터 목록 변경에 실패했습니다.");
 			return "common/errorPage";
 		}
 	}

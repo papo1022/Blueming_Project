@@ -173,7 +173,7 @@
                                             챕터 추가
                                         </button>
                                         <button type="button" class="btn btn-warning" onclick="chapterOrder();">
-                                            챕터 번호 수정
+                                            챕터 목록 변경
                                         </button>
                                     </form>
                                 </div>

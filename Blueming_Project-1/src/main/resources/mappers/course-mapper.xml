@@ -691,10 +691,10 @@
 		UPDATE CHAPTER
 		SET CHAPTER_ORDER = #{chapterOrder}
 		WHERE CHAPTER_ID = #{chapterId}
+		  AND COURSE_ID = #{courseId}
 	</update>
 
 </mapper>
-
 
 
 
