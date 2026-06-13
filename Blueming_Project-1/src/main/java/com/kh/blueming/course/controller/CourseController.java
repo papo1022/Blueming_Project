@@ -798,8 +798,8 @@ public class CourseController {
 		Member loginUser = (Member) session.getAttribute("loginUser");
 		Course course = courseService.selectCourse(courseId);
 		if (!canManageCourse(loginUser, course)) {
-			mv.addObject("errorMsg", "챕터 목록을 변경할 권한이 없습니다.")
-			  .setViewName("common/errorPage");
+			mv.addObject("errorMsg", "챕터 목록을 변경할 권한이 없습니다.");
+			mv.setViewName("common/errorPage");
 			return mv;
 		}
 		ArrayList<Chapter> chapter = courseService.selectChapterList(courseId);
@@ -837,9 +837,10 @@ public class CourseController {
 			validChapterIds.add(chapter.getChapterId());
 		}
 
+		Set<Integer> processedChapterIds = new HashSet<>();
 		Set<Integer> usedOrders = new HashSet<>();
 		for (int i = 0; i < chapterId.length; i++) {
-			if (!validChapterIds.remove(chapterId[i])) {
+			if (!validChapterIds.contains(chapterId[i]) || !processedChapterIds.add(chapterId[i])) {
 				model.addAttribute("errorMsg", "잘못된 챕터 정보가 포함되어 있습니다.");
 				return "common/errorPage";
 			}

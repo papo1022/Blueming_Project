@@ -163,7 +163,7 @@
                                 <div class="chapter-order-title">${ch.chapterTitle}</div>
                                 <div class="chapter-progress-wrap">
                                     <div class="chapter-progress-track">
-                                        <div class="chapter-progress-bar" style="width: ${String.format('%.2f', ch.avgProgress)}%;"></div>
+                                        <div class="chapter-progress-bar" data-progress="${ch.avgProgress}"></div>
                                     </div>
                                 </div>
                                 <p class="chapter-progress-rate">전체 수강생 이수율 ${String.format("%.2f", ch.avgProgress)}%</p>
@@ -199,15 +199,28 @@
                 item.querySelector(".chapter-order-badge").textContent = index + 1;
                 item.querySelector(".move-up").disabled = index === 0;
                 item.querySelector(".move-down").disabled = index === items.length - 1;
+                const bar = item.querySelector(".chapter-progress-bar");
+                const rawProgress = parseFloat(bar.dataset.progress);
+                const progress = Number.isFinite(rawProgress) ? Math.max(0, Math.min(100, rawProgress)) : 0;
+                bar.style.width = progress.toFixed(2) + "%";
             });
         }
 
         function rebuildHiddenFields() {
             hiddenFieldWrap.innerHTML = "";
             Array.from(list.querySelectorAll(".chapter-order-item")).forEach((item, index) => {
-                hiddenFieldWrap.insertAdjacentHTML("beforeend",
-                    '<input type="hidden" name="chapterId" value="' + item.dataset.chapterId + '">' +
-                    '<input type="hidden" name="chapterOrder" value="' + (index + 1) + '">');
+                const chapterIdInput = document.createElement("input");
+                chapterIdInput.type = "hidden";
+                chapterIdInput.name = "chapterId";
+                chapterIdInput.value = item.dataset.chapterId;
+
+                const chapterOrderInput = document.createElement("input");
+                chapterOrderInput.type = "hidden";
+                chapterOrderInput.name = "chapterOrder";
+                chapterOrderInput.value = index + 1;
+
+                hiddenFieldWrap.appendChild(chapterIdInput);
+                hiddenFieldWrap.appendChild(chapterOrderInput);
             });
         }
 
