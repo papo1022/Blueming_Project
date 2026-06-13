@@ -257,39 +257,6 @@
                         <h2 align="center">챕터 상세조회</h2>
                         <!-- 관리자에게만 보이는 버튼-->
                         <c:choose>
-<<<<<<< HEAD
-                            <c:when test="${not empty assignmentList}">
-                                <c:forEach var="assignment" items="${assignmentList}">
-                                    <tr class="assignment-clickable"
-                                        data-assignment-title="${assignment.assignmentTitle}"
-                                        data-assignment-description="${assignment.description}"
-                                        data-assignment-start-date="${assignment.startDate}"
-                                        data-assignment-due-date="${assignment.dueDate}"
-                                        data-assignment-max-score="${assignment.maxScore}">
-                                        <td>${assignment.assignmentTitle}</td>
-                                        <td>${assignment.dueDate}</td>
-                                        <c:if test="${sessionScope.loginUser.role eq 'S'}">
-                                            <td>
-                                                <div class="assignment-actions">
-                                                    <button type="button" class="btn btn-sm btn-primary" onclick="goGradeAssignment(${assignment.assignmentId});">
-                                                        채점
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-warning" onclick="updateAssignment(${assignment.assignmentId});">
-                                                        수정
-                                                    </button>
-                                                    <form action="/blueming/assignment/delete" method="post">
-                                                        <input type="hidden" name="assignmentId" value="${assignment.assignmentId}">
-                                                        <input type="hidden" name="chapterId" value="${chapter.chapterId}">
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('정말로 과제를 삭제하시겠습니까?');">
-                                                            삭제
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </c:if>
-                                    </tr>
-                                </c:forEach>
-=======
                             <c:when test="${ sessionScope.loginUser.role eq 'S' }">
                                 <div align="center" class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-warning mr-1" onclick="updateChapter();">
@@ -303,7 +270,6 @@
                                         </button>
                                     </form>
                                 </div>
->>>>>>> origin/main_semi
                             </c:when>
                             <c:otherwise>
                                 <style>
@@ -458,7 +424,7 @@
                                                     <td>
                                                         <div class="assignment-actions">
                                                             <button type="button" class="btn btn-sm btn-primary"
-                                                                onclick="">
+                                                                onclick="goGradeAssignment(${assignment.assignmentId});">
                                                                 채점
                                                             </button>
                                                             <button type="button" class="btn btn-sm btn-warning"
@@ -661,67 +627,9 @@
                         const chapterId = $("#chapterId").val();
                         const file = $("#replyFile")[0].files[0];
 
-<<<<<<< HEAD
-        function goGradeAssignment(assignmentId) {
-            window.location.href = "/blueming/assignment/admin/list?assignmentId=" + assignmentId;
-        }
-
-        onReady(function() {
-            // 초기 진도 바 너비 적용
-            const bar = document.getElementById("compRateBar");
-            if (bar) bar.style.width = (bar.dataset.rate || 0) + "%";
-
-            const totalCourseProgressBar = document.getElementById("totalCourseProgressBar");
-            if (totalCourseProgressBar) {
-                totalCourseProgressBar.style.width = (totalCourseProgressBar.dataset.rate || 0) + "%";
-            }
-
-            const totalAssignmentProgressBar = document.getElementById("totalAssignmentProgressBar");
-            if (totalAssignmentProgressBar) {
-                totalAssignmentProgressBar.style.width = (totalAssignmentProgressBar.dataset.rate || 0) + "%";
-            }
-
-            const playerShell = document.getElementById("chapterPlayerShell");
-            const btnPlayPause = document.getElementById("btnPlayPause");
-            const btnRewind = document.getElementById("btnRewind");
-            const btnForward = document.getElementById("btnForward");
-            const seekBar = document.getElementById("videoSeekBar");
-            const timeLabel = document.getElementById("videoTimeLabel");
-            const speedSelect = document.getElementById("speedSelect");
-            const btnMuteToggle = document.getElementById("btnMuteToggle");
-            const volumeSlider = document.getElementById("volumeSlider");
-            const btnFullscreen = document.getElementById("btnFullscreen");
-            const playerStatus = document.getElementById("playerStatus");
-
-            // ====== 영상 checkpoint 저장 ======
-            const video = document.getElementById("chapterVideo");
-            const enrollmentId = parseInt("${enrollmentId}") || 0;
-            const chapterId = parseInt("${chapter.chapterId}") || 0;
-
-            if (video) {
-                if (btnPlayPause && seekBar && timeLabel) {
-                    video.removeAttribute("controls");
-
-                    function formatTime(sec) {
-                        const total = Math.max(0, Math.floor(sec || 0));
-                        const min = Math.floor(total / 60);
-                        const rem = total % 60;
-                        return String(min).padStart(2, "0") + ":" + String(rem).padStart(2, "0");
-                    }
-
-                    function updateTimeline() {
-                        const duration = Number.isFinite(video.duration) ? video.duration : 0;
-                        const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
-
-                        if (duration > 0) {
-                            seekBar.value = ((current / duration) * 100).toFixed(2);
-                        } else {
-                            seekBar.value = 0;
-=======
                         if (!content.trim() && !file) {
                             alert("댓글 내용이나 파일을 선택해주세요.");
                             return;
->>>>>>> origin/main_semi
                         }
 
                         let formData = new FormData();
@@ -928,6 +836,10 @@
 
                 function updateAssignment(assignmentId) {
                     window.location.href = "/blueming/assignment/updateView?assignmentId=" + assignmentId;
+                }
+
+                function goGradeAssignment(assignmentId) {
+                    window.location.href = "/blueming/assignment/admin/list?assignmentId=" + assignmentId;
                 }
 
                 onReady(function () {
