@@ -840,8 +840,12 @@ public class CourseController {
 		Set<Integer> processedChapterIds = new HashSet<>();
 		Set<Integer> usedOrders = new HashSet<>();
 		for (int i = 0; i < chapterId.length; i++) {
-			if (!validChapterIds.contains(chapterId[i]) || !processedChapterIds.add(chapterId[i])) {
+			if (!validChapterIds.contains(chapterId[i])) {
 				model.addAttribute("errorMsg", "잘못된 챕터 정보가 포함되어 있습니다.");
+				return "common/errorPage";
+			}
+			if (!processedChapterIds.add(chapterId[i])) {
+				model.addAttribute("errorMsg", "중복된 챕터 정보가 포함되어 있습니다.");
 				return "common/errorPage";
 			}
 			if (chapterOrder[i] < 1 || chapterOrder[i] > chapterId.length || !usedOrders.add(chapterOrder[i])) {

@@ -436,7 +436,7 @@ public class CourseService {
 			ch.setChapterId(chapterIds[i]);
 			ch.setChapterOrder(chapterOrders[i]);
 			if (courseDao.orderChapter(sqlSession, ch) <= 0) {
-				return 0;
+				throw new IllegalStateException("챕터 순서 변경에 실패했습니다.");
 			}
 		}
 
