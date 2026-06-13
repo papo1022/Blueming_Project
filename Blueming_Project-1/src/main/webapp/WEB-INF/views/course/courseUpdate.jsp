@@ -73,7 +73,7 @@
             <jsp:include page="../common/mainMenubar.jsp" />
 
             <div class="outer">
-                <form id="content-card" action="updateCourse" align="center" method="post" enctype="multipart/form-data"
+                <form id="courseUpdateForm" action="updateCourse" align="center" method="post" enctype="multipart/form-data"
                     onsubmit="return validateForm();">
                     <h1 class="page-title">강의 수정</h1>
                     <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}">

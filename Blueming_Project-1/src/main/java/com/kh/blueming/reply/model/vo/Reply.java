@@ -1,7 +1,5 @@
 package com.kh.blueming.reply.model.vo;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +28,8 @@ public class Reply {
     private String name;          // 작성자 이름 (MEMBER 테이블 조인)
     private String deptName;      // 작성자 부서명 (DEPARTMENT 테이블 조인)
     private String originalName;    // 첨부파일 원본명 (ATTACHMENT 테이블 조인 시 사용)
+    private String changedName;     // 첨부파일 저장명
+    private String filePath;        // 첨부파일 저장 경로
    
     private String positionName;
 

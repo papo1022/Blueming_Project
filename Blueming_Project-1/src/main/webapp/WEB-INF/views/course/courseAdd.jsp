@@ -74,7 +74,7 @@
 
 
             <div class="outer">
-                <form id="content-card" action="addCourse" align="center" method="post" enctype="multipart/form-data"
+                <form id="courseAddForm" action="addCourse" align="center" method="post" enctype="multipart/form-data"
                     onsubmit="return validateForm();">
                     <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
                     <h1 class="page-title">강의 등록</h1>

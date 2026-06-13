@@ -1,8 +1,21 @@
 package com.kh.blueming.reply.controller;
 
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import jakarta.servlet.http.HttpSession; 
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,70 +23,188 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.kh.blueming.member.model.vo.Member; 
+import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.reply.model.service.ReplyService;
 import com.kh.blueming.reply.model.vo.Reply;
 
 @Controller
 @RequestMapping("/reply")
-@ResponseBody
 public class ReplyController {
 
     @Autowired
-    private ReplyService replyService; 
+    private ReplyService replyService;
 
-    // 1. 목록 조회
-    @PostMapping(value = "/list", produces = "application/json; charset=UTF-8")
-    public List<Reply> selectReplyList(@RequestParam("chapterId") int chapterId) {
+    // 댓글 목록 조회
+    @ResponseBody
+    @PostMapping(value="/list", produces="application/json; charset=UTF-8")
+    public List<Reply> selectReplyList(
+            @RequestParam("chapterId") int chapterId){
+
         return replyService.selectReplyList(chapterId);
     }
 
-    // 2. 댓글 등록 (파일 첨부 포함)
+    // 댓글 등록
+    @ResponseBody
     @PostMapping("/insert")
-    public String insertReply(@RequestParam("chapterId") int chapterId,
-                              @RequestParam("content") String content,
-                              @RequestParam(value="uploadFile", required=false) MultipartFile uploadFile,
-                              HttpSession session) {
-    	
-    	
-    	
-    	
-        Member loginUser = (Member) session.getAttribute("loginUser");
-        if (loginUser == null) return "FAIL";
+    public String insertReply(
+            @RequestParam("chapterId") int chapterId,
+            @RequestParam("content") String content,
+            @RequestParam(value="isPrivate", defaultValue="N") String isPrivate,
+            @RequestParam(value="parentReplyId", required=false) Integer parentReplyId,
+            @RequestParam(value="uploadFile", required=false) MultipartFile uploadFile,
+            HttpSession session){
+
+        Member loginUser =
+                (Member)session.getAttribute("loginUser");
+
+        if(loginUser == null){
+            return "NOT_LOGGED_IN";
+        }
 
         Reply r = new Reply();
+
         r.setChapterId(chapterId);
-        r.setContent(content);
         r.setMemberId(loginUser.getMemberId());
+        r.setContent(content);
+        r.setIsPrivate(isPrivate);
 
-        // 서비스에 파일과 댓글 객체를 함께 넘깁니다.
-        int result = replyService.insertReply(r, uploadFile);
-        
-        return (result > 0) ? "SUCCESS" : "FAIL";
-        
+        if(parentReplyId != null){
+            r.setParentReplyId(parentReplyId);
+        }
+
+        int result =
+                replyService.insertReply(r, uploadFile);
+
+        return result > 0 ? "SUCCESS" : "FAIL";
     }
-    
 
-    // 3. 댓글 삭제
+    // 댓글 삭제
+    @ResponseBody
     @PostMapping("/delete")
-    public String deleteReply(@RequestParam("replyId") int replyId, HttpSession session) {
-        Member loginUser = (Member) session.getAttribute("loginUser");
-        if (loginUser == null) return "NOT_LOGGED_IN"; 
-        
-        int result = replyService.deleteReply(replyId);
-        return (result > 0) ? "SUCCESS" : "FAIL";
+    public String deleteReply(
+            @RequestParam("replyId") int replyId,
+            HttpSession session){
+
+        Member loginUser =
+                (Member)session.getAttribute("loginUser");
+
+        if(loginUser == null){
+            return "NOT_LOGGED_IN";
+        }
+
+        Reply reply =
+                replyService.selectReply(replyId);
+
+        if(reply == null){
+            return "NOT_FOUND";
+        }
+
+        // 작성자 또는 관리자(S)
+        if(reply.getMemberId() != loginUser.getMemberId()
+                && !"S".equals(loginUser.getRole())){
+            return "NO_AUTH";
+        }
+
+        int result =
+                replyService.deleteReply(replyId);
+
+        return result > 0 ? "SUCCESS" : "FAIL";
     }
-    
-    // 4. 댓글 수정
+
+    // 댓글 수정
+    @ResponseBody
     @PostMapping("/update")
-    public String updateReply(@RequestParam("replyId") int replyId,
-                              @RequestParam("content") String content) {
+    public String updateReply(
+            @RequestParam("replyId") int replyId,
+            @RequestParam("content") String content,
+            HttpSession session){
+
+        Member loginUser =
+                (Member)session.getAttribute("loginUser");
+
+        if(loginUser == null){
+            return "NOT_LOGGED_IN";
+        }
+
+        Reply origin =
+                replyService.selectReply(replyId);
+
+        if(origin == null){
+            return "NOT_FOUND";
+        }
+
+        // 작성자만 수정 가능
+        if(origin.getMemberId()
+                != loginUser.getMemberId()){
+            return "NO_AUTH";
+        }
+
         Reply r = new Reply();
         r.setReplyId(replyId);
         r.setContent(content);
-        
-        int result = replyService.updateReply(r);
-        return (result > 0) ? "SUCCESS" : "FAIL"; 
+
+        int result =
+                replyService.updateReply(r);
+
+        return result > 0 ? "SUCCESS" : "FAIL";
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadReplyAttachment(
+            @RequestParam("replyId") int replyId,
+            HttpServletRequest request) {
+
+        Reply file = replyService.selectAttachmentByReplyId(replyId);
+        if (file == null
+                || file.getOriginalName() == null
+                || file.getChangedName() == null
+                || file.getFilePath() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "첨부파일 정보를 찾을 수 없습니다.");
+        }
+
+        String storedPath = file.getFilePath().trim();
+        Path resolvedPath;
+        Path storedAsPath = Paths.get(storedPath);
+        if (storedAsPath.isAbsolute()) {
+            resolvedPath = storedAsPath.resolve(file.getChangedName()).normalize();
+        } else {
+            String webPath = storedPath.startsWith("/") ? storedPath : "/" + storedPath;
+            String realDir = request.getServletContext().getRealPath(webPath);
+            if (realDir != null && !realDir.isBlank()) {
+                resolvedPath = Paths.get(realDir).resolve(file.getChangedName()).normalize();
+            } else {
+                resolvedPath = Paths.get(storedPath).resolve(file.getChangedName()).normalize();
+            }
+        }
+
+        Resource resource;
+        try {
+            resource = new UrlResource(resolvedPath.toUri());
+        } catch (MalformedURLException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "첨부파일 경로 처리 중 오류가 발생했습니다.",
+                    e);
+        }
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "첨부파일을 찾을 수 없습니다.");
+        }
+
+        String encodedName = URLEncoder.encode(
+                file.getOriginalName(),
+                StandardCharsets.UTF_8).replace("+", "%20");
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename*=UTF-8''" + encodedName)
+                .body(resource);
     }
 }

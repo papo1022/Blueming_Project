@@ -454,7 +454,7 @@
             <div class="top-controls">
                 <div id="search-area" align="left">
                     <form action="/blueming/assignment/list" method="get">
-                        <input type="search" name="keyword" value="${keyword}" id = "keyword-input">
+                        <input type="search" name="keyword" value="${keyword}" id = "keyword-input" placeholder="과제명/강의명/챕터명 검색" maxlength="100">
                         <input type="hidden" name="targetType" value="${targetType}" id="targetType-hidden-input">
                         <input type="hidden" name="mineOnly" value="${mineOnly}" id="mineOnly-hidden-input">
                         <button type="submit" class="btn btn-primary">검색</button>
@@ -498,7 +498,7 @@
 
                     <div class="form-group mt-4">
                         <label class="modal-form-label" for="submit-content">제출 내용</label>
-                        <textarea id="submit-content" class="form-control" rows="4" placeholder="과제 제출 내용을 입력하세요."></textarea>
+                        <textarea id="submit-content" class="form-control" rows="4" placeholder="과제 제출 내용을 입력하세요." maxlength="2000"></textarea>
                     </div>
 
                     <div class="form-group">

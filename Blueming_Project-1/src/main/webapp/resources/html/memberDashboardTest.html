@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Member Dashboard - CSS Test</title>
+<link rel="stylesheet" href="../css/mainMenubar.css">
+<link rel="stylesheet" href="../css/memberDashboard.css">
+</head>
+<body>
+
+	<!-- 공통 메뉴바 (sidebar 역할) -->
+	<jsp:include page="/WEB-INF/views/common/mainMenubar.jsp" />
+	
+	<!-- 메인 -->
+	<div class="main-wrapper">
+	
+	    <!-- 왼쪽 컬럼 -->
+	    <div class="left-col">
+	
+	        <!-- 인사말 + 검색 -->
+	        <div class="greeting-row">
+	            <div class="greeting-text">
+	                <h3>안녕하세요, 김소희 님!</h3>
+	                <p>오늘의 교육 이수율을 확인해 보세요.</p>
+	            </div>
+	            <div class="search-bar">
+	                <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요."> <i class="fi fi-rr-search"></i>
+	            </div>
+	        </div>
+	
+	        <!-- 강의 목록 -->
+	        <div class="section-title">강의 목록</div>
+	        <div class="course-grid">
+	
+	            <!-- theme-red: D-7 이하 -->
+	            <div class="course-card theme-red">
+	                <div class="card-top">
+	                    <div class="card-icon"><i class="fi fi-sr-book-alt"></i></div>
+	                    <div class="donut-wrap">
+	                        <svg viewBox="0 0 58 58">
+	                            <circle class="donut-bg" cx="29" cy="29" r="22"/>
+	                            <circle class="donut-fill" cx="29" cy="29" r="22"
+	                                stroke-dasharray="124.38 138.2"/>
+	                        </svg>
+	                        <div class="donut-label">90%</div>
+	                    </div>
+	                </div>
+	                <div class="card-title-text">XX부서 필수교육</div>
+	                <div class="card-dday">D-7</div>
+	            </div>
+	
+	            <!-- theme-yellow: D-8 이상 -->
+	            <div class="course-card theme-yellow">
+	                <div class="card-top">
+	                    <div class="card-icon"><i class="fi fi-sr-book-alt"></i></div>
+	                    <div class="donut-wrap">
+	                        <svg viewBox="0 0 58 58">
+	                            <circle class="donut-bg" cx="29" cy="29" r="22"/>
+	                            <circle class="donut-fill" cx="29" cy="29" r="22"
+	                                stroke-dasharray="124.38 138.2"/>
+	                        </svg>
+	                        <div class="donut-label">90%</div>
+	                    </div>
+	                </div>
+	                <div class="card-title-text">XX부서 필수교육 2</div>
+	                <div class="card-dday">D-20</div>
+	            </div>
+	
+	            <!-- theme-yellow: D-8 이상 -->
+	            <div class="course-card theme-yellow">
+	                <div class="card-top">
+	                    <div class="card-icon"><i class="fi fi-sr-book-alt"></i></div>
+	                    <div class="donut-wrap">
+	                        <svg viewBox="0 0 58 58">
+	                            <circle class="donut-bg" cx="29" cy="29" r="22"/>
+	                            <circle class="donut-fill" cx="29" cy="29" r="22"
+	                                stroke-dasharray="110.56 138.2"/>
+	                        </svg>
+	                        <div class="donut-label">80%</div>
+	                    </div>
+	                </div>
+	                <div class="card-title-text">XX부서 필수교육 3</div>
+	                <div class="card-dday">D-22</div>
+	            </div>
+	
+	            <!-- theme-green: 완료 (DONE) -->
+	            <div class="course-card theme-green">
+	                <div class="card-top">
+	                    <div class="card-icon"><i class="fi fi-sr-book-alt"></i></div>
+	                    <div class="donut-wrap">
+	                        <svg viewBox="0 0 58 58">
+	                            <circle class="donut-bg" cx="29" cy="29" r="22"/>
+	                            <circle class="donut-fill" cx="29" cy="29" r="22"
+	                                stroke-dasharray="138.2 138.2"/>
+	                        </svg>
+	                        <div class="donut-label">100%</div>
+	                    </div>
+	                </div>
+	                <div class="card-title-text">XX부서 필수교육 4</div>
+	                <div class="card-dday">완료</div>
+	            </div>
+	
+	            <!-- theme-gray: 마감 (CLOSED) -->
+	            <div class="course-card theme-gray">
+	                <div class="card-top">
+	                    <div class="card-icon"><i class="fi fi-sr-book-alt"></i></div>
+	                    <div class="donut-wrap">
+	                        <svg viewBox="0 0 58 58">
+	                            <circle class="donut-bg" cx="29" cy="29" r="22"/>
+	                            <circle class="donut-fill" cx="29" cy="29" r="22"
+	                                stroke-dasharray="124.38 138.2"/>
+	                        </svg>
+	                        <div class="donut-label">90%</div>
+	                    </div>
+	                </div>
+	                <div class="card-title-text">XX부서 필수교육 5</div>
+	                <div class="card-dday">마감</div>
+	            </div>
+	
+	        </div>
+	    </div><!-- /left-col -->
+	
+	    <!-- 오른쪽 컬럼 -->
+	    <div class="right-col">
+	
+	        <div class="right-col-header">
+	            <div class="right-col-title">내 프로필</div>
+	            <div class="right-col-header-links">
+	                <a href="#">마이페이지</a>
+	                <a href="#">로그아웃</a>
+	            </div>
+	        </div>
+	
+	        <!-- 프로필 카드 -->
+	        <div class="profile-card">
+	            <svg class="profile-avatar" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+	                <circle cx="44" cy="44" r="44" fill="#e8eaf0"/>
+	            </svg>
+	            <div class="profile-name">김소희</div>
+	            <div class="profile-email">kimsohee@gmail.com</div>
+	            <div class="profile-dept">개발팀 / 주임</div>
+	        </div>
+	
+	        <!-- 달력 -->
+	        <div class="calendar-card">
+	            <div class="calendar-header">
+	                <button id="cal-prev">&#8249;</button>
+	                <span class="calendar-month" id="cal-month"></span>
+	                <button id="cal-next">&#8250;</button>
+	            </div>
+	            <div class="calendar-days-header">
+	                <span>일</span><span>월</span><span>화</span>
+	                <span>수</span><span>목</span><span>금</span><span>토</span>
+	            </div>
+	            <div class="calendar-dates" id="cal-dates"></div>
+	        </div>
+	
+	        <!-- 과제 목록 -->
+	        <div class="assignment-section">
+	            <div class="assignment-section-title">과제</div>
+	
+	            <div class="assignment-item">
+	                <span>XX교육의 이해 n일차 레포트</span>
+	                <button class="btn-submit">제출</button>
+	            </div>
+	            <div class="assignment-item">
+	                <span>XX교육의 이해 n일차 레포트</span>
+	                <button class="btn-unsubmit">미제출</button>
+	            </div>
+	            <div class="assignment-item">
+	                <span>XX교육의 이해 n일차 레포트</span>
+	                <button class="btn-submit">제출</button>
+	            </div>
+	        </div>
+	
+	    </div><!-- /right-col -->
+	
+	</div><!-- /main-wrapper -->
+	
+	<!-- 달력 JS -->
+	<script>
+	(function () {
+	    const monthEl = document.getElementById('cal-month');
+	    const datesEl = document.getElementById('cal-dates');
+	    const today   = new Date();
+	    let   cur     = new Date(today.getFullYear(), today.getMonth(), 1);
+	
+	    function render() {
+	        const y = cur.getFullYear();
+	        const m = cur.getMonth();
+	        monthEl.textContent = (m + 1) + '월';
+	
+	        const firstDay  = new Date(y, m, 1).getDay();
+	        const lastDate  = new Date(y, m + 1, 0).getDate();
+	        const isThisMon = (y === today.getFullYear() && m === today.getMonth());
+	
+	        let html = '';
+	        for (let i = 0; i < firstDay; i++) html += '<span></span>';
+	        for (let d = 1; d <= lastDate; d++) {
+	            const isToday = isThisMon && d === today.getDate();
+	            html += '<span class="' + (isToday ? 'today' : '') + '">' + d + '</span>';
+	        }
+	        datesEl.innerHTML = html;
+	    }
+	
+	    document.getElementById('cal-prev').addEventListener('click', function () {
+	        cur.setMonth(cur.getMonth() - 1); render();
+	    });
+	    document.getElementById('cal-next').addEventListener('click', function () {
+	        cur.setMonth(cur.getMonth() + 1); render();
+	    });
+	
+	    render();
+	})();
+	</script>
+
+</body>
+</html>

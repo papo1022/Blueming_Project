@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.assignment.model.service.AssignmentService;
 import com.kh.blueming.assignment.model.vo.Assignment;
-import com.kh.blueming.assignment.model.vo.AssignmentSubmission;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.chapter.model.vo.ChapterProgress;
 import com.kh.blueming.common.template.FileRenamePolicy;
@@ -220,10 +219,14 @@ public class CourseController {
     //챕터 리스트를 불러오기까지 함
     @GetMapping("detail")
     public ModelAndView selectCourse(@RequestParam("courseId") int courseId,
-                                     ModelAndView mv) {
+									 ModelAndView mv,
+									 HttpSession session) {
     	
         Course course = courseService.selectCourse(courseId);
-        ArrayList<Chapter> chapterList = courseService.selectChapterList(courseId);
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		Integer memberId = loginUser != null ? loginUser.getMemberId() : null;
+		boolean isAdmin = loginUser != null && "S".equals(loginUser.getRole());
+		ArrayList<Chapter> chapterList = courseService.selectChapterList(courseId, memberId, isAdmin);
 
         mv.addObject("course", course)
             .addObject("chapterList",chapterList)
@@ -512,7 +515,7 @@ public class CourseController {
 			return "common/errorPage";
 		}
 
-		ArrayList<Chapter> chapterList = courseService.selectChapterList(courseId);
+		ArrayList<Chapter> chapterList = courseService.selectChapterList(courseId, null, true);
 		if (c != null && c.getFileId() > 0) {
 			Attachment thumbnailAttachment = courseService.selectAttachmentByFileId(c.getFileId());
 			if (thumbnailAttachment != null) {

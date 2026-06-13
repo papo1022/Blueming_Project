@@ -149,15 +149,15 @@ button {
                 <tr>
                     <th>제목</th>
                     <td>
-                        <input type="text" id="notice-title" name="noticeTitle" placeholder="제목을 입력하세요" maxlength="15" required>
-                        <div class="counter-text"><span id="title-curr">0</span> / 15자</div>
+                        <input type="text" id="notice-title" name="noticeTitle" placeholder="제목을 입력하세요" maxlength="50" required>
+                        <div class="counter-text"><span id="title-curr">0</span> / 50자</div>
                     </td>
                 </tr>
                 <tr>
                     <th>내용</th>
                     <td>
-                        <textarea id="notice-content" name="content" placeholder="내용을 입력하세요" maxlength="400" required></textarea>
-                        <div class="counter-text"><span id="content-curr">0</span> / 400자</div>
+                        <textarea id="notice-content" name="content" placeholder="내용을 입력하세요" maxlength="2000" required></textarea>
+                        <div class="counter-text"><span id="content-curr">0</span> / 2000자</div>
                     </td>
                 </tr>
             </table>
@@ -201,8 +201,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // 각각의 요소에 실시간 카운터 기능 작동 정의
-    bindCounter(titleInput, titleCurr, 15);
-    bindCounter(contentInput, contentCurr, 400);
+    bindCounter(titleInput, titleCurr, 50);
+    bindCounter(contentInput, contentCurr, 2000);
 
     // [추가] 초기화 버튼 클릭 시 글자 수 표기 숫자가 0으로 자동 리셋되도록 조치
     document.getElementById("enroll-form").addEventListener("reset", function() {

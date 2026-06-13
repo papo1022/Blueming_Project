@@ -6,13 +6,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Member Dashboard</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
 </head>
 <body>
 
     <%-- 공통 메뉴바 (sidebar 역할) --%>
-    <jsp:include page="/WEB-INF/views/common/menubar.jsp" />
+    <jsp:include page="/WEB-INF/views/common/mainMenubar.jsp" />
 
     <%-- MAIN WRAPPER --%>
     <div class="main-wrapper">
@@ -23,35 +23,35 @@
             <%-- 인사말 + 검색 --%>
             <div class="greeting-row">
                 <div class="greeting-text">
-                    <h1>안녕하세요, ${profile.name} 님!</h1>
+                    <p id="greeting">안녕하세요, ${profile.name} 님!</p>
                     <p>오늘의 교육 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
-                    <i class="fi fi-sr-search"></i>
-                    <input type="text" placeholder="강의 검색...">
-                </div>
+                    <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요." maxlength="100"> <i class="fi fi-rr-search"></i>
+	            </div>
             </div>
 
             <%-- 강의 목록 --%>
             <div class="section-title">강의 목록</div>
             <div class="course-grid">
+            
                 <c:forEach var="course" items="${courseList}" varStatus="status">
 
                     <%-- 카드 색상: 완료=green, 마감=gray, 나머지는 순환 --%>
                     <c:choose>
-                        <c:when test="${course.courseStatus == 'DONE'}">
-                            <c:set var="theme" value="theme-green"/>
-                        </c:when>
-                        <c:when test="${course.courseStatus == 'CLOSED'}">
-                            <c:set var="theme" value="theme-gray"/>
-                        </c:when>
-                        <c:when test="${status.index % 2 == 0}">
-                            <c:set var="theme" value="theme-red"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="theme" value="theme-yellow"/>
-                        </c:otherwise>
-                    </c:choose>
+					    <c:when test="${course.courseStatus == 'DONE'}">
+					        <c:set var="theme" value="theme-green"/>
+					    </c:when>
+					    <c:when test="${course.courseStatus == 'CLOSED'}">
+					        <c:set var="theme" value="theme-gray"/>
+					    </c:when>
+					    <c:when test="${course.dDay <= 7}">
+					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 빨강 --%>
+					    </c:when>
+					    <c:otherwise>
+					        <c:set var="theme" value="theme-yellow"/> <%-- 여유 있음: 노랑 --%>
+					    </c:otherwise>
+					</c:choose>
 
                     <div class="course-card ${theme}">
 
@@ -74,6 +74,7 @@
 
                         <%-- 카드 하단: 제목 + D-day --%>
                         <div class="card-title-text">${course.courseTitle}</div>
+                        
                         <c:choose>
                             <c:when test="${course.courseStatus == 'DONE'}">
                                 <div class="card-dday">완료</div>
@@ -88,6 +89,7 @@
 
                     </div>
                 </c:forEach>
+                
             </div>
 
         </div><%-- /left-col --%>
@@ -101,10 +103,8 @@
             <%-- 프로필 카드 --%>
             <div class="profile-card">
                 <svg class="profile-avatar" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
-	    <circle cx="44" cy="44" r="44" fill="#e8eaf0"/>
-	    <circle cx="44" cy="36" r="16" fill="#c4c5c6"/>
-	    <ellipse cx="44" cy="80" rx="26" ry="18" fill="#c4c5c6"/>
-	</svg>
+				    <circle cx="44" cy="44" r="44" fill="#c4c5c6"/>
+				</svg>
                 <div class="profile-name">${profile.name}</div>
                 <div class="profile-email">${profile.email}</div>
                 <div style="font-size:14px; color:#888; margin-top:2px;">
@@ -115,9 +115,15 @@
             <%-- 달력 (JS로 동적 렌더링) --%>
             <div class="calendar-card">
                 <div class="calendar-header">
-                    <button id="cal-prev">&#8249;</button>
+                    <button id="cal-prev">
+                    	<i class="fi fi-rr-angle-left"></i>
+					</button>
+					
                     <span class="calendar-month" id="cal-month"></span>
-                    <button id="cal-next">&#8250;</button>
+                    
+                    <button id="cal-next">
+                    	<i class="fi fi-rr-angle-right"></i>
+                    </button>
                 </div>
                 <div class="calendar-days-header">
                     <span>일</span><span>월</span><span>화</span>
@@ -154,32 +160,42 @@
         const monthEl = document.getElementById('cal-month');
         const datesEl = document.getElementById('cal-dates');
         const today   = new Date();
-        let   cur     = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        // 현재 기준이 되는 주의 일요일을 구하기 위한 변수
+        let currentWeekSunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
 
         function render() {
-            const y = cur.getFullYear();
-            const m = cur.getMonth();
-            monthEl.textContent = y + '년 ' + (m + 1) + '월';
-
-            const firstDay  = new Date(y, m, 1).getDay();
-            const lastDate  = new Date(y, m + 1, 0).getDate();
-            const isThisMon = (y === today.getFullYear() && m === today.getMonth());
+            const y = currentWeekSunday.getFullYear();
+            const m = currentWeekSunday.getMonth();
+            monthEl.textContent = (m + 1) + '월';
 
             let html = '';
-            for (let i = 0; i < firstDay; i++) html += '<span></span>';
-            for (let d = 1; d <= lastDate; d++) {
-                const isToday = isThisMon && d === today.getDate();
+            
+            // 일요일(0)부터 토요일(6)까지 7일간의 날짜를 반복 생성
+            for (let i = 0; i < 7; i++) {
+                const iterDate = new Date(currentWeekSunday.getFullYear(), currentWeekSunday.getMonth(), currentWeekSunday.getDate() + i);
+                
+                const d = iterDate.getDate();
+                const isToday = (iterDate.getFullYear() === today.getFullYear() &&
+                                 iterDate.getMonth() === today.getMonth() &&
+                                 iterDate.getDate() === today.getDate());
+                
+                // 오늘 날짜인 경우 'today' 클래스 추가
                 html += '<span class="' + (isToday ? 'today' : '') + '">' + d + '</span>';
             }
+            
             datesEl.innerHTML = html;
         }
 
+        // 이전 주 이동 (7일 차감)
         document.getElementById('cal-prev').addEventListener('click', function () {
-            cur.setMonth(cur.getMonth() - 1);
+            currentWeekSunday.setDate(currentWeekSunday.getDate() - 7);
             render();
         });
+        
+        // 다음 주 이동 (7일 증가)
         document.getElementById('cal-next').addEventListener('click', function () {
-            cur.setMonth(cur.getMonth() + 1);
+            currentWeekSunday.setDate(currentWeekSunday.getDate() + 7);
             render();
         });
 

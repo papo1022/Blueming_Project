@@ -108,15 +108,19 @@ public class AdminAssignmentController {
 
     @PostMapping("/updateScore")
     public String updateScore(
-            int submissionId,
-            int score) {
+            @RequestParam int submissionId,
+            @RequestParam(required = false) Integer score) {
 
-        adminAssignmentService.updateScore(
-                submissionId,
-                score);
+        if(score == null){
+            return "redirect:/assignment/admin/list";
+        }
+
+        adminAssignmentService.updateScore(submissionId, score);
 
         return "redirect:/assignment/admin/list";
     }
+    
+    
     
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadFile(
