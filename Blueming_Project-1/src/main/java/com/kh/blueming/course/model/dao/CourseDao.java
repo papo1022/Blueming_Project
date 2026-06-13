@@ -49,8 +49,12 @@ public class CourseDao {
 	    	return sqlSession.selectOne("courseMapper.selectAttachment", fileId);
 	}
     
-    public ArrayList<Chapter> selectChapterList(SqlSessionTemplate sqlSession, int courseId) {
-    	return (ArrayList)sqlSession.selectList("courseMapper.selectChapterList", courseId);
+	public ArrayList<Chapter> selectChapterList(SqlSessionTemplate sqlSession, int courseId, Integer memberId, boolean isAdmin) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("courseId", courseId);
+		map.put("memberId", memberId);
+		map.put("isAdmin", isAdmin);
+		return (ArrayList)sqlSession.selectList("courseMapper.selectChapterList", map);
 	}
     
     public Chapter selectChapter(SqlSessionTemplate sqlSession, int chapterId) {
@@ -198,6 +202,10 @@ public class CourseDao {
 
 	public int updateCourseStatus(SqlSessionTemplate sqlSession) {
 		return sqlSession.update("courseMapper.updateCourseStatus");
+	}
+
+	public int orderChapter(SqlSessionTemplate sqlSession, Chapter ch) {
+		return sqlSession.update("courseMapper.orderChapter", ch);
 	}
 
 }

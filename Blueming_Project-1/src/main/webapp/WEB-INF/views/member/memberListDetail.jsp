@@ -13,7 +13,7 @@
 
 </head>
 <body>
-    <jsp:include page="../common/mainMenubar.jsp"/>
+	<jsp:include page="../common/mainMenubar.jsp"/>
 
 	<div class="container">
 		<div class="content-wrapper">

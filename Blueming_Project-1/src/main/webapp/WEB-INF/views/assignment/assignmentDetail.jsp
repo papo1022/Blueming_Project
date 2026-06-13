@@ -3,110 +3,177 @@
 
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
 <head>
 <meta charset="UTF-8">
 <title>과제 채점</title>
 
 <style>
 
+/* ===== 전체 ===== */
 body{
-    font-family: "맑은 고딕";
-    background-color: #f5f7fa;
-    margin: 0;
-    padding: 30px;
+    background:#f5f7fb;
+    margin:0;
+    padding:30px;
+    font-family:"맑은 고딕", sans-serif;
 }
 
+/* ===== 컨테이너 ===== */
 .container{
-    width: 1000px;
-    margin: auto;
+    width:1200px;
+    max-width:95%;
+    margin:auto;
 }
 
+/* ===== 제목 ===== */
 .page-title{
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
+    text-align:center;
+    font-size:30px;
+    font-weight:700;
+    color:#2d3748;
+    margin-bottom:25px;
 }
 
+/* ===== 카드 ===== */
 .card{
-    background: white;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
+/* ===== 상세 테이블 ===== */
 .detail-table{
-    width: 100%;
-    border-collapse: collapse;
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
 }
 
 .detail-table th{
-    width: 180px;
-    background: #4A90E2;
-    color: white;
-    padding: 15px;
-    text-align: center;
+    width:180px;
+    background:#4fd1c5;
+    color:white;
+    text-align:center;
+    vertical-align:middle;
+    padding:15px;
+    border:1px solid #e8f4f8;
+    font-size:14px;
 }
 
 .detail-table td{
-    padding: 15px;
-    border: 1px solid #e5e5e5;
+    padding:15px 20px;
+    border:1px solid #eef2f7;
+    background:white;
+    color:#333;
 }
 
+/* ===== 내용 영역 ===== */
 .content-box{
-    min-height: 150px;
-    white-space: pre-wrap;
-    line-height: 1.8;
+    min-height:180px;
+    white-space:pre-wrap;
+    line-height:1.8;
+    padding:15px;
+    background:#fafcff;
+    border-radius:8px;
+}
+
+/* ===== 첨부파일 ===== */
+.detail-table a{
+    color:#4fd1c5;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.detail-table a:hover{
+    text-decoration:underline;
+}
+
+/* ===== 점수 ===== */
+.score-text{
+    color:#e53e3e;
+    font-weight:700;
 }
 
 .score-input{
-    width: 120px;
-    height: 40px;
-    text-align: center;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width:120px;
+    height:45px;
+    text-align:center;
+    font-size:18px;
+    border:1px solid #dce3ea;
+    border-radius:10px;
+    outline:none;
 }
 
+.score-input:focus{
+    border-color:#4fd1c5;
+}
+
+/* ===== 버튼 영역 ===== */
 .button-area{
-    margin-top: 30px;
-    text-align: center;
+    margin-top:30px;
+    text-align:center;
 }
 
+/* ===== 공통 버튼 ===== */
 .btn{
-    border: none;
-    padding: 12px 30px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 15px;
+    border:none;
+    padding:12px 30px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:.2s;
 }
 
+/* ===== 저장 버튼 ===== */
 .btn-save{
-    background: #4A90E2;
-    color: white;
+    background:#4fd1c5;
+    color:white;
 }
 
 .btn-save:hover{
-    background: #357ABD;
+    background:#38b2ac;
 }
 
+/* ===== 목록 버튼 ===== */
 .btn-list{
-    display: inline-block;
-    background: #6c757d;
-    color: white;
-    text-decoration: none;
-    padding: 12px 30px;
-    border-radius: 5px;
-    margin-left: 10px;
+    display:inline-block;
+    background:#6c757d;
+    color:white;
+    text-decoration:none;
+    padding:12px 30px;
+    border-radius:10px;
+    margin-left:10px;
+    font-weight:600;
+    transition:.2s;
 }
 
 .btn-list:hover{
-    background: #555;
+    background:#555;
+    color:white;
 }
 
-.score-text{
-    color: #E74C3C;
-    font-weight: bold;
+/* ===== 행 Hover ===== */
+.detail-table tr:hover td{
+    background:#f9fcff;
+}
+
+/* ===== 반응형 ===== */
+@media (max-width:768px){
+
+    .detail-table th{
+        width:120px;
+        font-size:13px;
+    }
+
+    .detail-table td{
+        font-size:13px;
+    }
+
+    .score-input{
+        width:100px;
+    }
 }
 
 </style>
@@ -117,7 +184,7 @@ body{
 <div class="container">
 
     <div class="page-title">
-        📝 과제 채점
+        <i class="fi fi-sr-document"></i> 과제 채점
     </div>
 
     <div class="card">
@@ -244,7 +311,7 @@ body{
                                name="score"
                                min="0"
                                max="${assignment.maxScore}"
-                               value="${assignment.score}">
+                               value="${assignment.score}"  >
 
                         / ${assignment.maxScore} 점
 

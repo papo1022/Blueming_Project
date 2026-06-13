@@ -5,157 +5,275 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>공지사항</title>
 <style>
-
 /* ===== 전체 ===== */
 body{
-    background:#f5f6f8;
+    background:#f5f7fb;
     margin:0;
     padding:0;
+    font-family:"맑은 고딕", sans-serif;
 }
 
+.notice-container{
+    width:100%;
+}
 /* ===== 본문 ===== */
 .outer{
     margin-left:250px;
-    padding:20px 30px;
+    padding:30px;
+    width:calc(100vw - 250px);
+    min-height:100vh;
+    box-sizing:border-box;
 }
 
 /* ===== 제목 ===== */
 .outer h2{
     text-align:center;
     font-weight:700;
-    margin-bottom:15px;
+    margin-bottom:25px;
+    color:#2d3748;
+    font-size:30px;
 }
 
 /* ===== 검색영역 ===== */
 #search-area{
-    text-align:center;
-    margin-bottom:10px;
+    width:100%;
+    margin-bottom:20px;
+
+    background:white;
+    padding:25px;
+
+    border-radius:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
 #search-area form{
-    display:inline-flex;
+    display:flex;
+    justify-content:center;
     align-items:center;
-    gap:8px;
-}
-
-#search-area select{
-    height:40px;
-    border:1px solid #ddd;
-    border-radius:20px;
-    padding:0 15px;
+    gap:10px;
 }
 
 #search-area input{
-    width:320px;
-    height:40px;
-    border:1px solid #ddd;
-    border-radius:20px;
-    padding:0 15px;
+    flex:1;
+    max-width:700px;
+    height:45px;
+}
+
+#search-area select{
+    width:120px;
+    height:42px;
+    border:1px solid #dce3ea;
+    border-radius:10px;
+    padding:0 10px;
+    outline:none;
+}
+
+
+#search-area input:focus,
+#search-area select:focus{
+    border-color:#4fd1c5;
 }
 
 #search-area button{
-    height:40px;
-    border-radius:20px;
+    height:42px;
+    width:90px;
+    border:none;
+    border-radius:10px;
+    background:#4fd1c5;
+    color:white;
+    font-weight:600;
+}
+
+#search-area button:hover{
+    background:#38b2ac;
 }
 
 /* ===== 글작성 버튼 ===== */
 .write-btn-area{
     width:95%;
-    margin:0 auto 8px auto;
-    text-align:right;
+    margin:0 auto 15px auto;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.write-btn-area .btn{
+    background:#4fd1c5;
+    border:none;
+    padding:8px 18px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.write-btn-area .btn:hover{
+    background:#38b2ac;
 }
 
 /* ===== 게시글 테이블 ===== */
 .list-area{
-    width:95%;
-    margin:auto;
+    width:100% !important;
+    table-layout:fixed;
+
     background:white;
+
     border-radius:15px;
     overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-}
 
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+.list-area.table tbody td,
+.list-area.table thead th{
+    text-align:center !important;
+    vertical-align:middle !important;
+}
 /* ===== 헤더 ===== */
 .list-area thead th{
     text-align:center;
-    height:50px;
+    height:55px;
     border:none;
-    background:#fafafa;
+    background:#4fd1c5;
+    color:white;
     font-size:14px;
+    font-weight:600;
 }
 
 /* ===== 본문 ===== */
 .list-area tbody td{
-    height:45px;
+    height:55px;
     padding:8px 12px;
     vertical-align:middle;
-    border-top:1px solid #f0f0f0;
+    border-top:1px solid #eef2f7;
     font-size:14px;
 }
 
+/* 제목 컬럼 */
+.list-area tbody td:nth-child(2){
+    text-align:left;
+    padding-left:25px;
+    font-weight:500;
+}
+
+/* 행 호버 */
+.list-area tbody tr{
+    transition:all .2s ease;
+}
+
 .list-area tbody tr:hover{
-    background:#f8fbff;
+    background:#f0fbfa;
     cursor:pointer;
 }
 
-/* ===== 번호 배지 ===== */
-.notice-badge{
-    background:#4fd1c5;
-    color:white;
-    border-radius:15px;
-    padding:5px 12px;
-    font-size:12px;
-    font-weight:bold;
+/* 글번호 배지 */
+.list-area tbody td:first-child{
+    font-weight:700;
+    color:#4fd1c5;
+}
+
+/* ===== 빈 데이터 ===== */
+.list-area tbody th{
+    height:80px;
+    vertical-align:middle;
+    color:#888;
 }
 
 /* ===== 페이징 ===== */
 .paging-area{
-    margin-left:250px;
-    margin-top:10px;
+    width:100%;
+    margin-top:25px;
 }
 
 .pagination{
-    margin-top:0;
-    margin-bottom:0;
+    justify-content:center;
+}
+
+.pagination .page-item{
+    margin:0 4px;
 }
 
 .pagination .page-link{
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     border:none;
-    background:none;
-    color:#666;
+    border-radius:50%;
+    color:#555;
+    background:white;
+    box-shadow:0 1px 4px rgba(0,0,0,0.08);
 }
 
 .pagination .page-item.active .page-link{
     background:#4fd1c5;
     color:white;
-    border-radius:50%;
-    width:35px;
-    height:35px;
-    line-height:22px;
 }
 
-/* ===== 공백 제거 ===== */
+.pagination .page-link:hover{
+    background:#e8fffd;
+    color:#4fd1c5;
+}
+
+.pagination .page-item.active .page-link:hover{
+    background:#4fd1c5;
+    color:white;
+}
+
+/* ===== 불필요한 br 제거 ===== */
 br{
     display:none;
 }
 
-.list-area th,
-.list-area td{
-    text-align:center;
-    vertical-align:middle;
+.list-area th:nth-child(1),
+.list-area td:nth-child(1){
+    width:8%;
 }
 
+.list-area th:nth-child(2),
+.list-area td:nth-child(2){
+    width:50%;
+}
+
+.list-area th:nth-child(3),
+.list-area td:nth-child(3){
+    width:12%;
+}
+
+.list-area th:nth-child(4),
+.list-area td:nth-child(4){
+    width:10%;
+}
+
+.list-area th:nth-child(5),
+.list-area td:nth-child(5){
+    width:20%;
+}
+.list-area td:nth-child(2){
+    text-align:left;
+    padding-left:30px;
+}
+
+.list-area{
+    margin:0 auto;
+}
 </style>
 </head>
 <body>
 	
 	<jsp:include page="../common/mainMenubar.jsp" />
 	
-<div class="outer">
-
-    <h2 align="center">공지사항</h2>
+			<div class="outer">
+			
+			    <div class="page-header">
+			
+			    <h2 class="page-title">
+			        <i class="fi fi-sr-megaphone"></i> 공지사항
+			    </h2>
+			
+			
+			</div>
+	<div class="notice-container">
+    
     <br>
 		
 
@@ -175,7 +293,7 @@ br{
 					<option value="content">내용</option>
 				</select>
 				
-				<input type="search" name="keyword" value="${ requestScope.keyword }">
+				<input type="search" name="keyword" value="${ requestScope.keyword }" maxlength="100">
 				<!-- 
 					- EL 구문은 꺼내올 응답데이터가 없다면 오류도 안내고 출력도 안하고 만다!!
 					- 그래서 boardListView.jsp 에서 일반게시글 목록 조회 와 일반게시글 검색 화면
@@ -397,6 +515,6 @@ br{
 			
 		</div>
 
-
+	</div>
 </body>
 </html>

@@ -29,30 +29,24 @@
     <div class="value"><input type="text" value="${member.memberId}" readonly></div>
 </div>
 
-<div class="row">
-    <div class="label">로그인ID</div>
-    <div class="value">
-        <input type="text" name="loginId"
-       value="${fn:escapeXml(member.loginId)}"
-       readonly
-       style="background-color: #e9ecef;">
+<div class="update-row">
+    <div class="update-label">로그인ID</div>
+    <div class="update-value">
+		<input type="text" name="loginId" value="<c:out value='${member.loginId}' />" maxlength="20" readonly style="background-color: #e9ecef;">
     </div>
 </div>
 
-<div class="row">
-    <div class="label">이름</div>
-    <div class="value">
-        <input type="text" name="name"
-       value="${fn:escapeXml(member.name)}"
-       required>
+<div class="update-row">
+    <div class="update-label">이름</div>
+    <div class="update-value">
+		<input type="text" name="name" value="<c:out value='${member.name}' />" maxlength="100" required>
     </div>
 </div>
 
-<div class="row">
-    <div class="label">이메일</div>
-    <div class="value">
-       <input type="email" name="email"
-       value="${fn:escapeXml(member.email)}">
+<div class="update-row">
+    <div class="update-label">이메일</div>
+    <div class="update-value">
+		<input type="email" name="email" value="<c:out value='${member.email}' />" maxlength="100">
     </div>
 </div>
 
@@ -75,7 +69,8 @@
     <div class="value">
         <input type="text"
        name="address"
-       value="${fn:escapeXml(member.address)}">
+       value="${fn:escapeXml(member.address)}"
+       maxlength="255">
     </div>
 </div>
 			
@@ -177,6 +172,12 @@
 		</form>
 	</div>
 
+			<div class="update-row" id="retireDateRow" style="display:none;">
+				<div class="update-label">퇴사일</div>
+				<div class="update-value">
+					<input type="date" name="retireDate" id="retireDateInput" value="${fmtRetireDate}">
+				</div>
+			</div>
 	<script>
 		// DB에서 가져온 8자리 숫자(YYYYMMDD)를 HTML5 <input type="date"> 포맷(YYYY-MM-DD)으로 파싱
 		// 🛡️ 안전하게 치환된 자바스크립트 변수 할당
@@ -191,6 +192,8 @@
 		    if(endNum && endNum.length === 8) {
 		        document.getElementById("viewLeaveEndDate").value = endNum.substring(0,4) + '-' + endNum.substring(4,6) + '-' + endNum.substring(6,8);
 		    }
+
+		    toggleLeaveInput();
 		}
 
 		function toggleLeaveInput() {

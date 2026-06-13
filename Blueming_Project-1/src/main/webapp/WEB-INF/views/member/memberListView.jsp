@@ -153,7 +153,7 @@
                     <option value="status" ${requestScope.condition == 'status' ? 'selected' : ''}>상태</option>
                 </select>
                 
-                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}" class="input" >
+                <input type="search" name="keyword" id="keyword" value="${requestScope.keyword}" class="input" maxlength="100">
                 <button type="submit" class="search-btn"><i class="fi fi-rr-search"></i></button>
                 
                  

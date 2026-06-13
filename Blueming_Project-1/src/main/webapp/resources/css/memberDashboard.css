@@ -1,4 +1,13 @@
 @charset "UTF-8";
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 /* --- 전체 레이아웃---  */
 
@@ -6,7 +15,6 @@
     margin-left: 260px; /* nav-area 너비와 동일한 크기임 */
     display: flex;
     min-height: 100vh;
-    border: 2px solid red;
 }
 
 
@@ -15,7 +23,6 @@
 .left-col {
     flex: 1;
     padding: 32px;
-    border: 2px solid blue;
 }
 
 /* 인사말 + 검색바 가로 배치 */
@@ -23,25 +30,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid green;
+    padding-bottom: 20px;
 }
 
-.greeting-text {
-    border: 1px dashed green;
+.greeting-text p {
+	margin-bottom: 5px;
 }
 
-.greeting-text h1 { margin: 0; }
-.greeting-text p  { margin: 0; }
+.greeting-text #greeting {
+	font-weight: bold;
+    font-size: 20px;
+}
 
 .search-bar {
     display: flex;
     align-items: center;
-    border: 1px dashed green;
+    width: 350px;
+    height: 60px;
+    border: 1px solid #c4c5c6; 
+    border-radius: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#search-input {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    outline: none;
 }
 
 /* 강의 목록 타이틀 */
 .section-title {
-    border: 1px dashed blue;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 /* 강의 카드 그리드 */
@@ -49,7 +75,6 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    border: 1px dashed blue;
 }
 
 /* 개별 강의 카드 */
@@ -85,66 +110,167 @@
 .card-title-text { border: 1px dashed orange; }
 .card-dday       { border: 1px dashed orange; }
 
+/* 테마 색상 */
+.theme-red    { background-color: #fde8e8; }
+.theme-yellow { background-color: #fef9e7; }
+.theme-green  { background-color: #e8f8f0; }
+.theme-gray   { background-color: #f0f0f0; }
+
+/* 도넛, 아이콘, D-day 텍스트 색상도 테마별로 달라짐 */
+.theme-red    .donut-fill { stroke: #e57373; }
+.theme-yellow .donut-fill { stroke: #f4b400; }
+.theme-green  .donut-fill { stroke: #4caf50; }
+.theme-gray   .donut-fill { stroke: #9e9e9e; }
+
+.theme-red    .card-dday { color: #e57373; }
+.theme-yellow .card-dday { color: #f4b400; }
+.theme-green  .card-dday { color: #4caf50; }
+.theme-gray   .card-dday { color: #9e9e9e; }
+
+.theme-red    .card-icon { background-color: #e57373; color: white; }
+.theme-yellow .card-icon { background-color: #f4b400; color: white; }
+.theme-green  .card-icon { background-color: #4caf50; color: white; }
+.theme-gray   .card-icon { background-color: #9e9e9e; color: white; }
+
 
 /* --- 오른쪽 컬럼 --- */
 
 .right-col {
-    width: 320px;
+    width: 400px;
     flex-shrink: 0;
     padding: 32px;
-    border: 2px solid purple;
 }
 
-.right-col-title { border: 1px dashed purple; }
+.right-col-title {
+	padding-bottom: 20px;
+	font-weight: bold;
+	font-size: 20px;
+	padding-top: 15px;
+}
+
+/* 마이페이지 / 로그아웃 */
+.profile-links {
+    display: flex;
+    gap: 15px;
+}
+
+.profile-links a {
+    text-decoration: none;
+    color: #c4c5c6;
+    font-size: 12px;
+    transition: color 0.2s;
+}
+
+.profile-links a:hover {
+    color: #333333; /* 마우스 오버시 진해짐 */
+    text-decoration: underline;
+}
 
 /* 프로필 카드 */
 .profile-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 2px solid purple;
+	padding-bottom: 20px;
 }
 
 .profile-avatar {
     width: 88px;
     height: 88px;
-    border: 1px dashed purple;
+    padding-bottom: 10px;
 }
 
-.profile-name  { border: 1px dashed purple; }
-.profile-email { border: 1px dashed purple; }
+.profile-name {
+	font-size: 20px;
+	font-weight: bold;
+}
 
 /* 달력 */
-.calendar-card { border: 2px solid purple; }
+.calendar-card {
+	padding: 20px;
+	border-radius: 20px;
+	background-color: #ededed;
+	margin-bottom: 20px;
+}
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px dashed purple;
+    padding-bottom: 10px;
 }
 
-.calendar-month { border: 1px dashed purple; }
+.calendar-month {
+	font-size: 20px;
+	font-weight: bold;
+}
 
 /* 요일 헤더 7칸 */
 .calendar-days-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border: 1px dashed purple;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 /* 날짜 셀 7칸 */
 .calendar-dates {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border: 1px dashed purple;
+    font-size: 12px;
+    text-align: center;
+    justify-items: center;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
 }
 
-.calendar-dates .today { border: 2px solid purple; }
+.calendar-dates .today {
+	background-color: #E16B60;
+	border-radius: 100px;
+}
 
-/* 과제 섹션 */
-.assignment-section       { border: 2px solid purple; }
-.assignment-section-title { border: 1px dashed purple; }
+/* 오늘 날짜 */
+.calendar-dates .today {
+    background-color: #E16B60;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+}
+
+/* 화살표 */
+.calendar-header button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.calendar-header button i {
+    font-size: 10px;
+    color: #333333;
+    transition: color 0.2s;
+}
+
+.calendar-header button:hover i {
+    color: #E16B60;
+}
+
+/* 과제 */
+.assignment-section-title {
+	font-size: 20px;
+	font-weight: bold;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
 
 /* 과제 항목: 제목 + 버튼 가로 배치 */
 .assignment-item {
@@ -154,5 +280,9 @@
     border: 1px dashed purple;
 }
 
-.btn-submit   { border: 1px dashed purple; }
-.btn-unsubmit { border: 1px dashed purple; }
+.btn-submit   {
+	border: 1px dashed purple;
+}
+.btn-unsubmit {
+	border: 1px dashed purple;
+}

@@ -7,184 +7,218 @@
 <meta charset="UTF-8">
 <title>과제 제출 현황</title>
 <style>
-
 /* ===== 전체 ===== */
 body{
-    background:#f5f6f8;
+    background:#f5f7fb;
     margin:0;
     padding:0;
+    font-family:"맑은 고딕", sans-serif;
 }
 
 /* ===== 본문 ===== */
 .outer{
     margin-left:250px;
-    padding:20px 30px;
+    width:calc(100vw - 250px);
+    min-height:100vh;
+    padding:30px;
+    box-sizing:border-box;
 }
 
 /* ===== 제목 ===== */
 .outer h2{
     text-align:center;
+    font-size:30px;
     font-weight:700;
+    color:#2d3748;
     margin-bottom:25px;
 }
 
-/* ===== 검색영역 (Notice 스타일 적용) ===== */
+/* ===== 검색 영역 ===== */
 #search-area{
-    text-align:center;
-    margin-bottom:20px;
+    width:100%;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:25px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    box-sizing:border-box;
 }
 
 #search-area form{
-    display:inline-flex;
+    display:flex;
+    justify-content:center;
     align-items:center;
-    gap:8px;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 #search-area select{
-    height:40px;
-    border:1px solid #ddd;
-    border-radius:20px;
-    padding:0 15px;
+    width:120px;
+    height:42px;
+    border:1px solid #dce3ea;
+    border-radius:10px;
+    padding:0 10px;
+    outline:none;
 }
 
 #search-area input{
-    width:320px;
-    height:40px;
-    border:1px solid #ddd;
-    border-radius:20px;
+    width:450px;
+    height:42px;
+    border:1px solid #dce3ea;
+    border-radius:10px;
     padding:0 15px;
+    outline:none;
+}
+
+#search-area input:focus,
+#search-area select:focus{
+    border-color:#4fd1c5;
 }
 
 #search-area button{
-    height:40px;
-    border-radius:20px;
-    padding: 0 20px;
-    border: none;
-    background: #6c757d;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-#search-area button:hover {
-    background: #5a6268;
-}
-
-/* ===== 테이블 영역 (Notice 라운딩 카드 스타일 적용) ===== */
-.list-area{
-    width:95%;
-    margin:auto;
-    background:white;
-    border-radius:15px;
-    overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* ===== 테이블 헤더 ===== */
-.list-area thead th{
-    text-align:center;
-    height:50px;
+    width:90px;
+    height:42px;
     border:none;
-    background:#fafafa;
-    font-size:14px;
-    padding: 0 10px;
-}
-
-/* ===== 정렬 버튼 (Notice 분위기에 맞춰 연한 회색/민트 포인트로 변경) ===== */
-.sort-btn{
-    color:#333;
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
+    border-radius:10px;
+    background:#4fd1c5;
+    color:white;
     font-weight:600;
-    padding:4px 8px;
-    border-radius:12px;
-    transition:.2s;
-}
-
-.sort-btn:hover{
-    background:rgba(79, 209, 197, 0.1);
-    color: #4fd1c5;
-}
-
-/* 현재 활성화된 정렬 강조 (Notice 민트색 배경 반영) */
-.sort-active{
-    background:rgba(79, 209, 197, 0.15);
-    color: #4fd1c5;
-}
-
-/* ===== 테이블 본문 ===== */
-.list-area tbody td{
-    height:45px;
-    padding:8px 12px;
-    vertical-align:middle;
-    border-top:1px solid #f0f0f0;
-    font-size:14px;
-}
-
-/* 클릭 가능한 행 호버 스타일 효과 */
-.list-area tbody tr.data-row:hover{
-    background:#f8fbff;
     cursor:pointer;
 }
 
-/* ===== 점수 스타일 (미채점은 연하게, 점수는 강조) ===== */
-.score-text{
-    font-weight:bold;
-    color:#e53e3e;
-}
-.score-empty{
-    color:#aaa;
-    font-size:13px;
+#search-area button:hover{
+    background:#38b2ac;
 }
 
-/* ===== 페이징 (Notice 민트색 원형 스타일 적용) ===== */
+/* ===== 테이블 ===== */
+.list-area{
+    width:100%;
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    table-layout:fixed;
+}
+
+/* ===== 헤더 ===== */
+.list-area thead th{
+    background:#4fd1c5;
+    color:white;
+    height:55px;
+    border:none;
+    text-align:center;
+    vertical-align:middle;
+    font-size:14px;
+    font-weight:600;
+}
+
+/* ===== 정렬 버튼 ===== */
+.sort-btn{
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.sort-btn:hover{
+    color:white;
+    text-decoration:none;
+}
+
+.sort-active{
+    background:rgba(255,255,255,.25);
+    padding:4px 10px;
+    border-radius:15px;
+}
+
+/* ===== 본문 ===== */
+.list-area tbody td{
+    height:55px;
+    border-top:1px solid #eef2f7;
+    text-align:center;
+    vertical-align:middle;
+    font-size:14px;
+}
+
+/* ===== 행 Hover ===== */
+.list-area tbody tr.data-row{
+    transition:.2s;
+}
+
+.list-area tbody tr.data-row:hover{
+    background:#f0fbfa;
+    cursor:pointer;
+}
+
+/* ===== 점수 ===== */
+.score-text{
+    color:#e53e3e;
+    font-weight:700;
+    font-size:15px;
+}
+
+.score-empty{
+    color:#999;
+}
+
+/* ===== 컬럼 줄바꿈 방지 ===== */
+.list-area th,
+.list-area td{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* ===== 페이징 ===== */
 .paging-area{
     margin-top:25px;
-    text-align:center;
 }
 
 .pagination{
-    margin-top:0;
-    margin-bottom:0;
-}
-
-.pagination .page-link{
-    border:none;
-    background:none;
-    color:#666;
-    text-decoration: none;
-    padding: 6px 12px;
-    display: inline-block;
+    justify-content:center;
+    margin:0;
 }
 
 .pagination .page-item{
-    display: inline-block;
-    list-style: none;
+    margin:0 4px;
+    list-style:none;
 }
 
-.pagination .page-item.disabled .page-link{
-    color: #ccc;
-    cursor: not-allowed;
+.pagination .page-link{
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    border-radius:50%;
+    background:white;
+    color:#555;
+    text-decoration:none;
+    box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+
+.pagination .page-link:hover{
+    background:#e8fffd;
+    color:#4fd1c5;
 }
 
 .pagination .page-item.active .page-link{
     background:#4fd1c5;
     color:white;
-    border-radius:50%;
-    width:35px;
-    height:35px;
-    line-height:22px;
-    padding: 6px 0;
 }
 
-.list-area th,
-.list-area td{
-    text-align:center;
-    vertical-align:middle;
+.pagination .page-item.disabled .page-link{
+    color:#ccc;
+    background:#f7f7f7;
+    cursor:not-allowed;
 }
 
+/* ===== 빈 데이터 ===== */
+.list-area tbody td[colspan]{
+    height:100px;
+    color:#888;
+    font-size:15px;
+}
 </style>
 </head>
 <body>
@@ -193,7 +227,7 @@ body{
 	
 <div class="outer">
 
-    <h2>📚 과제 채점 현황</h2>
+   <h2><i class="fi fi-sr-document"></i> 과제 채점 현황</h2>
 
     <div id="search-area">
         <form action="${pageContext.request.contextPath}/assignment/admin/list" method="get">
@@ -207,7 +241,7 @@ body{
                 <option value="position" <c:if test="${condition eq 'position'}">selected</c:if>>직급</option>
             </select>
             
-            <input type="search" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요">
+            <input type="search" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요" maxlength="100">
             <button type="submit">검색</button>
         </form>
     </div>
@@ -220,55 +254,55 @@ body{
                 <th>
                     <a class="sort-btn ${sort eq 'memberId' ? 'sort-active' : ''}"
                        href="?sort=memberId&order=${sort eq 'memberId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        사번 <c:choose><c:when test="${sort eq 'memberId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'memberId' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        사번 <c:choose><c:when test="${sort eq 'memberId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'memberId' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'loginId' ? 'sort-active' : ''}"
                        href="?sort=loginId&order=${sort eq 'loginId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        아이디 <c:choose><c:when test="${sort eq 'loginId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'loginId' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        아이디 <c:choose><c:when test="${sort eq 'loginId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'loginId' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'name' ? 'sort-active' : ''}"
                        href="?sort=name&order=${sort eq 'name' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        이름 <c:choose><c:when test="${sort eq 'name' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'name' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        이름 <c:choose><c:when test="${sort eq 'name' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'name' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'departmentId' ? 'sort-active' : ''}"
                        href="?sort=departmentId&order=${sort eq 'departmentId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        부서 <c:choose><c:when test="${sort eq 'departmentId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'departmentId' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        부서 <c:choose><c:when test="${sort eq 'departmentId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'departmentId' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'positionId' ? 'sort-active' : ''}"
                        href="?sort=positionId&order=${sort eq 'positionId' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        직급 <c:choose><c:when test="${sort eq 'positionId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'positionId' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        직급 <c:choose><c:when test="${sort eq 'positionId' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'positionId' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'assignmentTitle' ? 'sort-active' : ''}"
                        href="?sort=assignmentTitle&order=${sort eq 'assignmentTitle' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        과제명 <c:choose><c:when test="${sort eq 'assignmentTitle' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'assignmentTitle' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        과제명 <c:choose><c:when test="${sort eq 'assignmentTitle' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'assignmentTitle' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'startDate' ? 'sort-active' : ''}"
                        href="?sort=startDate&order=${sort eq 'startDate' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        시작일 <c:choose><c:when test="${sort eq 'startDate' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'startDate' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        시작일 <c:choose><c:when test="${sort eq 'startDate' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'startDate' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'dueDate' ? 'sort-active' : ''}"
                        href="?sort=dueDate&order=${sort eq 'dueDate' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        마감일 <c:choose><c:when test="${sort eq 'dueDate' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'dueDate' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        마감일 <c:choose><c:when test="${sort eq 'dueDate' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'dueDate' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
                 <th>
                     <a class="sort-btn ${sort eq 'score' ? 'sort-active' : ''}"
                        href="?sort=score&order=${sort eq 'score' and order eq 'asc' ? 'desc' : 'asc'}&${baseQuery}">
-                        점수 <c:choose><c:when test="${sort eq 'score' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'score' and order eq 'desc'}">▼</c:when><c:otherwise>⇅</c:otherwise></c:choose>
+                        점수 <c:choose><c:when test="${sort eq 'score' and order eq 'asc'}">▲</c:when><c:when test="${sort eq 'score' and order eq 'desc'}">▼</c:when><c:otherwise>↕</c:otherwise></c:choose>
                     </a>
                 </th>
             </tr>

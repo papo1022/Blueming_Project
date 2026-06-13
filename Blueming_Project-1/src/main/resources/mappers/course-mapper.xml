@@ -198,7 +198,7 @@
 			NULL
 		FROM MEMBER M
 		WHERE M.STATUS = 'Y'
-		  AND M.ROLE = 'N'
+		  AND M.ROLE IN ('N', 'R')
 		  <choose>
 			  <when test="targetType == '부서' or targetType == 'DEPT' or targetType == 'DEPARTMENT'">
 				AND M.DEPARTMENT_ID = #{targetValue}
@@ -236,7 +236,7 @@
 			NULL
 		FROM MEMBER M
 		WHERE M.STATUS = 'Y'
-		  AND M.ROLE = 'N'
+		  AND M.ROLE IN ('N', 'R')
 		  AND EXISTS (
 				SELECT 1
 				FROM COURSE_TARGET CT
@@ -282,7 +282,7 @@
 		  ON C.COURSE_ID = CT.COURSE_ID
 		WHERE M.MEMBER_ID = #{memberId}
 		  AND M.STATUS = 'Y'
-		  AND M.ROLE = 'N'
+		  AND M.ROLE IN ('N', 'R')
 		  AND C.STATUS = 'Y'
 		  AND NOT EXISTS (
 				SELECT 1
@@ -321,7 +321,7 @@
 	</select>
 	
 	<!-- 챕터 리스트를 불러오기 -->
-	<select id="selectChapterList" resultMap="chapterMap">
+	<select id="selectChapterList" resultMap="chapterMap" parameterType="map">
 		SELECT C.CHAPTER_ID AS chapterId,
 				C.COURSE_ID AS courseId,
 				C.CHAPTER_TITLE AS chapterTitle,
@@ -329,11 +329,36 @@
 				C.VIDEO_FILE_ID AS videoFileId,
 				C.CREATE_DATE AS createDate,
 				C.UPDATED_DATE AS updatedDate,
-				(
-					SELECT NVL(ROUND(AVG(CHAP_COMP_RATE),2),0)
-			        FROM CHAPTER_PROGRESS CP
-			        WHERE CP.CHAPTER_ID = C.CHAPTER_ID
-			    ) AS avgProgress
+				<choose>
+					<when test="isAdmin == true">
+						(
+							SELECT NVL(
+							    ROUND(
+							        SUM(NVL(
+							            (SELECT CP.CHAP_COMP_RATE
+							             FROM CHAPTER_PROGRESS CP
+							             WHERE CP.ENROLLMENT_ID = E.ENROLLMENT_ID
+							               AND CP.CHAPTER_ID = C.CHAPTER_ID),
+							            0
+							        )) / NULLIF(COUNT(*), 0),
+							        2
+							    ), 0)
+					        FROM ENROLLMENT E
+					        WHERE E.COURSE_ID = C.COURSE_ID
+					          AND E.STATUS = 'Y'
+						)
+					</when>
+					<otherwise>
+						(
+							SELECT NVL(MAX(CP.CHAP_COMP_RATE), 0)
+					        FROM CHAPTER_PROGRESS CP
+					        JOIN ENROLLMENT E ON E.ENROLLMENT_ID = CP.ENROLLMENT_ID
+					        WHERE CP.CHAPTER_ID = C.CHAPTER_ID
+					          AND E.MEMBER_ID = #{memberId}
+					          AND E.STATUS = 'Y'
+						)
+					</otherwise>
+				</choose> AS avgProgress
 		FROM CHAPTER C
 		WHERE C.COURSE_ID = #{courseId}
 		ORDER BY C.CHAPTER_ORDER
@@ -660,9 +685,16 @@
 		        #{enrollmentId}, #{chapterId}, #{watchedSeconds}, #{lastPositionSeconds}, #{chapCompRate}, #{isCompleted}
 		    )
 	</update>
+	
+	<!-- 오더 저장하기 -->
+	<update id="orderChapter">
+		UPDATE CHAPTER
+		SET CHAPTER_ORDER = #{chapterOrder}
+		WHERE CHAPTER_ID = #{chapterId}
+		  AND COURSE_ID = #{courseId}
+	</update>
 
 </mapper>
-
 
 
 

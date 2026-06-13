@@ -6,10 +6,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
 </head>
 <body>
 <jsp:include page="../common/mainMenubar.jsp" />
 <jsp:include page="../common/userInfo.jsp" />
+<jsp:include page="../hrDashboard/hrDashboard.jsp" />
 
 </body>
 </html>
