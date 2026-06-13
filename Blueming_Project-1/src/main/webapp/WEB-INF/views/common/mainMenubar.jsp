@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/menubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -111,7 +111,15 @@
                                         과제
                                     </a>
                                 </li>
+                                
                             </c:if>
+                            
+                             <li>
+                                <a href="<c:url value='/member/myPage'/>">
+                                    <i class="fi fi-sr-user"></i>
+                                    마이페이지
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </c:if>
