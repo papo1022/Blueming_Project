@@ -193,19 +193,12 @@
         const hiddenFieldWrap = document.getElementById("chapterOrderFields");
         let draggingItem = null;
 
-        function clampRate(rate) {
-            return Math.max(0, Math.min(100, rate || 0));
-        }
-
         function refreshChapterOrderList() {
             const items = Array.from(list.querySelectorAll(".chapter-order-item"));
             items.forEach((item, index) => {
                 item.querySelector(".chapter-order-badge").textContent = index + 1;
                 item.querySelector(".move-up").disabled = index === 0;
                 item.querySelector(".move-down").disabled = index === items.length - 1;
-                const bar = item.querySelector(".chapter-progress-bar");
-                const width = clampRate(parseFloat(bar.style.width));
-                bar.style.width = width.toFixed(2) + "%";
             });
         }
 
