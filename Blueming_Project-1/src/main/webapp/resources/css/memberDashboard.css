@@ -2,6 +2,7 @@
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css');
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css');
 
 * {
     margin: 0;
@@ -77,60 +78,89 @@
     gap: 16px;
 }
 
-/* 개별 강의 카드 */
 .course-card {
-    border: 2px solid orange;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* 카드 상단: 아이콘 + 도넛 */
 .card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px dashed orange;
 }
 
-.card-icon   { border: 1px dashed orange; }
+.card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
 
 .donut-wrap {
     position: relative;
-    border: 1px dashed orange;
+    width: 56px;
+    height: 56px;
 }
-
-.donut-wrap svg { display: block; }
 
 .donut-label {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px dashed orange;
+    font-size: 12px;
 }
 
-.card-title-text { border: 1px dashed orange; }
-.card-dday       { border: 1px dashed orange; }
+/* 도넛 SVG 안에서 사용하는 클래스 */
+.donut-bg {
+	fill: none;
+    stroke: transparent;
+    stroke-width: 5;
+}
+
+.donut-fill {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+}
+
+.card-title-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #222;
+}
+
+.card-dday {
+    font-size: 20px;
+    font-weight: bold;
+}
 
 /* 테마 색상 */
-.theme-red    { background-color: #fde8e8; }
-.theme-yellow { background-color: #fef9e7; }
-.theme-green  { background-color: #e8f8f0; }
-.theme-gray   { background-color: #f0f0f0; }
+.theme-red    { background-color: #FDD6D3; }
+.theme-yellow { background-color: #FFF4D8; }
+.theme-green  { background-color: #E6FFD8; }
+.theme-gray   { background-color: #EDEDED; }
 
 /* 도넛, 아이콘, D-day 텍스트 색상도 테마별로 달라짐 */
-.theme-red    .donut-fill { stroke: #e57373; }
-.theme-yellow .donut-fill { stroke: #f4b400; }
-.theme-green  .donut-fill { stroke: #4caf50; }
-.theme-gray   .donut-fill { stroke: #9e9e9e; }
+.theme-red    .donut-fill { stroke: #E16B60; }
+.theme-yellow .donut-fill { stroke: #FFC635; }
+.theme-green  .donut-fill { stroke: #91F854; }
+.theme-gray   .donut-fill { stroke: #c4c4c5; }
 
-.theme-red    .card-dday { color: #e57373; }
-.theme-yellow .card-dday { color: #f4b400; }
-.theme-green  .card-dday { color: #4caf50; }
-.theme-gray   .card-dday { color: #9e9e9e; }
+.theme-red    .card-dday { color: #E16B60; }
+.theme-yellow .card-dday { color: #FFC635; }
+.theme-green  .card-dday { color: #91F854; }
+.theme-gray   .card-dday { color: #c4c4c5; }
 
-.theme-red    .card-icon { background-color: #e57373; color: white; }
-.theme-yellow .card-icon { background-color: #f4b400; color: white; }
-.theme-green  .card-icon { background-color: #4caf50; color: white; }
-.theme-gray   .card-icon { background-color: #9e9e9e; color: white; }
+.theme-red    .card-icon { background-color: #E16B60; color: #FFFFFF; }
+.theme-yellow .card-icon { background-color: #FFC635; color: #FFFFFF; }
+.theme-green  .card-icon { background-color: #91F854; color: #FFFFFF; }
+.theme-gray   .card-icon { background-color: #c4c4c5; color: #FFFFFF; }
 
 
 /* --- 오른쪽 컬럼 --- */
@@ -277,12 +307,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px dashed purple;
+    padding-bottom: 10px;
 }
 
-.btn-submit   {
-	border: 1px dashed purple;
+.assignment-title {
+    font-size: 14px;
+    color: #444;
 }
+
+.btn-submit {
+    background-color: #40E0D0;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
 .btn-unsubmit {
-	border: 1px dashed purple;
+    background-color: #c4c5c6;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 12px;
+    cursor: pointer;
+    justify-content: center;
 }

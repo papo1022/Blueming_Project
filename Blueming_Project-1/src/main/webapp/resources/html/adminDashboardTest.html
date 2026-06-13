@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard - Test</title>
+<link rel="stylesheet" href="../css/mainMenubar.css">
+<link rel="stylesheet" href="../css/adminDashboard.css">
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="nav-area">
+    <div class="nav-logo">
+        <i class="fi fi-rr-desktop"></i>
+        <span>대시보드</span>
+    </div>
+    <a class="nav-item active" href="#">
+        <i class="fi fi-rr-megaphone"></i> 공지사항
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fi fi-rr-graduation-cap"></i> 강의 관리
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fi fi-rr-document"></i> 과제 관리
+    </a>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main-wrapper">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-col">
+
+        <!-- 상단 바: 검색창 -->
+        <div class="top-bar">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요.">
+                <i class="fi fi-rr-search"></i>
+            </div>
+        </div>
+
+        <!-- 강의 목록 -->
+        <div class="section-title">관리할 강의 목록</div>
+        <div class="course-grid" id="course-grid">
+
+            <!-- 카드 1: D-7 (빨강) -->
+            <div class="course-card theme-red" data-title="XX부서 필수교육">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rs-document"></i></div>
+                </div>
+                <div class="card-title-text">XX부서 필수교육</div>
+                <div class="card-dday">D-7</div>
+                <div class="card-period">2026.02.09 ~ 2026.06.12</div>
+            </div>
+
+            <!-- 카드 2: D-20 (노랑) -->
+            <div class="course-card theme-yellow" data-title="XX부서 필수교육">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rr-time-check"></i></div>
+                </div>
+                <div class="card-title-text">XX부서 필수교육</div>
+                <div class="card-dday">D-20</div>
+                <div class="card-period">2026.02.09 ~ 2026.06.12</div>
+            </div>
+
+            <!-- 카드 3: 완료 (초록) -->
+            <div class="course-card theme-green" data-title="신입사원 온보딩">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rs-document"></i></div>
+                </div>
+                <div class="card-title-text">신입사원 온보딩</div>
+                <div class="card-dday">완료</div>
+                <div class="card-period">2026.01.02 ~ 2026.03.31</div>
+            </div>
+
+            <!-- 카드 4: 마감 (회색) -->
+            <div class="course-card theme-gray" data-title="정보보안 교육">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rs-document"></i></div>
+                </div>
+                <div class="card-title-text">정보보안 교육</div>
+                <div class="card-dday">마감</div>
+                <div class="card-period">2025.11.01 ~ 2026.01.31</div>
+            </div>
+
+            <!-- 카드 5: D-3 (빨강) -->
+            <div class="course-card theme-red" data-title="개인정보 보호 교육">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rs-document"></i></div>
+                </div>
+                <div class="card-title-text">개인정보 보호 교육</div>
+                <div class="card-dday">D-3</div>
+                <div class="card-period">2026.03.01 ~ 2026.06.14</div>
+            </div>
+
+            <!-- 카드 6: 예정 (노랑) -->
+            <div class="course-card theme-yellow" data-title="리더십 역량 강화">
+                <a href="#" class="card-edit-btn">수정</a>
+                <div class="card-top">
+                    <div class="card-icon"><i class="fi fi-rr-time-check"></i></div>
+                </div>
+                <div class="card-title-text">리더십 역량 강화</div>
+                <div class="card-dday">D-45</div>
+                <div class="card-period">2026.04.01 ~ 2026.07.31</div>
+            </div>
+
+        </div><!-- /course-grid -->
+
+    </div><!-- /left-col -->
+
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+    
+    	<div class="profile-bar">
+            <span class="profile-bar-name">관리자 계정</span>
+            <div class="profile-bar-links">
+                <a href="#">마이페이지</a>
+                <a href="#">로그아웃</a>
+            </div>
+            <svg class="profile-bar-avatar" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="22" r="22" fill="#c4c5c6"/>
+            </svg>
+        </div>
+
+        <!-- 달력 (월별) -->
+        <div class="calendar-card">
+            <div class="calendar-header">
+                <button id="cal-prev"><i class="fi fi-rr-angle-left"></i></button>
+                <span class="calendar-month" id="cal-month"></span>
+                <button id="cal-next"><i class="fi fi-rr-angle-right"></i></button>
+            </div>
+            <div class="calendar-days-header">
+                <span>일</span><span>월</span><span>화</span>
+                <span>수</span><span>목</span><span>금</span><span>토</span>
+            </div>
+            <div class="calendar-dates" id="cal-dates"></div>
+        </div>
+
+        <!-- 공지사항 -->
+        <div class="notice-section-title">공지사항</div>
+        <div class="notice-list">
+
+            <a href="#" class="notice-item">
+                <div class="notice-icon">📢</div>
+                <div class="notice-text">
+                    <div class="notice-title">관리자 공지사항입니다.</div>
+                    <div class="notice-date">2026.06.01</div>
+                </div>
+            </a>
+
+            <a href="#" class="notice-item">
+                <div class="notice-icon">📢</div>
+                <div class="notice-text">
+                    <div class="notice-title">HR팀 공지사항입니다.</div>
+                    <div class="notice-date">2026.05.31</div>
+                </div>
+            </a>
+
+            <a href="#" class="notice-item">
+                <div class="notice-icon">📢</div>
+                <div class="notice-text">
+                    <div class="notice-title">관리자 공지사항입니다.</div>
+                    <div class="notice-date">2026.05.29</div>
+                </div>
+            </a>
+
+        </div>
+
+    </div><!-- /right-col -->
+
+</div><!-- /main-wrapper -->
+
+
+<!-- 달력 JS (월별, hrDashboard 방식) -->
+<script>
+(function () {
+    const monthEl = document.getElementById('cal-month');
+    const datesEl = document.getElementById('cal-dates');
+    const today   = new Date();
+    let cur = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    function render() {
+        const y = cur.getFullYear();
+        const m = cur.getMonth();
+        monthEl.textContent = y + '년 ' + (m + 1) + '월';
+
+        const firstDay = new Date(y, m, 1).getDay();
+        const lastDate = new Date(y, m + 1, 0).getDate();
+        const isThisMon = (y === today.getFullYear() && m === today.getMonth());
+
+        let html = '';
+        for (let i = 0; i < firstDay; i++) html += '<span></span>';
+        for (let d = 1; d <= lastDate; d++) {
+            const isToday = isThisMon && d === today.getDate();
+            html += '<span class="' + (isToday ? 'today' : '') + '">' + d + '</span>';
+        }
+        datesEl.innerHTML = html;
+    }
+
+    document.getElementById('cal-prev').addEventListener('click', function () {
+        cur.setMonth(cur.getMonth() - 1); render();
+    });
+    document.getElementById('cal-next').addEventListener('click', function () {
+        cur.setMonth(cur.getMonth() + 1); render();
+    });
+
+    render();
+})();
+</script>
+
+<!-- 강의 검색 JS -->
+<script>
+document.getElementById('search-input').addEventListener('input', function () {
+    const keyword = this.value.trim().toLowerCase();
+    document.querySelectorAll('#course-grid .course-card').forEach(function (card) {
+        const title = (card.dataset.title || '').toLowerCase();
+        card.style.display = title.includes(keyword) ? '' : 'none';
+    });
+});
+</script>
+
+</body>
+</html>

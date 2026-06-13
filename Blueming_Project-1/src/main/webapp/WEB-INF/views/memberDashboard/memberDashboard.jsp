@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +33,7 @@
 
             <%-- 강의 목록 --%>
             <div class="section-title">강의 목록</div>
-            <div class="course-grid">
+            <div class="course-grid" id="course-grid">
             
                 <c:forEach var="course" items="${courseList}" varStatus="status">
 
@@ -45,7 +45,7 @@
 					    <c:when test="${course.courseStatus == 'CLOSED'}">
 					        <c:set var="theme" value="theme-gray"/>
 					    </c:when>
-					    <c:when test="${course.dDay <= 7}">
+					    <c:when test="${course.dday <= 7}">
 					        <c:set var="theme" value="theme-red"/>   <%-- 7일 이하: 빨강 --%>
 					    </c:when>
 					    <c:otherwise>
@@ -53,21 +53,21 @@
 					    </c:otherwise>
 					</c:choose>
 
-                    <div class="course-card ${theme}">
+                    <div class="course-card ${theme}" data-title="${course.courseTitle}">
 
                         <%-- 카드 상단: 아이콘 + 도넛 --%>
                         <div class="card-top">
                             <div class="card-icon">
-                                <i class="fi fi-sr-book-alt"></i>
+                                <i class="fi fi-rs-document"></i>
                             </div>
-                            <%-- 도넛 차트: stroke-dasharray = (progressRate/100) * 138.2 --%>
+                            <%-- 도넛 차트 --%>
                             <div class="donut-wrap">
-                                <svg viewBox="0 0 58 58">
-                                    <circle class="donut-bg" cx="29" cy="29" r="22"/>
-                                    <circle class="donut-fill" cx="29" cy="29" r="22"
-                                        stroke-dasharray="${course.progressRate * 1.382} 138.2"
-                                        stroke-dashoffset="0"/>
-                                </svg>
+                                <svg viewBox="0 0 58 58" style="transform: rotate(-90deg); transform-origin: center;">
+								    <circle class="donut-bg" cx="29" cy="29" r="22"/>
+								    <circle class="donut-fill" cx="29" cy="29" r="22"
+								        stroke-dasharray="${course.progressRate * 1.382} 138.2"
+								        stroke-dashoffset="0"/>
+								</svg>
                                 <div class="donut-label">${course.progressRate}%</div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                                 <div class="card-dday">마감</div>
                             </c:when>
                             <c:otherwise>
-                                <div class="card-dday">D-${course.dDay}</div>
+                                <div class="card-dday">D-${course.dday}</div>
                             </c:otherwise>
                         </c:choose>
 
@@ -202,6 +202,19 @@
         render();
     })();
     </script>
+    
+    <%-- 강의 검색창 js --%>
+    <script>
+	document.getElementById('search-input').addEventListener('input', function () {
+	    const keyword = this.value.trim().toLowerCase();
+	    const cards = document.querySelectorAll('#course-grid .course-card');
+	
+	    cards.forEach(function (card) {
+	        const title = (card.dataset.title || '').toLowerCase();
+	        card.style.display = title.includes(keyword) ? '' : 'none';
+	    });
+	});
+	</script>
 
 </body>
 </html>

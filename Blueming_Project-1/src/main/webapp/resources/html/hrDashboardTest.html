@@ -1,29 +1,22 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>HR Dashboard</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/hrDashboard.css">
+<link rel="stylesheet" href="../css/mainMenubar.css">
+<link rel="stylesheet" href="../css/hrDashboard.css">
 </head>
 <body>
 
-    <%-- 공통 메뉴바 --%>
-    <jsp:include page="/WEB-INF/views/common/mainMenubar.jsp" />
-
-    <%-- MAIN WRAPPER --%>
     <div class="main-wrapper">
 
-        <%-- LEFT COLUMN --%>
+        <!-- LEFT COLUMN -->
         <div class="left-col">
 
-            <%-- 인사말 + 검색바 --%>
+            <!-- 인사말 + 검색바 -->
             <div class="greeting-row">
                 <div class="greeting-text">
-                    <p>안녕하세요, ${profile.name} 님!</p>
+                    <p>안녕하세요, 한인사 님!</p>
                     <p>오늘의 사원 강의 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
@@ -32,7 +25,7 @@
                 </div>
             </div>
 
-            <%-- 강의 이수율 테이블 --%>
+            <!-- 강의 이수율 테이블 -->
             <div class="section-title">강의 이수율</div>
             <div class="rate-table-wrap">
                 <table class="rate-table">
@@ -46,40 +39,74 @@
                         </tr>
                     </thead>
                     <tbody id="member-tbody">
-                        <c:forEach var="member" items="${hrMemberList}">
-                            <tr data-name="${member.name}">
-                                <td>${member.name}</td>
-                                <td>${member.departmentName}</td>
-                                <td>${member.positionName}</td>
-                                <td>${member.email}</td>
-                                <td class="rate-cell">
-                                    <c:choose>
-                                        <c:when test="${not empty member.avgProgressRate}">
-                                            ${member.avgProgressRate}%
-                                        </c:when>
-                                        <c:otherwise>–</c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty hrMemberList}">
-                            <tr>
-                                <td colspan="5" class="empty-msg">사원 데이터가 없습니다.</td>
-                            </tr>
-                        </c:if>
+                        <tr data-name="김소희">
+                            <td>김소희</td>
+                            <td>XX부서</td>
+                            <td>사원</td>
+                            <td>kimsohee@gmail.com</td>
+                            <td class="rate-cell">87%</td>
+                        </tr>
+                        <tr data-name="이정우">
+                            <td>이정우</td>
+                            <td>MM부서</td>
+                            <td>대리</td>
+                            <td>JungwooLee133@gmail.com</td>
+                            <td class="rate-cell">50%</td>
+                        </tr>
+                        <tr data-name="박희연">
+                            <td>박희연</td>
+                            <td>XX부서</td>
+                            <td>팀장</td>
+                            <td>heeyeonPark@gmail.com</td>
+                            <td class="rate-cell">100%</td>
+                        </tr>
+                        <tr data-name="한인사">
+                            <td>한인사</td>
+                            <td>HR부서</td>
+                            <td>주임</td>
+                            <td>Annyeonghaseyo@naver.com</td>
+                            <td class="rate-cell">–</td>
+                        </tr>
+                        <tr data-name="정길동">
+                            <td>정길동</td>
+                            <td>HH부서</td>
+                            <td>사원</td>
+                            <td>gildongJeong@naver.com</td>
+                            <td class="rate-cell">92%</td>
+                        </tr>
+                        <tr data-name="유재희">
+                            <td>유재희</td>
+                            <td>NN부서</td>
+                            <td>사원</td>
+                            <td>JaeheeYu@gmail.com</td>
+                            <td class="rate-cell">100%</td>
+                        </tr>
+                        <tr data-name="최갑돌">
+                            <td>최갑돌</td>
+                            <td>MM부서</td>
+                            <td>대리</td>
+                            <td>GabdolChoi@gmail.com</td>
+                            <td class="rate-cell">98%</td>
+                        </tr>
+                        <tr data-name="이연서">
+                            <td>이연서</td>
+                            <td>TT부서</td>
+                            <td>주임</td>
+                            <td>YeonSeoLee521@gmail.com</td>
+                            <td class="rate-cell">36%</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-        </div><%-- /left-col --%>
+        </div><!-- /left-col -->
 
 
-        <%-- RIGHT COLUMN --%>
+        <!-- RIGHT COLUMN -->
         <div class="right-col">
         
-        	<%-- 프로필 바 --%>
 			<div class="profile-bar">
-			    <div class="profile-bar-name">${profile.departmentName} ${profile.name}</div>
+			    <div class="profile-bar-name">한인사</div>
 			    <div class="profile-bar-links">
 			        <a href="#">마이페이지</a>
 			        <a href="#">로그아웃</a>
@@ -89,7 +116,7 @@
 			    </svg>
 			</div>
 
-            <%-- 달력 --%>
+            <!-- 달력 -->
             <div class="right-col-title"></div>
             <div class="calendar-card">
                 <div class="calendar-header">
@@ -104,30 +131,38 @@
                 <div class="calendar-dates" id="cal-dates"></div>
             </div>
 
-            <%-- 공지사항 --%>
+            <!-- 공지사항 -->
             <div class="notice-section-title">공지사항</div>
             <div class="notice-list">
-                <c:forEach var="notice" items="${noticeList}">
-                    <div class="notice-item">
-                        <div class="notice-icon">📢</div>
-                        <div class="notice-text">
-                            <div class="notice-title">${notice.noticeTitle}</div>
-                            <div class="notice-date">${notice.createdAt}</div>
-                        </div>
+                <div class="notice-item">
+                    <div class="notice-icon">📢</div>
+                    <div class="notice-text">
+                        <div class="notice-title">관리자 공지사항입니다.</div>
+                        <div class="notice-date">2026.06.01</div>
                     </div>
-                </c:forEach>
-                <%-- 공지 데이터 없을 때 --%>
-                <c:if test="${empty noticeList}">
-                    <div style="color:#aaa; font-size:14px; padding: 12px 4px;">공지사항이 없습니다.</div>
-                </c:if>
+                </div>
+                <div class="notice-item">
+                    <div class="notice-icon">📢</div>
+                    <div class="notice-text">
+                        <div class="notice-title">HR팀 공지사항입니다.</div>
+                        <div class="notice-date">2026.05.31</div>
+                    </div>
+                </div>
+                <div class="notice-item">
+                    <div class="notice-icon">📢</div>
+                    <div class="notice-text">
+                        <div class="notice-title">관리자 공지사항입니다.</div>
+                        <div class="notice-date">2026.05.29</div>
+                    </div>
+                </div>
             </div>
 
-        </div><%-- /right-col --%>
+        </div><!-- /right-col -->
 
-    </div><%-- /main-wrapper --%>
+    </div><!-- /main-wrapper -->
 
 
-    <%-- 달력 JS --%>
+    <!-- 달력 JS -->
     <script>
     (function () {
         const monthLabelEl = document.getElementById('cal-month-label');
@@ -169,7 +204,7 @@
     })();
     </script>
 
-    <%-- 검색 JS (이름 기준 필터) --%>
+    <!-- 검색 JS -->
     <script>
     document.getElementById('search-input').addEventListener('input', function () {
         const keyword = this.value.trim().toLowerCase();

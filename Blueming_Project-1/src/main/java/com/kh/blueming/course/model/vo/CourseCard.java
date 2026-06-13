@@ -18,7 +18,7 @@ public class CourseCard {
     private int courseId;
     private String courseTitle;
     private Date endDate;
-    private int dDay;
+    private int dday;
     private int progressRate;
     private String courseStatus; // IN_PROGRESS(수강중) / DONE(수강완료) / CLOSED(마감)
 }
