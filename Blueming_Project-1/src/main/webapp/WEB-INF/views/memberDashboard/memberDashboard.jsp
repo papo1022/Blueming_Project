@@ -6,8 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Member Dashboard</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common/mainMenubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard/memberDashboard.css">
 </head>
 <body>
 

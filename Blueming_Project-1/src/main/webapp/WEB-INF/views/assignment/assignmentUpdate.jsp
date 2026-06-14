@@ -5,38 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>blueming</title>
-<style>
-    .outer {
-        width: 90%;
-        margin: 0 auto;
-    }
-
-    #assignmentTitle,
-    #description,
-    #startDate,
-    #dueDate,
-    #maxScore {
-        width: 80%;
-    }
-
-    #description {
-        height: 220px;
-        resize: none;
-    }
-
-    .field-error {
-        width: 80%;
-        margin: 6px auto 0;
-        color: #d93025;
-        font-size: 13px;
-        text-align: left;
-        min-height: 18px;
-    }
-
-    .is-invalid {
-        border-color: #d93025;
-    }
-</style>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/assignment/assignmentForm.css">
 </head>
 <body>
 

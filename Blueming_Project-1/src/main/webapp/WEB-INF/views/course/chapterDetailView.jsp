@@ -10,241 +10,7 @@
                 href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
             <link rel="stylesheet"
                 href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
-            <style>
-                .outer {
-                    float: center;
-                    margin: 20px;
-                    margin-left: 270px;
-                    width: 80%;
-                }
-
-                .assignment-empty {
-                    text-align: center;
-                    color: #666;
-                    padding: 18px 0;
-                }
-
-                .assignment-actions {
-                    display: flex;
-                    justify-content: center;
-                    gap: 8px;
-                    flex-wrap: wrap;
-                }
-
-                .assignment-clickable {
-                    cursor: pointer;
-                }
-
-                .assignment-clickable:hover {
-                    background-color: #f8f9fa;
-                }
-
-                /* 영상 플레이어 */
-                .video-section {
-                    margin-bottom: 30px;
-                }
-
-                .player-shell {
-                    background: linear-gradient(135deg, #121926 0%, #1f2d44 100%);
-                    border-radius: 12px;
-                    padding: 14px;
-                    box-shadow: 0 10px 24px rgba(17, 25, 40, 0.24);
-                }
-
-                .video-section video {
-                    width: 100%;
-                    max-height: 480px;
-                    background: #000;
-                    border-radius: 8px;
-                    display: block;
-                }
-
-                .video-section video:fullscreen {
-                    width: 100vw;
-                    height: 100vh;
-                    max-height: none;
-                    object-fit: contain;
-                    border-radius: 0;
-                }
-
-                .video-section video:-webkit-full-screen {
-                    width: 100vw;
-                    height: 100vh;
-                    max-height: none;
-                    object-fit: contain;
-                    border-radius: 0;
-                }
-
-                .player-controls {
-                    margin-top: 10px;
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 8px;
-                    align-items: center;
-                }
-
-                .control-btn {
-                    border: 0;
-                    border-radius: 8px;
-                    background: rgba(255, 255, 255, 0.12);
-                    color: #f0f6ff;
-                    font-size: 13px;
-                    padding: 7px 12px;
-                    line-height: 1;
-                    cursor: pointer;
-                    transition: background 0.2s ease;
-                }
-
-                .control-btn.icon-btn {
-                    width: 34px;
-                    height: 34px;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0;
-                    font-size: 16px;
-                }
-
-                .control-btn.icon-btn i {
-                    line-height: 1;
-                }
-
-                .control-btn:hover,
-                .control-btn:focus {
-                    background: rgba(255, 255, 255, 0.24);
-                    outline: none;
-                }
-
-                .control-btn.is-active {
-                    background: #2ca9e1;
-                    color: #fff;
-                }
-
-                .speed-select {
-                    border: 0;
-                    border-radius: 8px;
-                    background: rgba(255, 255, 255, 0.12);
-                    color: #f0f6ff;
-                    font-size: 13px;
-                    padding: 7px 10px;
-                    min-width: 84px;
-                    cursor: pointer;
-                }
-
-                .speed-select:focus {
-                    outline: none;
-                    background: rgba(255, 255, 255, 0.24);
-                }
-
-                .speed-select option {
-                    color: #111;
-                }
-
-                .volume-wrap {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    min-width: 120px;
-                }
-
-                .volume-wrap input[type="range"] {
-                    width: 90px;
-                    accent-color: #2ca9e1;
-                }
-
-                .seek-wrap {
-                    flex: 1 1 240px;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    min-width: 180px;
-                }
-
-                .seek-wrap input[type="range"] {
-                    width: 100%;
-                    accent-color: #2ca9e1;
-                }
-
-                .time-label {
-                    color: #d9e4f7;
-                    font-size: 12px;
-                    min-width: 110px;
-                    text-align: right;
-                }
-
-                .player-status {
-                    margin-top: 8px;
-                    color: #b6c8e2;
-                    font-size: 12px;
-                }
-
-                @media (max-width: 768px) {
-                    .player-shell {
-                        padding: 10px;
-                    }
-
-                    .control-btn {
-                        padding: 7px 10px;
-                        font-size: 12px;
-                    }
-
-                    .time-label {
-                        min-width: 96px;
-                        font-size: 11px;
-                    }
-                }
-
-                .progress-info {
-                    margin-top: 8px;
-                    font-size: 14px;
-                    color: #555;
-                }
-
-                .progress-bar-wrap {
-                    height: 8px;
-                    background: #ddd;
-                    border-radius: 4px;
-                    margin-top: 4px;
-                    overflow: hidden;
-                }
-
-                .progress-bar-fill {
-                    height: 100%;
-                    background: #5bc0de;
-                    border-radius: 4px;
-                    transition: width 0.3s;
-                }
-
-                .table {
-                    text-align: center;
-                }
-
-                .text-big {
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-
-                .text-small {
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-
-                /* 댓글 영역 강제 노출 (기존 꼬인 display:none 무력화) */
-                #replyList,
-                #replyList * {
-                    display: revert !important;
-                }
-
-                #replyList .card {
-                    display: block !important;
-                }
-
-                #replyList .d-flex {
-                    display: flex !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                }
-            </style>
+            <link rel="stylesheet" href="/blueming/resources/css/course/chapterDetailView.css">
         </head>
 
         <body>
@@ -423,12 +189,10 @@
                                                 <c:if test="${sessionScope.loginUser.role eq 'S'}">
                                                     <td>
                                                         <div class="assignment-actions">
-                                                            <button type="button" class="btn btn-sm btn-primary"
-                                                                onclick="goGradeAssignment(${assignment.assignmentId});">
+                                                            <button type="button" class="btn btn-sm btn-primary grade-assignment-btn" data-assignment-id="${assignment.assignmentId}">
                                                                 채점
                                                             </button>
-                                                            <button type="button" class="btn btn-sm btn-warning"
-                                                                onclick="updateAssignment(${assignment.assignmentId});">
+                                                            <button type="button" class="btn btn-sm btn-warning update-assignment-btn" data-assignment-id="${assignment.assignmentId}">
                                                                 수정
                                                             </button>
                                                             <form action="/blueming/assignment/delete" method="post">
@@ -843,6 +607,19 @@
                 }
 
                 onReady(function () {
+                    // Assignment action button handlers
+                    document.querySelectorAll('.grade-assignment-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            goGradeAssignment(this.dataset.assignmentId);
+                        });
+                    });
+
+                    document.querySelectorAll('.update-assignment-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            updateAssignment(this.dataset.assignmentId);
+                        });
+                    });
+
                     // 초기 진도 바 너비 적용
                     const bar = document.getElementById("compRateBar");
                     if (bar) bar.style.width = (bar.dataset.rate || 0) + "%";

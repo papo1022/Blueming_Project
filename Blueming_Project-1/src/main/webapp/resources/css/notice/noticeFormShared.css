@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+body {
+    background: #f5f7fb;
+    margin: 0;
+    padding: 0;
+    font-family: "맑은 고딕", sans-serif;
+}
+
+.outer {
+    margin-left: 250px;
+    width: calc(100vw - 250px);
+    min-height: 100vh;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 25px;
+}
+
+.notice-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+}
+
+.notice-header {
+    height: 32px;
+    background: #4fd1c5;
+}
+
+.btn-custom {
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: .2s;
+}
