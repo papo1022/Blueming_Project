@@ -6,40 +6,31 @@
 <head>
 <meta charset="UTF-8">
 <title>수강 정보 관리</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/enrollMemList.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
-<style>
-    .outer { display: flex; flex-direction: column; min-height: 70vh; padding: 20px; align-items: center; }
-    .table-container { flex: 1; width: 100%; max-width: 800px; }
-    .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    .table tbody tr { cursor: pointer; }
-    .table tbody tr:hover { background-color: #f5f5f5; }
-    .table th, .table td { padding: 10px; border: 1px solid #ddd; text-align: center; }
-    .sort-link { text-decoration: none; color: black; cursor: pointer; display: block; }
-    .pagination-wrapper { display: flex; justify-content: center; margin-top: 30px; padding-bottom: 20px; }
-    .pagination-wrapper a, .pagination-wrapper span { display: inline-block; padding: 5px 12px; margin: 0 3px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; text-decoration: none; color: #333; }
-    .disabled-btn { color: #ccc !important; cursor: default; }
-</style>
+
 </head>
 <body>
     <jsp:include page="../common/mainMenubar.jsp"/>
     
     <div class="outer">
-        <h2>수강 정보 관리</h2>
+       
         
-        <form id="searchForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="get">
-            <select name="condition" id="searchCondition">
+        <form id="searchForm" action="${pageContext.request.contextPath}/enrollment/enrollMemList" method="get" class="search-con">
+            <select name="condition" id="searchCondition" class="search-sel">
                 <option value="course" ${condition == 'course' ? 'selected' : ''}>강의명</option>
             </select>
         
-            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword" maxlength="100">
+            <input type="text" name="keyword" value="<c:out value='${keyword}' />" id="searchKeyword" maxlength="100" class="input">
         
-            <button type="submit">검색</button>
-            <button type="button" onclick="clearSearchInput();">초기화</button>
+            <button type="submit" class="search-btn"><i class="fi fi-rr-search"></i></button>
+            <button type="button" onclick="clearSearchInput();" class="reset"><i class="fi fi-rr-cross"></i></button>
+            
         </form>
 
         <div class="table-container">
-            <table class="table table-bordered">
+            <table class="list">
                 <thead>
                     <tr>
                         <th><a href="javascript:void(0);" onclick="sortList('COURSE_TITLE')" class="sort-link">강의명 </a></th>

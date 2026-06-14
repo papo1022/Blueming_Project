@@ -4,23 +4,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>강의 상세 및 수강생 현황</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/enrollMemListDetail.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 	<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
-    <style>
-        .progress-bg { width: 100px; height: 10px; background: #eee; border-radius: 5px; display: inline-block; }
-        .progress-bar { height: 100%; border-radius: 5px; }
-        .paging-area button { margin: 0 5px; padding: 5px 10px; cursor: pointer; }
-        .sort-link { text-decoration: none; color: black; font-weight: bold; }
-    </style>
+   
 </head>
 <body>
     <jsp:include page="../common/mainMenubar.jsp"/>
 
     <div class="outer" align="center">
-        <h2><c:out value="${c.COURSE_TITLE}" /> 강의 상세 정보</h2>
-        
-        <div>
+           
+        <div class="info">
             기간: <c:out value="${c.START_DATE}" /> ~ <c:out value="${c.END_DATE}" /> | 
             상태 : 
             <c:choose>
@@ -34,8 +28,9 @@
         </div>
         
         <br>
-        <div class="filter">
-            <select id="deptFilter" onchange="filterByDept()">
+       
+        <div class="search-con">
+            <select id="deptFilter" onchange="filterByDept()" class="search-sel">
 			    <option value="">전체 부서</option>
 			    <c:forEach var="dept" items="${deptList}">
                     <option value="<c:out value='${dept.DEPARTMENT_ID}' />" <c:if test="${deptFilter eq dept.DEPARTMENT_ID}">selected</c:if>>
@@ -43,9 +38,10 @@
 			        </option>
 			    </c:forEach>
 			</select>
+     
         </div>
-
-        <table class="table table-bordered">
+    <div class="table-container">
+        <table class="list">
             <thead>
                 <tr>
                     <th><a href="javascript:void(0);" onclick="sortDetail('DEPARTMENT_NAME')" class="sort-link">부서 </a></th>
@@ -74,9 +70,7 @@
                                         <span style="width:45px;">
                                             <c:out value="${item.chapCompRate}" />%
                                         </span>
-                                        <div style="width:80px; height:10px; background:#e9ecef; border-radius:5px; overflow:hidden;">
-                                            <div style="width:<c:out value='${item.chapCompRate}' />%; height:100%; background:${item.chapCompRate < 30 ? '#dc3545' : item.chapCompRate < 70 ? '#ffc107' : '#28a745'}; transition:width .3s;"></div>
-                                        </div>
+                                       
                                     </div>
                                 </td>
                             </tr>
@@ -85,8 +79,8 @@
                 </c:choose>
             </tbody>
         </table>
-
-        <div class="paging-area">
+</div>
+        <div class="pagination-wrapper">
             <c:choose>
                 <c:when test="${pi.currentPage <= 1}">
                     <button disabled>이전</button>
