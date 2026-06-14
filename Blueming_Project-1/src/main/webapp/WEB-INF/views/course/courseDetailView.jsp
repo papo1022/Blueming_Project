@@ -6,33 +6,7 @@
         <head>
             <meta charset="UTF-8">
             <title>blueming</title>
-            <style>
-                .outer {
-                    float: center;
-                    margin: 20px;
-                    margin-left: 270px;
-                    width: 80%;
-                }
-
-                #chapter-area>tbody>tr:hover {
-                    background-color: #f8f9fa;
-                    cursor: pointer;
-                }
-
-                .table {
-                    text-align: center;
-                }
-
-                .text-big {
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-
-                .text-small {
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-            </style>
+            <link rel="stylesheet" href="/blueming/resources/css/course/courseDetailView.css">
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         </head>
 
@@ -243,7 +217,7 @@
 
                 function chapterOrder() {
 
-                    const chapterCount = ${chapterList.size()};
+                    const chapterCount = Number("${chapterList.size()}");
 
                     if (chapterCount < 2) {
                         alert("적어도 2개 이상의 챕터가 존재해야 합니다.");

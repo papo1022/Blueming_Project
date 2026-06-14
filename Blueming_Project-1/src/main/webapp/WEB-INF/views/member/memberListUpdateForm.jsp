@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>사원 정보 수정</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberList.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/member/memberList.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 

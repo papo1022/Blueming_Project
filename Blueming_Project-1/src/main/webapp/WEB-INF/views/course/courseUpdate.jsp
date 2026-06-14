@@ -65,7 +65,7 @@
                     margin-bottom: 0;
                 }
             </style>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/courseStyle.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
         </head>
 
         <body>
@@ -143,17 +143,21 @@
             </div>
 
             <script>
-                const deptOptions = [
-                    <c:forEach var="d" items="${deptOptions}" varStatus="st">
-                        {id: "${d.DEPARTMENT_ID}", name: "${d.DEPARTMENT_NAME}" }<c:if test="${!st.last}">,</c:if>
-                    </c:forEach>
-                ];
+                const deptOptionsRaw = [];
+                <c:forEach var="d" items="${deptOptions}">
+                    deptOptionsRaw.push(["${d.DEPARTMENT_ID}", "${d.DEPARTMENT_NAME}"]);
+                </c:forEach>
+                const deptOptions = deptOptionsRaw.map(function (row) {
+                    return { id: row[0], name: row[1] };
+                });
 
-                const posOptions = [
-                    <c:forEach var="p" items="${positionOptions}" varStatus="st">
-                        {id: "${p.POSITION_ID}", name: "${p.POSITION_NAME}" }<c:if test="${!st.last}">,</c:if>
-                    </c:forEach>
-                ];
+                const posOptionsRaw = [];
+                <c:forEach var="p" items="${positionOptions}">
+                    posOptionsRaw.push(["${p.POSITION_ID}", "${p.POSITION_NAME}"]);
+                </c:forEach>
+                const posOptions = posOptionsRaw.map(function (row) {
+                    return { id: row[0], name: row[1] };
+                });
 
                 const targetRules = [];
 
@@ -278,7 +282,17 @@
                 <c:choose>
                     <c:when test="${not empty targetRules}">
                         <c:forEach var="r" items="${targetRules}">
-                            addInitialRule("${empty r.targetType ? (empty r.TARGETTYPE ? r.TARGET_TYPE : r.TARGETTYPE) : r.targetType}", "${empty r.targetValue ? (empty r.TARGETVALUE ? r.TARGET_VALUE : r.TARGETVALUE) : r.targetValue}");
+                            <c:set var="resolvedType" value="${r.targetType}" />
+                            <c:if test="${empty resolvedType}">
+                                <c:set var="resolvedType" value="${empty r.TARGETTYPE ? r.TARGET_TYPE : r.TARGETTYPE}" />
+                            </c:if>
+
+                            <c:set var="resolvedValue" value="${r.targetValue}" />
+                            <c:if test="${empty resolvedValue}">
+                                <c:set var="resolvedValue" value="${empty r.TARGETVALUE ? r.TARGET_VALUE : r.TARGETVALUE}" />
+                            </c:if>
+
+                            addInitialRule("${resolvedType}", "${resolvedValue}");
                         </c:forEach>
                     </c:when>
                     <c:otherwise>

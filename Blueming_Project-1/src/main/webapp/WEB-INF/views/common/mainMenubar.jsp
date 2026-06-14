@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/semantic.min.css"/>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberDashboard.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard/memberDashboard.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common/mainMenubar.css">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">

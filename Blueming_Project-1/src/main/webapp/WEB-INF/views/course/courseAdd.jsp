@@ -6,66 +6,8 @@
         <head>
             <meta charset="UTF-8">
             <title>Insert title here</title>
-            <style>
-                #courseTitle {
-                    width: 80%;
-                    margin: 10px;
-                }
-
-                #description {
-                    width: 80%;
-                    height: 300px;
-                    resize: none;
-                }
-
-                input[type="date"] {
-                    width: 80%;
-                }
-
-                #ruleTypeSelector,
-                #deptSelector,
-                #posSelector {
-                    width: 80%;
-                }
-
-                #target-rule-area {
-                    width: 80%;
-                    margin: 0 auto;
-                    text-align: left;
-                }
-
-                #target-rules-list {
-                    margin-top: 10px;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    padding: 10px;
-                    min-height: 56px;
-                    background: #fafafa;
-                }
-
-                .target-rule-item {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 6px 8px;
-                    margin-bottom: 6px;
-                    background: #fff;
-                    border: 1px solid #e5e5e5;
-                    border-radius: 6px;
-                }
-
-                .target-rule-item:last-child {
-                    margin-bottom: 0;
-                }
-
-                .outer {
-                    float: center;
-                    margin: 20px;
-                    margin-left: 270px;
-                    width: 80%;
-                }
-            </style>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/courseStyle.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseForm.css">
         </head>
 
         <body>
@@ -133,17 +75,21 @@
             </div>
 
             <script>
-                const deptOptions = [
-                    <c:forEach var="d" items="${deptOptions}" varStatus="st">
-                        {id: "${d.DEPARTMENT_ID}", name: "${d.DEPARTMENT_NAME}" }<c:if test="${!st.last}">,</c:if>
-                    </c:forEach>
-                ];
+                const deptOptionsRaw = [];
+                <c:forEach var="d" items="${deptOptions}">
+                    deptOptionsRaw.push(["${d.DEPARTMENT_ID}", "${d.DEPARTMENT_NAME}"]);
+                </c:forEach>
+                const deptOptions = deptOptionsRaw.map(function (row) {
+                    return { id: row[0], name: row[1] };
+                });
 
-                const posOptions = [
-                    <c:forEach var="p" items="${positionOptions}" varStatus="st">
-                        {id: "${p.POSITION_ID}", name: "${p.POSITION_NAME}" }<c:if test="${!st.last}">,</c:if>
-                    </c:forEach>
-                ];
+                const posOptionsRaw = [];
+                <c:forEach var="p" items="${positionOptions}">
+                    posOptionsRaw.push(["${p.POSITION_ID}", "${p.POSITION_NAME}"]);
+                </c:forEach>
+                const posOptions = posOptionsRaw.map(function (row) {
+                    return { id: row[0], name: row[1] };
+                });
 
                 const targetRules = [];
 

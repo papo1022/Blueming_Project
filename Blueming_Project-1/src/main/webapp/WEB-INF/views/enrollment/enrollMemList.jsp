@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>수강 정보 관리</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/enrollMemList.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/enrollment/enrollMemList.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 

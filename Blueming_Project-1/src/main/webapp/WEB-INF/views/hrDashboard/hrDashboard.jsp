@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>HR Dashboard</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMenubar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common/mainMenubar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/hrDashboard.css">
 </head>
 <body>
