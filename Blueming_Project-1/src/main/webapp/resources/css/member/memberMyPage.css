@@ -199,7 +199,7 @@
 	.course-card-title,
 	.course-card h3 {
 	    margin: 0 0 20px 0;
-	    font-size: 20px;
+	    font-size: 12px;
 	    font-weight: 700;
 	}
 	
@@ -212,7 +212,7 @@
 	    background: #f8fafc;
 	    padding: 12px;
 	    text-align: left;
-	    font-size: 14px;
+	    font-size: 12px;
 	    border-bottom: 1px solid #e2e8f0;
 	}
 	
@@ -287,7 +287,7 @@
 	}
 	
 	.right-panel {
-    width: 550px;
+    width: 800px;
     min-width: 500px;
 
     display: flex;
