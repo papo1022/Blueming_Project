@@ -6,62 +6,69 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kh.blueming.common.model.vo.PageInfo;
+import com.kh.blueming.common.template.Pageination;
 import com.kh.blueming.hrdashboard.model.service.HrDashboardService;
 import com.kh.blueming.hrdashboard.model.vo.HrDashboardMember;
-import com.kh.blueming.member.model.service.MemberDashboardService;
-import com.kh.blueming.member.model.vo.Member;
-import com.kh.blueming.member.model.vo.MemberProfile;
-
-import jakarta.servlet.http.HttpSession;
+import com.kh.blueming.notice.model.service.NoticeService;
+import com.kh.blueming.notice.model.vo.Notice;
 
 @Controller
-@RequestMapping("/hrDashboard")
 public class HrDashboardController {
-	
-	@Autowired
-	private HrDashboardService hrDashboardService;
-	
-	@Autowired
-	private MemberDashboardService memberDashboardService;
-	// 프로필 조회 재사용
-	
-	@GetMapping("main")
-	public String hrDashboard(HttpSession session, Model model) {
-		
-		// 1. 세션에서 로그인 정보 꺼내기
-		Member loginUser = (Member)session.getAttribute("loginUser");
-		
-		// 2. 로그인 안 했으면 로그인 페이지로
-		if(loginUser == null) {
-			
-			return "redirect:/member/login";
-		}
-		
-		// 3. 인사팀 직원(ROLE = 'R')이 아니면 접근 차단
-		// N(사원) / S(관리자) / R(인사팀)
-		if(!loginUser.getRole().equals("R")) {
-			
-			return "redirect:/dashboard/main";
-		}
-		
-		int memberId = loginUser.getMemberId();
-		
-		// 4. 데이터 조회
-		// 프로필은 기존 MemberDashboardService 재사용
-		MemberProfile profile = memberDashboardService.selectMemberProfile(memberId);
-		
-		// 전체 사원 이수율 목록
-		List<HrDashboardMember> hrMemberList = hrDashboardService.selectHrMemberList();
-		
-		// 5. Model에 담기
-		model.addAttribute("profile", profile);
-		model.addAttribute("hrMemberList", hrMemberList);
-		
-		// 6. JSP로 이동
-		return "hrDashboard/hrDashboard";
-		// "/WEB-INF/views/hrDashboard/hrDashboard.jsp"
-	}
 
+    @Autowired
+    private HrDashboardService hrDashboardService;
+    
+    @Autowired
+    private NoticeService noticeService;
+
+    @GetMapping("/member/hr")
+    public String dashboard(
+            @RequestParam(value="mpage", defaultValue="1") int mpage,
+            @RequestParam(value="npage", defaultValue="1") int npage,
+            @RequestParam(value="keyword", required=false) String keyword,
+            Model model
+    ) {
+
+        int listCount = hrDashboardService.getMemberCount(keyword);
+        PageInfo mpi = Pageination.getPageInfo(listCount, mpage, 5, 10);
+
+        int noticeCount = hrDashboardService.getNoticeCount();
+        PageInfo npi = Pageination.getPageInfo(noticeCount, npage, 5, 5);
+
+        List<HrDashboardMember> progressList =
+                hrDashboardService.getMemberProgressList(mpi, keyword);
+
+        List<HrDashboardMember> noticeList =
+                hrDashboardService.getRecentNoticeList(npi);
+
+        model.addAttribute("progressList", progressList);
+        model.addAttribute("noticeList", noticeList);
+        model.addAttribute("mpi", mpi);
+        model.addAttribute("npi", npi);
+        model.addAttribute("keyword", keyword);
+
+        return "member/hr";
+    }
+    
+    @GetMapping("/notice/detail/hr") // 대시보드에서 접근할 별도 URL
+    public String noticeDetail(@RequestParam(value="no") int noticeId, Model model) {
+        
+        // 1. 조회수 증가 (NoticeController의 selectNotice 메서드 로직 재활용)
+        int result = noticeService.increaseCount(noticeId);
+        
+        if(result > 0) {
+            // 2. 상세 조회
+            Notice n = noticeService.selectNotice(noticeId);
+            model.addAttribute("n", n); // 💡 기존 noticeDetailView.jsp에서 'n'이라는 이름으로 쓰고 있으므로 동일하게 맞춥니다.
+            
+            // 💡 기존 공지사항 상세 페이지 뷰 경로를 그대로 리턴
+            return "notice/noticeDetailView"; 
+        } else {
+            model.addAttribute("errorMsg", "공지사항 상세조회에 실패했습니다.");
+            return "common/errorPage";
+        }
+    }
 }

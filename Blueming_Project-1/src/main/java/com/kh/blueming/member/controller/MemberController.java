@@ -63,10 +63,7 @@ public class MemberController {
 	    return "member/admin";
 	}
 
-	@GetMapping("hr")
-	public String hr() {
-	    return "member/hr";
-	}
+	
 
 	@GetMapping("employee")
 	public String employee() {
@@ -278,7 +275,7 @@ public class MemberController {
 
 	    // 비밀번호 확인
 	    if(passwordMatched) {
-
+	    	session.removeAttribute("alertMsg");
 	        // 세션 저장
 	        session.setAttribute("loginUser", loginUser);
 

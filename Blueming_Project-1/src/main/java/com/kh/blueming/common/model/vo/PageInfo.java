@@ -23,6 +23,9 @@ public class PageInfo {
 	private int startPage;
 	private int endPage;
 	
+	 // 🔥 추가 (필수)
+    private int startRow;
+    private int endRow;
 	
 
 }

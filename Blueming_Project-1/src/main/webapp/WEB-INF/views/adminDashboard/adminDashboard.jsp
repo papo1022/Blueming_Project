@@ -104,6 +104,6 @@
         </div>
     </div>
 </div>
-
+<a href="<c:url value='/member/logout'/>">로그아웃</a>
 </body>
 </html>

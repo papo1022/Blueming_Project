@@ -128,6 +128,12 @@
         </div>
         
     </div>
+    <c:if test="${not empty alertMsg}">
+        <script>
+            alertify.alert("알림", "${alertMsg}");
+        </script>
+        <c:remove var="alertMsg" scope="session"/>
+    </c:if>
     
 </body>
 </html>
