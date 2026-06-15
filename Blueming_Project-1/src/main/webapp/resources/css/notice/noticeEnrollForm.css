@@ -1,5 +1,28 @@
 @charset "UTF-8";
 
+.outer {
+    margin-left: 250px;
+    min-height: 100vh;
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+.page-title {
+    width: 100%;
+    max-width: 1500px;
+    margin-bottom: 20px;
+}
+
+.notice-card {
+    width: 100%;
+    max-width: 1200px;
+}
+
 #enroll-form {
     padding: 35px;
 }
