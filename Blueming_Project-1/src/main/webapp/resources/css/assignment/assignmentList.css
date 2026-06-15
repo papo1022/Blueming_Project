@@ -8,13 +8,31 @@ body {
 
 /* ===== 본문 ===== */
 .outer {
-    margin-left: 4x`50px;
-    max-width: 1300px;
+    margin-left: 250px;
     min-height: 100vh;
     padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-sizing: border-box;
 }
 
+/* 고정 폭 */
+.outer h2,
+#search-area,
+.list-area,
+.paging-area {
+    width: 1600px;
+    max-width: 1600px;
+}
+
+#search-area,
+.list-area,
+.paging-area,
+.outer h2 {
+    width: 1600px;
+}
 /* ===== 제목 ===== */
 .outer h2 {
     text-align: center;
