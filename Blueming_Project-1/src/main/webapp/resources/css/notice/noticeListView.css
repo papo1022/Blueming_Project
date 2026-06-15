@@ -12,11 +12,14 @@ body {
 
 /* ===== 본문 ===== */
 .outer {
-    margin-left: 250px;
+    margin-left: 450px;
     padding: 30px;
     width: calc(100vw - 250px);
     min-height: 100vh;
     box-sizing: border-box;
+    
+    width: calc(100vw - 250px);
+    max-width: 1200px;  
 }
 
 /* ===== 제목 ===== */

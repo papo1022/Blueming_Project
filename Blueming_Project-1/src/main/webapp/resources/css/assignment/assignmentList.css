@@ -8,8 +8,8 @@ body {
 
 /* ===== 본문 ===== */
 .outer {
-    margin-left: 250px;
-    width: calc(100vw - 250px);
+    margin-left: 450px;
+    max-width: 1300px;
     min-height: 100vh;
     padding: 30px;
     box-sizing: border-box;

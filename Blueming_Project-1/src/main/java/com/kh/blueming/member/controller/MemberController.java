@@ -345,7 +345,7 @@ public class MemberController {
 	                    listCount,
 	                    currentPage,
 	                    5,   // 페이지번호 5개씩
-	                    5   // 한 페이지당 10개
+	                    3   // 한 페이지당 10개
 	            );
 
 	    // 현재 페이지 강의 조회

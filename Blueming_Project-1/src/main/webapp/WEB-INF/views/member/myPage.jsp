@@ -28,7 +28,7 @@
 
   
 
-   <div class="main-layout">
+
 
    
     <div class="mypage-container">
