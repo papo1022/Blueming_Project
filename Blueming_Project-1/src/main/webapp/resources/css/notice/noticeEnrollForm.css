@@ -13,12 +13,14 @@
 }
 
 .page-title {
-    width: 1500px;
+    width: 100%;
+    max-width: 1500px;
     margin-bottom: 20px;
 }
 
 .notice-card {
-    width: 1200px;
+    width: 100%;
+    max-width: 1200px;
 }
 
 #enroll-form {
