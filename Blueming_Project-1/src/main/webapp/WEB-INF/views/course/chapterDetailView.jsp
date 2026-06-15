@@ -10,6 +10,7 @@
                 href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
             <link rel="stylesheet"
                 href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+            <link rel="stylesheet" href="/blueming/resources/css/course/courseStyle.css">
             <link rel="stylesheet" href="/blueming/resources/css/course/chapterDetailView.css">
         </head>
 
@@ -189,10 +190,14 @@
                                                 <c:if test="${sessionScope.loginUser.role eq 'S'}">
                                                     <td>
                                                         <div class="assignment-actions">
-                                                            <button type="button" class="btn btn-sm btn-primary grade-assignment-btn" data-assignment-id="${assignment.assignmentId}">
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-primary grade-assignment-btn"
+                                                                data-assignment-id="${assignment.assignmentId}">
                                                                 채점
                                                             </button>
-                                                            <button type="button" class="btn btn-sm btn-warning update-assignment-btn" data-assignment-id="${assignment.assignmentId}">
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-warning update-assignment-btn"
+                                                                data-assignment-id="${assignment.assignmentId}">
                                                                 수정
                                                             </button>
                                                             <form action="/blueming/assignment/delete" method="post">
@@ -609,13 +614,13 @@
                 onReady(function () {
                     // Assignment action button handlers
                     document.querySelectorAll('.grade-assignment-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
+                        btn.addEventListener('click', function () {
                             goGradeAssignment(this.dataset.assignmentId);
                         });
                     });
 
                     document.querySelectorAll('.update-assignment-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
+                        btn.addEventListener('click', function () {
                             updateAssignment(this.dataset.assignmentId);
                         });
                     });

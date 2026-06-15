@@ -16,7 +16,7 @@
 
 
             <div class="outer">
-                <form id="courseAddForm" action="addCourse" align="center" method="post" enctype="multipart/form-data"
+                <form id="content-card" action="addCourse" align="center" method="post" enctype="multipart/form-data"
                     onsubmit="return validateForm();">
                     <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
                     <h1 class="page-title">강의 등록</h1>
@@ -30,12 +30,8 @@
                             <td><textarea name="description" id="description" required maxlength="666"></textarea></td>
                         </tr>
                         <tr>
-                            <td>* 강의 시작 시간</td>
-                            <td><input type="date" name="startDate" required></td>
-                        </tr>
-                        <tr>
-                            <td>* 강의 마감 시간</td>
-                            <td><input type="date" name="endDate" required></td>
+                            <td>* 강의 시간</td>
+                            <td><input type="date" name="startDate" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>~</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" name="endDate" required></td>
                         </tr>
                         <tr>
                             <td>* 강좌 대상</td>

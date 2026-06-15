@@ -11,6 +11,7 @@
                 href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/dashboard/memberDashboard.css">
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common/mainMenubar.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseListView.css">
         </head>
 
@@ -20,7 +21,9 @@
 
             <div class="outer">
                 <div class="main-panel">
-                    <h2 class="page-title-left">강의리스트</h2>
+                    <h2 class="page-title-left">
+                       <i class="page-title-left fi fi-sr-graduation-cap"> 강의리스트</i> 
+                    </h2>
 
                     <div class="top-controls">
                         <div id="search-area" align="left">
