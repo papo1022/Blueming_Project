@@ -85,24 +85,40 @@
 </div>
 
 	<script>
-window.addEventListener("load", function() {
+	document.addEventListener("DOMContentLoaded", function(){
 
-    const title = document.getElementById("noticeTitle");
-    const content = document.getElementById("content");
+	    const titleInput = document.getElementById("noticeTitle");
+	    const titleCurr = document.getElementById("title-curr");
 
-    const titleCount = document.getElementById("titleCount");
-    const contentCount = document.getElementById("contentCount");
+	    const contentInput = document.getElementById("content");
+	    const contentCurr = document.getElementById("content-curr");
 
-    function updateCount() {
-        titleCount.textContent = title.value.length + " / 15";
-        contentCount.textContent = content.value.length + " / 400";
-    }
+	    function updateCounter(inputEl, counterEl, maxLength){
 
-    title.addEventListener("input", updateCount);
-    content.addEventListener("input", updateCount);
+	        const currentLength = inputEl.value.length;
 
-    updateCount();
-});
+	        counterEl.textContent = currentLength;
+
+	        if(currentLength >= maxLength){
+	            counterEl.style.color = "#ef4444";
+	            counterEl.style.fontWeight = "700";
+	        }else{
+	            counterEl.style.color = "#94a3b8";
+	            counterEl.style.fontWeight = "400";
+	        }
+	    }
+
+	    titleInput.addEventListener("input", function(){
+	        updateCounter(titleInput, titleCurr, 15);
+	    });
+
+	    contentInput.addEventListener("input", function(){
+	        updateCounter(contentInput, contentCurr, 400);
+	    });
+
+	    updateCounter(titleInput, titleCurr, 15);
+	    updateCounter(contentInput, contentCurr, 400);
+	});
 </script>
 	
 	<br><br>
