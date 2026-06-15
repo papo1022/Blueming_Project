@@ -134,22 +134,26 @@
             </div>
 
             <%-- 과제 목록 --%>
-            <div class="assignment-section">
-                <div class="assignment-section-title">과제</div>
-                <c:forEach var="assign" items="${assignmentList}">
-                    <div class="assignment-item">
-                        <span>${assign.assignmentTitle}</span>
-                        <c:choose>
-                            <c:when test="${assign.submitStatus == 'SUBMITTED'}">
-                                <button class="btn-submit">제출</button>
-                            </c:when>
-                            <c:otherwise>
-                                <button class="btn-unsubmit">미제출</button>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </c:forEach>
-            </div>
+			<div class="assignment-section">
+			    <div class="assignment-section-title">과제</div>
+			    <c:forEach var="assign" items="${assignmentList}">
+			        <div class="assignment-item">
+			            <span>${assign.assignmentTitle}</span>
+			            <c:choose>
+			                <c:when test="${assign.submitStatus == 'SUBMITTED'}">
+			                    <a href="${pageContext.request.contextPath}/assignment/list">
+			                        <button type="button" class="btn-submit">제출</button>
+			                    </a>
+			                </c:when>
+			                <c:otherwise>
+			                    <a href="${pageContext.request.contextPath}/assignment/list">
+			                        <button type="button" class="btn-unsubmit">미제출</button>
+			                    </a>
+			                </c:otherwise>
+			            </c:choose>
+			        </div>
+			    </c:forEach>
+			</div>
 
         </div><%-- /right-col --%>
 
