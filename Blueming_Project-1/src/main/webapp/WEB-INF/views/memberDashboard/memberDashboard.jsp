@@ -27,7 +27,8 @@
                     <p>오늘의 교육 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요." maxlength="100"> <i class="fi fi-rr-search"></i>
+                    <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요." maxlength="100"> 
+                    <button type="submit" id="search-btn"><i class="fi fi-rr-search"></i></button>
 	            </div>
             </div>
 

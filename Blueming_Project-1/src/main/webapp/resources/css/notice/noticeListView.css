@@ -22,18 +22,19 @@ body {
 /* ===== 제목 ===== */
 .outer h2 {
     text-align: center;
-    font-weight: 700;
-    margin-bottom: 25px;
+    font-weight: bold;
+    margin-bottom: 30px;
     color: #2d3748;
-    font-size: 30px;
+    font-size: 20px;
 }
 
 /* ===== 검색영역 ===== */
 #search-area {
-    width: 100%;
+    width: 50%;
+    margin-left: 280px;
     margin-bottom: 20px;
     background: white;
-    padding: 25px;
+    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
 }
@@ -49,6 +50,8 @@ body {
     flex: 1;
     max-width: 700px;
     height: 45px;
+    border-color: #c5c6c7;
+    border-radius: 100px;
 }
 
 #search-area select {
@@ -62,7 +65,7 @@ body {
 
 #search-area input:focus,
 #search-area select:focus {
-    border-color: #4fd1c5;
+    border-color: #40E0D0;
 }
 
 #search-area button {
@@ -70,9 +73,8 @@ body {
     width: 90px;
     border: none;
     border-radius: 10px;
-    background: #4fd1c5;
+    background: #40E0D0;
     color: white;
-    font-weight: 600;
 }
 
 #search-area button:hover {
@@ -88,11 +90,10 @@ body {
 }
 
 .write-btn-area .btn {
-    background: #4fd1c5;
+    background: #40E0D0;
     border: none;
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 10px;
-    font-weight: 600;
 }
 
 .write-btn-area .btn:hover {
@@ -120,26 +121,25 @@ body {
     text-align: center;
     height: 55px;
     border: none;
-    background: #4fd1c5;
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
+    background: #40E0D0;
+    color: #ffffff;
+    font-size: 15px;
 }
 
 /* ===== 본문 ===== */
 .list-area tbody td {
     height: 55px;
-    padding: 8px 12px;
+    padding: 10px 20px;
     vertical-align: middle;
     border-top: 1px solid #eef2f7;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 /* 제목 컬럼 */
 .list-area tbody td:nth-child(2) {
     text-align: left;
-    padding-left: 25px;
-    font-weight: 500;
+    padding-left: 20px;
+    font-weight: bold;
 }
 
 /* 행 호버 */
@@ -154,8 +154,8 @@ body {
 
 /* 글번호 배지 */
 .list-area tbody td:first-child {
-    font-weight: 700;
-    color: #4fd1c5;
+    font-weight: bold;
+    color: #40E0D0;
 }
 
 /* ===== 빈 데이터 ===== */
@@ -168,7 +168,7 @@ body {
 /* ===== 페이징 ===== */
 .paging-area {
     width: 100%;
-    margin-top: 25px;
+    margin-top: 30px;
 }
 
 .pagination {
@@ -188,23 +188,23 @@ body {
     border: none;
     border-radius: 50%;
     color: #555;
-    background: white;
+    background: #ffffff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .pagination .page-item.active .page-link {
-    background: #4fd1c5;
-    color: white;
+    background: #40E0D0;
+    color: #ffffff;
 }
 
 .pagination .page-link:hover {
     background: #e8fffd;
-    color: #4fd1c5;
+    color: #40E0D0;
 }
 
 .pagination .page-item.active .page-link:hover {
-    background: #4fd1c5;
-    color: white;
+    background: #40E0D0;
+    color: #ffffff;
 }
 
 /* ===== 불필요한 br 제거 ===== */
@@ -239,7 +239,7 @@ br {
 
 .list-area td:nth-child(2) {
     text-align: left;
-    padding-left: 30px;
+    padding-left: 20px;
 }
 
 .list-area {
