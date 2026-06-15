@@ -32,25 +32,34 @@
 
             <table>
 
-                <tr>
-                    <th>제목</th>
-                    <td>
-                        <input type="text"
-                               name="noticeTitle"
-                               value="${requestScope.n.noticeTitle}"
-                               maxlength="50"
-                               required>
-                    </td>
-                </tr>
+				<tr>
+				    <th>제목</th>
+				    <td>
+				        <input type="text"
+				               id="noticeTitle"
+				               name="noticeTitle"
+				               value="${requestScope.n.noticeTitle}"
+				               maxlength="15"
+				               required>
+				        <div class="counter-text">
+                            <span id="title-curr">0</span> / 15자
+                        </div>
 
-                <tr>
-                    <th>내용</th>
-                    <td>
-                        <textarea name="content"
-                                  maxlength="2000"
-                                  required>${requestScope.n.content}</textarea>
-                    </td>
-                </tr>
+				    </td>
+				</tr>
+				
+				<tr>
+				    <th>내용</th>
+				    <td>
+				        <textarea id="content"
+				                  name="content"
+				                  maxlength="400"
+				                  required>${requestScope.n.content}</textarea>
+				         <div class="counter-text">
+                            <span id="content-curr">0</span> / 400자
+                        </div>
+				    </td>
+				</tr>
 
             </table>
 
@@ -74,6 +83,27 @@
     </div>
 
 </div>
+
+	<script>
+window.addEventListener("load", function() {
+
+    const title = document.getElementById("noticeTitle");
+    const content = document.getElementById("content");
+
+    const titleCount = document.getElementById("titleCount");
+    const contentCount = document.getElementById("contentCount");
+
+    function updateCount() {
+        titleCount.textContent = title.value.length + " / 15";
+        contentCount.textContent = content.value.length + " / 400";
+    }
+
+    title.addEventListener("input", updateCount);
+    content.addEventListener("input", updateCount);
+
+    updateCount();
+});
+</script>
 	
 	<br><br>
 

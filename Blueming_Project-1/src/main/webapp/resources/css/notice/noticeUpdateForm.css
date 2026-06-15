@@ -3,7 +3,12 @@
 #update-form {
     padding: 35px;
 }
-
+.counter-text {
+    text-align: right;
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 13px;
+}
 #update-form table {
     width: 100%;
     border-collapse: collapse;
