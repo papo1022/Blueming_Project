@@ -10,14 +10,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         resultType="com.kh.blueming.member.model.vo.OngoingCourse">
 
     SELECT
-        COURSE_ID,
-        COURSE_TITLE,
-        DESCRIPTION,
-        MEMBER_ID,
-        STATUS,
-        START_DATE,
-        END_DATE,
-        TOTAL_HOURS
+        COURSE_ID      AS courseId,
+        COURSE_TITLE   AS courseTitle,
+        DESCRIPTION    AS description,
+        MEMBER_ID      AS memberId,
+        STATUS         AS status,
+        START_DATE     AS startDate,
+        END_DATE       AS endDate,
+        TOTAL_HOURS    AS totalHours
     FROM COURSE
     WHERE MEMBER_ID = #{memberId}
     ORDER BY START_DATE DESC
