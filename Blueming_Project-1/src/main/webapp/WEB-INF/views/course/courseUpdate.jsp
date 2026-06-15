@@ -6,66 +6,9 @@
         <head>
             <meta charset="UTF-8">
             <title>Insert title here</title>
-            <style>
-                .outer {
-                    float: center;
-                    margin: 20px;
-                    margin-left: 270px;
-                    width: 80%;
-                }
-
-                #courseTitle {
-                    width: 80%;
-                    margin: 10px;
-                }
-
-                #description {
-                    width: 80%;
-                    height: 300px;
-                    resize: none;
-                }
-
-                input[type="date"] {
-                    width: 80%;
-                }
-
-                #ruleTypeSelector,
-                #deptSelector,
-                #posSelector {
-                    width: 80%;
-                }
-
-                #target-rule-area {
-                    width: 80%;
-                    margin: 0 auto;
-                    text-align: left;
-                }
-
-                #target-rules-list {
-                    margin-top: 10px;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    padding: 10px;
-                    min-height: 56px;
-                    background: #fafafa;
-                }
-
-                .target-rule-item {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 6px 8px;
-                    margin-bottom: 6px;
-                    background: #fff;
-                    border: 1px solid #e5e5e5;
-                    border-radius: 6px;
-                }
-
-                .target-rule-item:last-child {
-                    margin-bottom: 0;
-                }
-            </style>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseForm.css">
+            
         </head>
 
         <body>
@@ -73,7 +16,7 @@
             <jsp:include page="../common/mainMenubar.jsp" />
 
             <div class="outer">
-                <form id="courseUpdateForm" action="updateCourse" align="center" method="post" enctype="multipart/form-data"
+                <form id="content-card" action="updateCourse" align="center" method="post" enctype="multipart/form-data"
                     onsubmit="return validateForm();">
                     <h1 class="page-title">강의 수정</h1>
                     <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}">
@@ -91,12 +34,8 @@
                                     required>${requestScope.c.description}</textarea></td>
                         </tr>
                         <tr>
-                            <td>* 강의 시작 시간</td>
-                            <td><input type="date" name="startDate" value="${requestScope.c.startDate}" required></td>
-                        </tr>
-                        <tr>
-                            <td>* 강의 마감 시간</td>
-                            <td><input type="date" name="endDate" value="${requestScope.c.endDate}" required></td>
+                            <td>* 강의 시간</td>
+                            <td><input type="date" name="startDate" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>~</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" name="endDate" required></td>
                         </tr>
                         <tr>
                             <td>* 강좌 대상</td>
