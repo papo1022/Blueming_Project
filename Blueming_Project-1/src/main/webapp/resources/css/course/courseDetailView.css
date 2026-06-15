@@ -1,17 +1,6 @@
-.outer {
-    float: center;
-    margin: 20px;
-    margin-left: 270px;
-    width: 80%;
-}
-
 #chapter-area>tbody>tr:hover {
     background-color: #f8f9fa;
     cursor: pointer;
-}
-
-.table {
-    text-align: center;
 }
 
 .text-big {
@@ -22,4 +11,12 @@
 .text-small {
     font-size: 13px;
     font-weight: bold;
+}
+
+#detail-area {
+    margin: 30px auto;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .08);
 }

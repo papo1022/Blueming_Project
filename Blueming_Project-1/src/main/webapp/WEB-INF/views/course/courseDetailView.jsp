@@ -6,6 +6,7 @@
         <head>
             <meta charset="UTF-8">
             <title>blueming</title>
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
             <link rel="stylesheet" href="/blueming/resources/css/course/courseDetailView.css">
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         </head>
@@ -72,13 +73,13 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="${ requestScope.course.status eq 'Y' }">
-                                            진행중
+                                            <b style="color: #338cff">진행중</b>
                                         </c:when>
                                         <c:when test="${ requestScope.course.status eq 'W' }">
-                                            예정
+                                            <b style="color: #ffc635">예정</b>
                                         </c:when>
                                         <c:when test="${ requestScope.course.status eq 'N' }">
-                                            종료
+                                            <b style="color: #bb3b23">종료</b>
                                         </c:when>
                                     </c:choose>
                                 </td>

@@ -7,6 +7,7 @@
             <meta charset="UTF-8">
             <title>Insert title here</title>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/course/courseStyle.css">
+            
 
         <body>
 
