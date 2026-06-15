@@ -32,25 +32,34 @@
 
             <table>
 
-                <tr>
-                    <th>제목</th>
-                    <td>
-                        <input type="text"
-                               name="noticeTitle"
-                               value="${requestScope.n.noticeTitle}"
-                               maxlength="50"
-                               required>
-                    </td>
-                </tr>
+				<tr>
+				    <th>제목</th>
+				    <td>
+				        <input type="text"
+				               id="noticeTitle"
+				               name="noticeTitle"
+				               value="${requestScope.n.noticeTitle}"
+				               maxlength="15"
+				               required>
+				        <div class="counter-text">
+                            <span id="title-curr">0</span> / 15자
+                        </div>
 
-                <tr>
-                    <th>내용</th>
-                    <td>
-                        <textarea name="content"
-                                  maxlength="2000"
-                                  required>${requestScope.n.content}</textarea>
-                    </td>
-                </tr>
+				    </td>
+				</tr>
+				
+				<tr>
+				    <th>내용</th>
+				    <td>
+				        <textarea id="content"
+				                  name="content"
+				                  maxlength="400"
+				                  required>${requestScope.n.content}</textarea>
+				         <div class="counter-text">
+                            <span id="content-curr">0</span> / 400자
+                        </div>
+				    </td>
+				</tr>
 
             </table>
 
@@ -74,6 +83,43 @@
     </div>
 
 </div>
+
+	<script>
+	document.addEventListener("DOMContentLoaded", function(){
+
+	    const titleInput = document.getElementById("noticeTitle");
+	    const titleCurr = document.getElementById("title-curr");
+
+	    const contentInput = document.getElementById("content");
+	    const contentCurr = document.getElementById("content-curr");
+
+	    function updateCounter(inputEl, counterEl, maxLength){
+
+	        const currentLength = inputEl.value.length;
+
+	        counterEl.textContent = currentLength;
+
+	        if(currentLength >= maxLength){
+	            counterEl.style.color = "#ef4444";
+	            counterEl.style.fontWeight = "700";
+	        }else{
+	            counterEl.style.color = "#94a3b8";
+	            counterEl.style.fontWeight = "400";
+	        }
+	    }
+
+	    titleInput.addEventListener("input", function(){
+	        updateCounter(titleInput, titleCurr, 15);
+	    });
+
+	    contentInput.addEventListener("input", function(){
+	        updateCounter(contentInput, contentCurr, 400);
+	    });
+
+	    updateCounter(titleInput, titleCurr, 15);
+	    updateCounter(contentInput, contentCurr, 400);
+	});
+</script>
 	
 	<br><br>
 
