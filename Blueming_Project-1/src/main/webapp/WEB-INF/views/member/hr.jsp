@@ -10,7 +10,6 @@
 </head>
 <body>
 <jsp:include page="../common/mainMenubar.jsp" />
-<jsp:include page="../common/userInfo.jsp" />
 <jsp:include page="../hrDashboard/hrDashboard.jsp" />
 
 </body>

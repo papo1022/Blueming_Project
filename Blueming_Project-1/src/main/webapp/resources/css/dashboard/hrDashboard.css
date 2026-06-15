@@ -191,13 +191,6 @@
     border-left: 1px solid #f2f2f2;
 }
 
-.right-col-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #222;
-    margin-bottom: 20px;
-}
-
 
 /* 달력 (월별) */
 .calendar-card {
