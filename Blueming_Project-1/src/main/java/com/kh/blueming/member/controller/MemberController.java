@@ -282,9 +282,7 @@ public class MemberController {
 	        // 세션 저장
 	        session.setAttribute("loginUser", loginUser);
 
-	        session.setAttribute("alertMsg",
-	                             "성공적으로 로그인이 되었습니다.");
-
+	      
 	        // 권한별 페이지 이동
 	        switch(loginUser.getRole()) {
 
