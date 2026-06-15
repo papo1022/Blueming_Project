@@ -18,7 +18,7 @@
 
                 <input type="hidden" name="memberId" value="${sessionScope.loginUser.memberId}"><br>
                 <input type="hidden" name="courseId" value="${courseId}">
-                <table class="table">
+                <table class="table" id="detail-area">
                     <tr>
                         <td>챕터 번호</td>
                         <td><input type="number" name="chapterOrder" value="${nextOrder}" required readonly></td>

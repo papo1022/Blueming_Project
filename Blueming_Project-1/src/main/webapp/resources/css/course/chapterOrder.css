@@ -1,12 +1,5 @@
 @charset "UTF-8";
 
-.outer {
-    margin: 20px;
-    margin-left: 270px;
-    width: calc(100% - 320px);
-    max-width: 1080px;
-}
-
 .chapter-order-shell {
     display: flex;
     flex-direction: column;
