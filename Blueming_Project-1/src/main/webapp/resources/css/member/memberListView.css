@@ -15,9 +15,9 @@ body {
 }
 
 .table-container {
-    width: 1440px;
-    margin-left: 350px;
-    margin-top: 40px;
+    width: 1240px;
+    margin-left: 320px;
+    margin-top: 10px;
     text-align: center;
     border-radius: 10px;
     overflow: hidden;
