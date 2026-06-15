@@ -72,7 +72,7 @@
 					<div class="label">입사일</div>
 					<div class="value"><fmt:formatDate value="${member.hireDate}" pattern="yyyy-MM-dd"/></div>
 				</div>
-				<div class="row last-row">
+				<div class="row ${member.status == 'Y' ? 'last-row' : ''}">
 					<div class="label">상태</div>
 					<div class="value">
 						<c:choose>
@@ -85,7 +85,7 @@
 
 				<%-- 추가 정보 (휴직/퇴사일) --%>
 				<c:if test="${member.status == 'R' or member.status == 'N'}">
-					<div class="row">
+					<div class="row last-row">
 						<div class="label">${member.status == 'R' ? '휴직기간' : '퇴사일'}</div>
 						<div class="value">
 							<c:choose>

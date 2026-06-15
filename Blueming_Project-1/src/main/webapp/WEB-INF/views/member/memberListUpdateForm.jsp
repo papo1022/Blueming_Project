@@ -29,23 +29,23 @@
     <div class="value"><input type="text" value="${member.memberId}" readonly></div>
 </div>
 
-<div class="update-row">
-    <div class="update-label">로그인ID</div>
-    <div class="update-value">
+<div class="row">
+    <div class="label">로그인ID</div>
+    <div class="value">
 		<input type="text" name="loginId" value="<c:out value='${member.loginId}' />" maxlength="20" readonly style="background-color: #e9ecef;">
     </div>
 </div>
 
-<div class="update-row">
-    <div class="update-label">이름</div>
-    <div class="update-value">
+<div class="row">
+    <div class="label">이름</div>
+    <div class="value">
 		<input type="text" name="name" value="<c:out value='${member.name}' />" maxlength="100" required>
     </div>
 </div>
 
-<div class="update-row">
-    <div class="update-label">이메일</div>
-    <div class="update-value">
+<div class="row">
+    <div class="label">이메일</div>
+    <div class="value">
 		<input type="email" name="email" value="<c:out value='${member.email}' />" maxlength="100">
     </div>
 </div>
@@ -172,9 +172,9 @@
 		</form>
 	</div>
 
-			<div class="update-row" id="retireDateRow" style="display:none;">
-				<div class="update-label">퇴사일</div>
-				<div class="update-value">
+			<div class="row" id="retireDateRow" style="display:none;">
+				<div class="label">퇴사일</div>
+				<div class="value">
 					<input type="date" name="retireDate" id="retireDateInput" value="${fmtRetireDate}">
 				</div>
 			</div>
