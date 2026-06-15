@@ -38,7 +38,7 @@ public class ReplyController {
 
     // 댓글 목록 조회
     @ResponseBody
-    @PostMapping(value="/list", produces="application/json; charset=UTF-8")
+    @GetMapping(value="/list", produces="application/json; charset=UTF-8")
     public List<Reply> selectReplyList(
             @RequestParam("chapterId") int chapterId){
 
