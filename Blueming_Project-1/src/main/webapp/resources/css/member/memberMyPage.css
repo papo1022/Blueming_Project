@@ -212,7 +212,7 @@
 	    background: #f8fafc;
 	    padding: 12px;
 	    text-align: left;
-	    font-size: 14px;
+	    font-size: 20px;
 	    border-bottom: 1px solid #e2e8f0;
 	}
 	
@@ -287,14 +287,15 @@
 	}
 	
 	.right-panel {
-    width: 340px;
-    min-width: 340px;
+    width: 550px;
+    min-width: 500px;
 
     display: flex;
     flex-direction: column;
-
-    gap: 20px;
-	}
+    gap: 40px;
+    
+     margin-top: 50px;
+}
 	
 	
 .calendar-card {
