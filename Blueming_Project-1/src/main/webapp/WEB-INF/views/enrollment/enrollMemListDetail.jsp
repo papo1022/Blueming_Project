@@ -65,13 +65,8 @@
                                 <td><c:out value="${item.deptName}" /></td>
                                 <td><c:out value="${item.positionName}" /></td>
                                 <td><c:out value="${item.name}" /></td>
-                                <td>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="width:45px;">
-                                            <c:out value="${item.chapCompRate}" />%
-                                        </span>
-                                       
-                                    </div>
+                                <td><c:out value="${item.chapCompRate}" />%
+                                     
                                 </td>
                             </tr>
                         </c:forEach>
