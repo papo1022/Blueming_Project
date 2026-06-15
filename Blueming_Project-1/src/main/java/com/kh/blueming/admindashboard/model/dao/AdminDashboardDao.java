@@ -12,17 +12,13 @@ import com.kh.blueming.notice.model.vo.Notice;
 @Repository
 public class AdminDashboardDao {
 	
-	@Autowired
-	private SqlSessionTemplate sqlSession;
-	
 	// 관리자 대시보드 강의 목록 조회
-	public List<AdminDashboardCourse> selectAdminCourseList() {
+	public List<AdminDashboardCourse> selectAdminCourseList(SqlSessionTemplate sqlSession) {
 		return sqlSession.selectList("adminDashboardMapper.selectAdminCourseList");
 	}
 	
 	// 최근 공지사항 3개 조회
-	public List<Notice> selectRecentNoticeList() {
-		
+	public List<Notice> selectRecentNoticeList(SqlSessionTemplate sqlSession) {
 		return sqlSession.selectList("adminDashboardMapper.selectRecentNoticeList");
 	}
 }

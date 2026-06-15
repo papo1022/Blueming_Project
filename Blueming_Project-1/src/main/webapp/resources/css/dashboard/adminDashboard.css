@@ -58,6 +58,11 @@
     font-size: 14px;
 }
 
+#search-btn {
+	border: none;
+	background: transparent;
+}
+
 /* 프로필 바 (우측 상단) */
 
 .profile-bar {

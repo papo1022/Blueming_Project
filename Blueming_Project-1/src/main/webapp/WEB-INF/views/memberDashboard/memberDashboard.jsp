@@ -27,7 +27,8 @@
                     <p>오늘의 교육 이수율을 확인해 보세요.</p>
                 </div>
                 <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요." maxlength="100"> <i class="fi fi-rr-search"></i>
+                    <input type="text" id="search-input" placeholder="검색할 강의를 입력해 주세요." maxlength="100"> 
+                    <button type="submit" id="search-btn"><i class="fi fi-rr-search"></i></button>
 	            </div>
             </div>
 
@@ -133,22 +134,26 @@
             </div>
 
             <%-- 과제 목록 --%>
-            <div class="assignment-section">
-                <div class="assignment-section-title">과제</div>
-                <c:forEach var="assign" items="${assignmentList}">
-                    <div class="assignment-item">
-                        <span>${assign.assignmentTitle}</span>
-                        <c:choose>
-                            <c:when test="${assign.submitStatus == 'SUBMITTED'}">
-                                <button class="btn-submit">제출</button>
-                            </c:when>
-                            <c:otherwise>
-                                <button class="btn-unsubmit">미제출</button>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </c:forEach>
-            </div>
+			<div class="assignment-section">
+			    <div class="assignment-section-title">과제</div>
+			    <c:forEach var="assign" items="${assignmentList}">
+			        <div class="assignment-item">
+			            <span>${assign.assignmentTitle}</span>
+			            <c:choose>
+			                <c:when test="${assign.submitStatus == 'SUBMITTED'}">
+			                    <a href="${pageContext.request.contextPath}/assignment/list">
+			                        <button type="button" class="btn-submit">제출</button>
+			                    </a>
+			                </c:when>
+			                <c:otherwise>
+			                    <a href="${pageContext.request.contextPath}/assignment/list">
+			                        <button type="button" class="btn-unsubmit">미제출</button>
+			                    </a>
+			                </c:otherwise>
+			            </c:choose>
+			        </div>
+			    </c:forEach>
+			</div>
 
         </div><%-- /right-col --%>
 

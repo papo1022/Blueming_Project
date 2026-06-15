@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+
+    /* 1. 댓글(2) 전체 배경색 */
+    .reply-header-bg {
+        background-color: #40E0D0; /* 청록색 계열 */
+        padding: 10px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        border-radius:10px;
+    }
+
+    /* 2. 답글 입력창 초기 숨김 */
+    .re-input-area {
+        display: none; /* 답글달기 버튼 클릭 시 보여짐 */
+        background: #f9f9f9;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+    }
+    
+    /* 3. 하단 입력창 정렬 */
+    .write-area { margin-top: 30px; }
+    .bottom-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    
+    .reply-btn{
+    cursor:pointer;
+    margin-left:10px;
+
+    }
+
+    /* 입력창 전체 영역 */
+    .area { background: #f8f9fa; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+
+    /* 입력창 하단 컨트롤 영역 */
+    .reply-controls { 
+        display: flex; 
+        flex-direction: column; /* 세로 방향 배치 */
+        gap: 10px;              /* 위아래 간격 */
+        margin-top: 15px;
+    }
+
+    /* 상단: 비밀글 + 등록 (우측 정렬) */
+    .top-row { 
+        display: flex; 
+        justify-content: flex-end; /* 우측 정렬 */
+        align-items: center;
+        gap: 15px; 
+        
+    }
+
+    /* 하단: 파일첨부 (좌측 정렬) */
+    .bottom-row { 
+        display: flex; 
+        justify-content: flex-end; /* 좌측 정렬 */
+        align-items: center;
+        gap: 10px; 
+       
+        
+    }
+	.btn1{
+	border:1px solid;
+       border-radius:3px;
+       margin: 20px 15px;
+	}
+	.btn2{
+	border:1px solid;
+       border-radius:3px;
+       margin:20px 15px;
+	}
+    .file { display: none; }
+    .file-name { font-size: 13px; color: #666; }
+    

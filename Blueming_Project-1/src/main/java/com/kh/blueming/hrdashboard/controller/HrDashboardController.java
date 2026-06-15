@@ -8,11 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.hrdashboard.model.service.HrDashboardService;
 import com.kh.blueming.hrdashboard.model.vo.HrDashboardMember;
 import com.kh.blueming.member.model.service.MemberDashboardService;
 import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.member.model.vo.MemberProfile;
+import com.kh.blueming.notice.model.vo.Notice;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -54,10 +56,12 @@ public class HrDashboardController {
 		
 		// 전체 사원 이수율 목록
 		List<HrDashboardMember> hrMemberList = hrDashboardService.selectHrMemberList();
+		//List<Notice> noticeList = hrDashboardService.selectRecentNoticeList();
 		
 		// 5. Model에 담기
 		model.addAttribute("profile", profile);
 		model.addAttribute("hrMemberList", hrMemberList);
+		//model.addAttribute("noticeList", noticeList);
 		
 		// 6. JSP로 이동
 		return "hrDashboard/hrDashboard";

@@ -18,7 +18,7 @@ import com.kh.blueming.notice.model.vo.Notice;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/adminDashboard")
+@RequestMapping("/admindashboard")
 public class AdminDashboardController {
 
 	@Autowired

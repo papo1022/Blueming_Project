@@ -1,45 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-
+<link rel="stylesheet" href="/blueming/resources/css/course/reply.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
 
-<style>
-.reply-wrap { width:100%; margin:30px auto; font-family:sans-serif; }
-.reply-list-table { width:100%; border-collapse:collapse; margin-top:20px; }
-.reply-list-table tr { border-bottom:1px solid #eee; }
-.reply-list-table td { padding:12px 8px; vertical-align:top; }
-.child-reply { background:#f9f9f9; padding-left: 30px; }
-.re-input-area { background:#f4f6f9; padding:10px; display:none; margin-top:5px; }
-.secret-text { color:#aaa; font-style:italic; }
-.reply-btn { font-size:11px; color:#007bff; cursor:pointer; margin-left:10px; text-decoration:underline; }
-.file-name { font-size:12px; color:#007bff; margin-left:5px; }
-</style>
 
-<div class="reply-wrap">
-    <h3>질문 / 댓글 (<span id="replyCount">0</span>)</h3>
-    <input type="hidden" id="chapterId" value="${chapter.chapterId}">
 
-    <table style="width:100%;">
-        <tr>
-            <td>
-                <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none;" placeholder="댓글을 입력하세요." maxlength="1000"></textarea>
-                <div style="margin-top:5px;">
-                    <input type="file" id="mainReplyFile" style="display:none;" onchange="showFileName(this,'mainFileName')">
-                    <button type="button" onclick="$('#mainReplyFile').click();">파일첨부</button>
-                    <span id="mainFileName" class="file-name">선택된 파일 없음</span>
-                </div>
-            </td>
-            <td style="width:120px; text-align:right;">
-                <label><input type="checkbox" id="mainIsPrivate"> 비밀글</label><br><br>
-                <button type="button" onclick="addMainReply();" style="width:80px;height:40px;">등록</button>
-            </td>
-        </tr>
-    </table>
 
-    <table class="reply-list-table">
-        <tbody id="replyBody"></tbody>
-    </table>
+<div class="reply-header-bg">
+    <h3>댓글 (<span id="replyCount">0</span>)</h3>
+</div>
+
+<table class="reply-list-table">
+    <tbody id="replyBody">
+        </tbody>
+</table>
+
+<div class="area">
+    <textarea id="mainReplyContent" rows="3" style="width:100%; resize:none; padding:10px;" placeholder="댓글을 입력하세요."></textarea>
+    
+    <div class="reply-controls">
+        <div class="top-row">
+            <label><input type="checkbox" id="mainIsPrivate"> 비밀글</label>
+            <button type="button" onclick="addMainReply();" class="btn1">등록</button>
+        </div>
+        
+        <div class="bottom-row">
+            <button type="button" onclick="$('#mainReplyFile').click();" class="btn2">파일첨부</button>
+            <input type="file" id="mainReplyFile" class="file" onchange="showFileName(this,'mainFileName')">
+            <span id="mainFileName" class="file-name">선택된 파일 없음</span>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -55,7 +46,7 @@ function showFileName(input, targetId){
 function selectReplyList(){
     $.ajax({
         url : "${pageContext.request.contextPath}/reply/list",
-        type : "post",
+        type : "get",
         data : { chapterId : $("#chapterId").val() },
         success : function(list){
             $("#replyCount").text(list.length);

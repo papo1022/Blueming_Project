@@ -1,21 +1,3 @@
-.outer {
-    width: 90%;
-    margin: 0 auto;
-}
-
-#assignmentTitle,
-#description,
-#startDate,
-#dueDate,
-#maxScore {
-    width: 80%;
-}
-
-#description {
-    height: 220px;
-    resize: none;
-}
-
 .field-error {
     width: 80%;
     margin: 6px auto 0;

@@ -63,6 +63,11 @@
     outline: none;
 }
 
+#search-btn {
+	border: none;
+	background: transparent;
+}
+
 /* 강의 목록 타이틀 */
 .section-title {
     padding-top: 20px;
