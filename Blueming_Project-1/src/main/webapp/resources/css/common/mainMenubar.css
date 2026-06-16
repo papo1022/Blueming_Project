@@ -18,7 +18,7 @@ body {
     position: fixed;
     width: 260px;
     height: 100vh;
-    background-color: #338CFF;
+    background-image: linear-gradient( 135deg, #338CFF 10%, #736EFE 100%);
     padding: 20px;
     box-sizing: border-box;
     display: flex;

@@ -76,14 +76,14 @@
                     <div class="info-item">
                         <span class="label-title">이메일</span>
                         <input type="email" name="email" class="view-input"
-                               maxlength="100"
+                               maxlength="30"
                                value="${sessionScope.loginUser.email}">
                     </div>
 
                     <div class="info-item full-width">
                         <span class="label-title">주소</span>
                         <input type="text" name="address" class="view-input"
-                               maxlength="255"
+                               maxlength="70"
                                value="${sessionScope.loginUser.address}">
                     </div>
 

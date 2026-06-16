@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
+import com.kh.blueming.common.template.XssDefencePolicy;
 import com.kh.blueming.course.model.service.CourseService;
 import com.kh.blueming.member.model.service.MemberDashboardService;
 import com.kh.blueming.member.model.service.MemberService;
@@ -474,7 +475,9 @@ public class MemberController {
 	@PostMapping("update")
 	public ModelAndView updateMember(Member m, ModelAndView mv, HttpSession session) {
 		
-	
+		m.setName(XssDefencePolicy.defence(m.getName()));
+		m.setEmail(XssDefencePolicy.defence(m.getEmail()));
+		m.setAddress(XssDefencePolicy.defence(m.getAddress()));
 		
 		int result = memberService.updateMember(m);
 		System.out.println(result);
