@@ -24,5 +24,15 @@ public class AdminDashboardCourse {
 	private Date updatedDate;			//	UPDATED_DATE	DATE
 	private int fileIdNumber;			//	FILE_ID	NUMBER
 	private String Status; 				//	STATUS	VARCHAR2(1 BYTE)
+
+	private String courseStatus;
+	private int DDay;
+	
+	private int courseId;
+    private String courseTitle;
+
+    private Date startDate;
+    private Date endDate;
 	
 }
+

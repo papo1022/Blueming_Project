@@ -15,12 +15,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
+import com.kh.blueming.course.model.service.CourseService;
+import com.kh.blueming.member.model.service.MemberDashboardService;
 import com.kh.blueming.member.model.service.MemberService;
 import com.kh.blueming.member.model.service.OngoingCourseService;
 import com.kh.blueming.member.model.vo.Member;
+import com.kh.blueming.member.model.vo.MemberProfile;
 import com.kh.blueming.member.model.vo.OngoingCourse;
+import com.kh.blueming.notice.model.service.NoticeService;
+import com.kh.blueming.notice.model.vo.Notice;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,6 +40,12 @@ public class MemberController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private CourseService courseService;
+	
+	@Autowired
+	private NoticeService noticeService;
 	
 	@Autowired
 	private JavaMailSender mailSender;
@@ -59,13 +71,37 @@ public class MemberController {
 	
 	
 	@GetMapping("admin")
-	public String admin() {
-	    return "member/admin";
-	}
-
-	@GetMapping("hr")
-	public String hr() {
-	    return "member/hr";
+	public String admin(Model model, HttpSession session) {
+		// 1. 세션에서 로그인 정보 꺼내기
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		
+		// 2. 로그인 안 했으면 로그인 페이지로
+		if(loginUser == null) {
+			
+			return "redirect:/member/login";
+		}
+		
+		// 3. 관리자(ROLE = 'S')가 아니면 접근 차단
+		if(!loginUser.getRole().equals("S")) {
+			
+			return "redirect:/dashboard/main";
+		}
+		
+		int memberId = loginUser.getMemberId();
+		
+		// 4. 데이터 조회
+		//MemberProfile profile = MemberDashboardService.selectMemberProfile(memberId);
+		List<AdminDashboardCourse> courseList = courseService.selectAdminCourseList();
+		List<Notice> noticeList = noticeService.selectRecentNoticeList();
+		
+		// 5. Model에 담기
+		//model.addAttribute("profile", profile);
+		model.addAttribute("courseList", courseList);
+		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("test", "으악");
+		
+		// 6. JSP로 이동
+		return "member/admin";
 	}
 
 	@GetMapping("employee")

@@ -2,12 +2,14 @@ package com.kh.blueming.course.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.attachment.model.vo.Attachment;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.chapter.model.vo.ChapterProgress;
@@ -206,6 +208,10 @@ public class CourseDao {
 
 	public int orderChapter(SqlSessionTemplate sqlSession, Chapter ch) {
 		return sqlSession.update("courseMapper.orderChapter", ch);
+	}
+
+	public List<AdminDashboardCourse> selectAdminCourseList(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectList("adminDashboardMapper.selectAdminCourseList");
 	}
 
 }

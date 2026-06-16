@@ -2,6 +2,7 @@ package com.kh.blueming.notice.model.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,9 @@ public class NoticeService {
 			PageInfo pi) {
 
 		return noticeDao.searchNoticeList(sqlSession, map, pi);
+	}
+
+	public List<Notice> selectRecentNoticeList() {
+		return noticeDao.selectRecentNoticeList(sqlSession);
 	}
 }

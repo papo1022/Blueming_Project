@@ -17,7 +17,10 @@ public class Pageination {
 			endPage = maxPage;
 		}
 		
+		int startRow = (currentPage - 1) * boardLimit + 1;
+		int endRow = startRow + boardLimit - 1;
+		
 		return new PageInfo(listCount, currentPage, pageLimit, boardLimit,
-							maxPage, startPage, endPage);
+							maxPage, startPage, endPage, startRow, endRow);
 	}
 }

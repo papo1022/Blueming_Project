@@ -34,7 +34,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/member/logout",
                         "/resources/**",
                         "/error",
-                        "/error/**"
+                        "/error/**",
+                        "/member/hr"
                 );
     }
 }

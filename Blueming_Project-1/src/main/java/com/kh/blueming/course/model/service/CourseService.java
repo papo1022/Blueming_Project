@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.blueming.attachment.model.vo.Attachment;
+import com.kh.blueming.admindashboard.model.vo.AdminDashboardCourse;
 import com.kh.blueming.assignment.model.service.AssignmentService;
 import com.kh.blueming.chapter.model.vo.Chapter;
 import com.kh.blueming.chapter.model.vo.ChapterProgress;
@@ -441,5 +442,10 @@ public class CourseService {
 		}
 
 		return 1;
+	}
+
+
+	public List<AdminDashboardCourse> selectAdminCourseList() {
+		return courseDao.selectAdminCourseList(sqlSession);
 	}
 }

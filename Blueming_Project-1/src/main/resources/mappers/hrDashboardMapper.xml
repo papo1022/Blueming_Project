@@ -1,39 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="hrDashboardMapper">
 
-    <!-- 전체 사원 강의 평균 이수율 목록 조회 -->
-    <select id="selectHrMemberList" resultType="hrDashboardMember">
-        SELECT M.NAME AS name,
-               D.DEPARTMENT_NAME AS departmentName,
-               P.POSITION_NAME AS positionName,
-               M.EMAIL AS email,
-               NVL(ROUND(AVG(PROG.PROGRESS_RATE)), 0) AS avgProgressRate
-        FROM MEMBER M
-        LEFT JOIN DEPARTMENT D ON D.DEPARTMENT_ID = M.DEPARTMENT_ID
-        LEFT JOIN POSITION   P ON P.POSITION_ID = M.POSITION_ID
-        LEFT JOIN ENROLLMENT E ON E.MEMBER_ID = M.MEMBER_ID
-                              AND E.STATUS = 'Y'
-        LEFT JOIN (
-            SELECT CP.ENROLLMENT_ID,
-                   ROUND(
-                       COUNT(CASE WHEN CP.IS_COMPLETED = 'Y' THEN 1 END)
-                       / NULLIF(COUNT(*), 0) * 100
-                   ) AS PROGRESS_RATE
-            FROM CHAPTER_PROGRESS CP
-            GROUP BY CP.ENROLLMENT_ID
-        ) PROG ON PROG.ENROLLMENT_ID = E.ENROLLMENT_ID
-        WHERE M.STATUS = 'Y'
-          AND M.ROLE = 'N'
-        GROUP BY M.MEMBER_ID,
-                 M.NAME,
-                 D.DEPARTMENT_NAME,
-                 P.POSITION_NAME,
-                 M.EMAIL
-        ORDER BY avgProgressRate ASC
+    <resultMap id="hrMemberResultMap" type="com.kh.blueming.hrdashboard.model.vo.HrDashboardMember">
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="departmentName" column="DEPARTMENT_NAME"/> 
+        <result property="positionName" column="POSITION_NAME"/>
+        <result property="email" column="EMAIL"/>
+        <result property="progressRate" column="PROGRESS_RATE"/>
+    </resultMap>
+
+    <resultMap id="hrNoticeResultMap" type="com.kh.blueming.hrdashboard.model.vo.HrDashboardMember">
+        <result property="noticeId" column="NOTICE_ID"/>
+        <result property="noticeTitle" column="NOTICE_TITLE"/>
+        <result property="content" column="CONTENT"/>
+        <result property="memberId" column="MEMBER_ID"/>
+        <result property="count" column="COUNT"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+        <result property="fileIdNumber" column="FILE_ID"/>
+        <result property="Status" column="STATUS"/>
+    </resultMap>
+	<select id="getMemberProgressList" parameterType="map" resultMap="hrMemberResultMap">
+        SELECT * FROM (
+            SELECT ROWNUM RNUM, A.* FROM (
+                SELECT 
+                    m.MEMBER_ID,
+                    m.NAME,
+                    NVL(m.DEPARTMENT_ID, '소속없음') AS DEPARTMENT_NAME,
+                    NVL(m.POSITION_ID, '사원') AS POSITION_NAME,
+                    m.EMAIL,
+                    ROUND(AVG(p.CHAP_COMP_RATE), 2) AS PROGRESS_RATE
+                FROM MEMBER m
+                LEFT JOIN COURSE c ON m.MEMBER_ID = c.MEMBER_ID
+                LEFT JOIN CHAPTER ch ON c.COURSE_ID = ch.COURSE_ID
+                LEFT JOIN CHAPTER_PROGRESS p ON ch.CHAPTER_ID = p.CHAPTER_ID
+                WHERE 1=1
+                <if test="keyword != null and keyword != ''">
+                    AND m.NAME LIKE '%' || #{keyword} || '%'
+                </if>
+                GROUP BY m.MEMBER_ID, m.NAME, m.DEPARTMENT_ID, m.POSITION_ID, m.EMAIL
+                ORDER BY m.NAME ASC
+            ) A
+        )
+        WHERE RNUM BETWEEN #{startRow} AND #{endRow}
     </select>
+
+    <select id="getRecentNoticeList" parameterType="map" resultMap="hrNoticeResultMap">
+        SELECT * FROM (
+            SELECT ROWNUM RNUM, A.* FROM (
+                SELECT 
+                    NOTICE_ID,
+                    NOTICE_TITLE,
+                    CONTENT,
+                    MEMBER_ID,
+                    COUNT,
+                    CREATED_DATE,
+                    UPDATED_DATE,
+                    FILE_ID,
+                    STATUS
+                FROM NOTICE
+                WHERE STATUS = 'Y'
+                ORDER BY CREATED_DATE DESC
+            ) A
+        )
+        WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+    </select>
+    <select id="getMemberCount" parameterType="string" resultType="_int">
+        SELECT COUNT(*)
+        FROM MEMBER
+        WHERE 1=1
+        <if test="_parameter != null and _parameter != ''">
+            AND NAME LIKE '%' || #{value} || '%'
+        </if>
+    </select>
+
+    
+
+    <select id="getNoticeCount" resultType="_int">
+        SELECT COUNT(*) FROM NOTICE WHERE STATUS = 'Y'
+    </select>
+
+    
 
 </mapper>

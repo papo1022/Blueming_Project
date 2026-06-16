@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.blueming.member.model.dao.MemberDao;
 import com.kh.blueming.member.model.vo.Member;
+import com.kh.blueming.member.model.vo.MemberProfile;
 
 @Service
 public class MemberService {
@@ -64,6 +65,12 @@ public class MemberService {
 	public int deleteMember(String loginId) {
 		
 		return memberDao.deleteMember(sqlSession, loginId);
+	}
+	
+
+	public MemberProfile selectMemberProfile(int memberId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

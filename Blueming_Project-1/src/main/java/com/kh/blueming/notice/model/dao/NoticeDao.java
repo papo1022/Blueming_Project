@@ -2,6 +2,7 @@ package com.kh.blueming.notice.model.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -75,6 +76,10 @@ public class NoticeDao {
 	public int selectSearchCount(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
 		
 		return sqlSession.selectOne("noticeMapper.selectSearchCount", map);
+	}
+
+	public static List<Notice> selectRecentNoticeList(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectList("adminDashboardMapper.selectRecentNoticeList");
 	}
 	
 

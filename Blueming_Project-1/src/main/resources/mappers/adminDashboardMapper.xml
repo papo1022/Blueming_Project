@@ -34,7 +34,7 @@
     </select>
     
         <!-- 최근 공지사항 3개 조회 -->
-	<select id="selectRecentNoticeList" resultType="notice">
+	<select id="selectRecentNoticeList" resultMap="noticeResultSet">
     SELECT NOTICE_ID,
 	           NOTICE_TITLE,
 	           CREATED_DATE
