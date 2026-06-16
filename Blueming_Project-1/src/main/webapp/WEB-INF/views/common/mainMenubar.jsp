@@ -62,6 +62,12 @@
 							<%-- HR팀 메뉴 --%>
                             <c:if test="${loginUser.role eq 'R'}">
                                 <li>
+	                                <a href="<c:url value='/course/list'/>">
+	                                    <i class="fi fi-sr-graduation-cap"></i>
+	                                    강의
+	                                </a>
+	                            </li>
+                                <li>
                                     <a href="<c:url value='/assignment/list'/>">
                                         <i class="fi fi-sr-document"></i>
                                         과제
