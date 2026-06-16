@@ -134,6 +134,7 @@
 			
 			<div class="row ${member.status == 'R' ? 'last-row' : ''}"
      id="leaveDateRow"
+     style="${member.status == 'R' ? '' : 'display:none;'}">
 
     <div class="label">휴직기간</div>
 
@@ -146,6 +147,7 @@
 
 <div class="row ${member.status == 'N' ? 'last-row' : ''}"
      id="retireDateRow"
+     style="${member.status == 'N' ? '' : 'display:none;'}">
 
     <div class="label">퇴사일</div>
 
