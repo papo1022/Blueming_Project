@@ -354,7 +354,13 @@ public class NoticeController {
 	}
 	
 	@PostMapping("updateForm")
-	public ModelAndView updateForm(@RequestParam("nno") int noticeId, ModelAndView mv) {
+	public ModelAndView updateForm(@RequestParam("nno") int noticeId, ModelAndView mv, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (!isHrTeam(loginUser)) {
+			mv.addObject("errorMsg", "인사팀만 공지사항을 수정할 수 있습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
 		
 		// System.out.println("글번호 : " + noticeNo);
 		
@@ -374,6 +380,12 @@ public class NoticeController {
 	
 	@PostMapping("update")
 	public ModelAndView updateNotice(Notice n, ModelAndView mv, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (!isHrTeam(loginUser)) {
+			mv.addObject("errorMsg", "인사팀만 공지사항을 수정할 수 있습니다.")
+			  .setViewName("common/errorPage");
+			return mv;
+		}
 		
 		// System.out.println(n);
 		
@@ -419,6 +431,11 @@ public class NoticeController {
 	
 	@PostMapping("delete")
 	public String deleteNotice(@RequestParam("nno") int noticeId, Model model, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (!isHrTeam(loginUser)) {
+			model.addAttribute("errorMsg", "인사팀만 공지사항을 삭제할 수 있습니다.");
+			return "common/errorPage";
+		}
 		
 		
 		

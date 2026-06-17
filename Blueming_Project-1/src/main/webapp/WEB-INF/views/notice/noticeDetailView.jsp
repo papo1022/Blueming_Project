@@ -62,7 +62,7 @@ ${requestScope.n.content}
             </a>
 
             <c:if test="${(not empty sessionScope.loginUser)
-                        and (sessionScope.loginUser.memberId eq requestScope.n.memberId)}">
+                        and (sessionScope.loginUser.departmentId eq 'D01')}">
 
                 <button type="button"
                         class="btn-custom btn-update"
