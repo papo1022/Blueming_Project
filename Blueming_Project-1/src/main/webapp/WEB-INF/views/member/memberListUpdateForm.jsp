@@ -10,13 +10,11 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/member/memberList.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
-
 </head>
 <body>
 	<jsp:include page="../common/mainMenubar.jsp"/>
 
 	<div class="container">
-
 		
 		<form id="updateForm" action="/blueming/memberlist/update" method="post">
 			<input type="hidden" name="memberId" value="${member.memberId}">
@@ -25,54 +23,53 @@
 			<input type="hidden" id="realLeaveEndDate" name="leaveEndDate">
 		
 			<div class="row">
-    <div class="label">사원번호</div>
-    <div class="value"><input type="text" value="${member.memberId}" readonly></div>
-</div>
+                <div class="label">사원번호</div>
+                <div class="value"><input type="text" value="${member.memberId}" readonly></div>
+            </div>
 
-<div class="row">
-    <div class="label">로그인ID</div>
-    <div class="value">
-		<input type="text" name="loginId" value="<c:out value='${member.loginId}' />" maxlength="20" readonly style="background-color: #e9ecef;">
-    </div>
-</div>
+            <div class="row">
+                <div class="label">로그인ID</div>
+                <div class="value">
+                    <input type="text" name="loginId" value="<c:out value='${member.loginId}' />" maxlength="20" readonly style="background-color: #e9ecef;">
+                </div>
+            </div>
 
-<div class="row">
-    <div class="label">이름</div>
-    <div class="value">
-		<input type="text" name="name" value="<c:out value='${member.name}' />" maxlength="100" required>
-    </div>
-</div>
+            <div class="row">
+                <div class="label">이름</div>
+                <div class="value">
+                    <input type="text" name="name" id="name" value="<c:out value='${member.name}' />" required>
+                    <span id="nameMsg" style="color: red; font-size: 12px; display: none;"></span>
+                </div>
+            </div>
 
-<div class="row">
-    <div class="label">이메일</div>
-    <div class="value">
-		<input type="email" name="email" value="<c:out value='${member.email}' />" maxlength="100">
-    </div>
-</div>
+            <div class="row">
+                <div class="label">이메일</div>
+                <div class="value">
+                    <input type="email" name="email" value="<c:out value='${member.email}' />" maxlength="100">
+                </div>
+            </div>
 
-<div class="row">
-    <div class="label">연락처</div>
-    <div class="value">
-        <input type="text"
-       name="phone"
-       id="phoneInput"
-       value="${fn:escapeXml(member.phone)}"
-        placeholder="010-1234-5678" 
-        maxlength="13" 
-        pattern="010-[0-9]{3,4}-[0-9]{4}"
-        title="010-XXXX-XXXX 형식의 13자리(하이픈 포함)로 입력해주세요." required>
-    </div>
-</div>
+            <div class="row">
+                <div class="label">연락처</div>
+                <div class="value">
+                    <input type="text"
+                           name="phone"
+                           id="phoneInput"
+                           value="${fn:escapeXml(member.phone)}"
+                           placeholder="010-1234-5678" 
+                           maxlength="13" 
+                           pattern="010-[0-9]{3,4}-[0-9]{4}"
+                           title="010-XXXX-XXXX 형식의 13자리(하이픈 포함)로 입력해주세요." required>
+                </div>
+            </div>
 
-<div class="row">
-    <div class="label">주소</div>
-    <div class="value">
-        <input type="text"
-       name="address"
-       value="${fn:escapeXml(member.address)}"
-       maxlength="255">
-    </div>
-</div>
+            <div class="row">
+                <div class="label">주소</div>
+                <div class="value">
+                    <input type="text" name="address" id="address" value="${fn:escapeXml(member.address)}">
+                    <span id="addressMsg" style="color: red; font-size: 12px; display: none;"></span>
+                </div>
+            </div>
 			
 			<div class="row">
 			    <div class="label">부서</div>
@@ -122,67 +119,85 @@
 			</div>
 			
 			<div class="row ${member.status == 'Y' ? 'last-row' : ''}">
-	    <div class="label">상태</div>
-	   	 <div class="value">
-		        <select name="status" id="statusSelect" onchange="toggleLeaveInput();">
-		            <option value="Y" ${member.status == 'Y' ? 'selected' : ''}>재직</option>
-		            <option value="R" ${member.status == 'R' ? 'selected' : ''}>휴직</option>
-		            <option value="N" ${member.status == 'N' ? 'selected' : ''}>퇴사</option>
-		        </select>
-	    	</div>
-		</div>
+                <div class="label">상태</div>
+                 <div class="value">
+                    <select name="status" id="statusSelect" onchange="toggleLeaveInput();">
+                        <option value="Y" ${member.status == 'Y' ? 'selected' : ''}>재직</option>
+                        <option value="R" ${member.status == 'R' ? 'selected' : ''}>휴직</option>
+                        <option value="N" ${member.status == 'N' ? 'selected' : ''}>퇴사</option>
+                    </select>
+                </div>
+            </div>
 			
-			<div class="row ${member.status == 'R' ? 'last-row' : ''}"
-     id="leaveDateRow"
-     style="${member.status == 'R' ? '' : 'display:none;'}">
+			<div class="row ${member.status == 'R' ? 'last-row' : ''}" id="leaveDateRow" style="${member.status == 'R' ? '' : 'display:none;'}">
+                <div class="label">휴직기간</div>
+                <div class="value leave-date-group">
+                    <input type="date" id="viewLeaveStartDate">
+                    <span>~</span>
+                    <input type="date" id="viewLeaveEndDate">
+                </div>
+            </div>
 
-    <div class="label">휴직기간</div>
+            <div class="row ${member.status == 'N' ? 'last-row' : ''}" id="retireDateRow" style="${member.status == 'N' ? '' : 'display:none;'}">
+                <div class="label">퇴사일</div>
+                <div class="value">
+                    <fmt:formatDate var="fmtRetireDate" value="${member.retireDate}" pattern="yyyy-MM-dd"/>
+                    <input type="date" name="retireDate" id="retireDateInput" value="${fmtRetireDate}">
+                </div>
+            </div>
 
-    <div class="value leave-date-group">
-        <input type="date" id="viewLeaveStartDate">
-        <span>~</span>
-        <input type="date" id="viewLeaveEndDate">
-    </div>
-</div>
-
-<div class="row ${member.status == 'N' ? 'last-row' : ''}"
-     id="retireDateRow"
-     style="${member.status == 'N' ? '' : 'display:none;'}">
-
-    <div class="label">퇴사일</div>
-
-    <div class="value">
-        <fmt:formatDate
-            var="fmtRetireDate"
-            value="${member.retireDate}"
-            pattern="yyyy-MM-dd"/>
-
-        <input type="date"
-               name="retireDate"
-               id="retireDateInput"
-               value="${fmtRetireDate}">
-    </div>
-</div>
 			<div class="row btn-row">
-			<div class="value btn-group">
-			    <button type="button" class="btn1" onclick="submitUpdateForm();">저장하기</button>
-			    <button type="button" class="btn2" onclick="location.href='/blueming/memberlist'">취소</button>
-			</div>
+                <div class="value btn-group">
+                    <button type="button" class="btn1" onclick="submitUpdateForm();">저장하기</button>
+                    <button type="button" class="btn2" onclick="location.href='/blueming/memberlist'">취소</button>
+                </div>
 			</div>
 		</form>
 	</div>
 
-			<div class="row" id="retireDateRow" style="display:none;">
-				<div class="label">퇴사일</div>
-				<div class="value">
-					<input type="date" name="retireDate" id="retireDateInput" value="${fmtRetireDate}">
-				</div>
-			</div>
 	<script>
-		// DB에서 가져온 8자리 숫자(YYYYMMDD)를 HTML5 <input type="date"> 포맷(YYYY-MM-DD)으로 파싱
-		// 🛡️ 안전하게 치환된 자바스크립트 변수 할당
+        // 🌟 1. 확장형 공통 글자수 및 정규식 제한 함수
+        function handleLengthLimit(inputEl, msgEl, limit, fieldType) {
+            if (!inputEl) return;
+            
+            let val = inputEl.value;
+            let filtered = val;
+            let errorMsg = "";
+
+            if (fieldType === "name") {
+                // 이름: 영문, 한글, 공백만 허용 (숫자 및 특수문자 완벽 차단)
+                filtered = val.replace(/[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s]/g, '');
+                if (val !== filtered) errorMsg = "이름은 영문과 한글만 입력 가능합니다.";
+                
+            } else if (fieldType === "address") {
+                // 주소: 영문, 숫자, 한글, 공백만 허용 (순수 특수문자만 차단)
+                filtered = val.replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\s]/g, '');
+                if (val !== filtered) errorMsg = "주소에는 특수문자를 입력할 수 없습니다.";
+            }
+
+            if (val !== filtered) {
+                if (msgEl) {
+                    msgEl.textContent = errorMsg;
+                    msgEl.style.display = "block";
+                }
+                inputEl.value = filtered;
+                return;
+            }
+
+            if (filtered.length >= limit) {
+                if (msgEl) {
+                    msgEl.textContent = `최대 ${limit}자까지 입력 가능합니다.`;
+                    msgEl.style.display = "block";
+                }
+                if (filtered.length > limit) {
+                    inputEl.value = filtered.substring(0, limit);
+                }
+            } else {
+                if (msgEl) msgEl.style.display = "none";
+            }
+        }
+
 		window.onload = function() {
-		 
 		    const startNum = "${fn:escapeXml(member.leaveStartDate)}".trim();
 			const endNum = "${fn:escapeXml(member.leaveEndDate)}".trim();
 		    
@@ -197,40 +212,31 @@
 		}
 
 		function toggleLeaveInput() {
-
 		    const currentStatus = document.getElementById("statusSelect").value;
-
 		    const leaveRow = document.getElementById("leaveDateRow");
 		    const retireRow = document.getElementById("retireDateRow");
 
-		    // 기존 표시/숨김 처리
 		    leaveRow.style.display = (currentStatus === 'R') ? 'flex' : 'none';
 		    retireRow.style.display = (currentStatus === 'N') ? 'flex' : 'none';
 
-		    // 기존 퇴사일 초기화
 		    if(currentStatus !== 'N') {
 		        document.getElementById("retireDateInput").value = "";
 		    }
 
-		    // last-row 초기화
-		    document.querySelectorAll(".last-row")
-		            .forEach(row => row.classList.remove("last-row"));
+		    document.querySelectorAll(".last-row").forEach(row => row.classList.remove("last-row"));
 
-		    // 상태 행 찾기
 		    const statusRow = document.getElementById("statusSelect").closest(".row");
 
 		    if(currentStatus === 'R') {
 		        leaveRow.classList.add("last-row");
-		    }
-		    else if(currentStatus === 'N') {
+		    } else if(currentStatus === 'N') {
 		        retireRow.classList.add("last-row");
-		    }
-		    else {
+		    } else {
 		        statusRow.classList.add("last-row");
 		    }
 		}
 
-		// 전송 전 유효성 검사 및 하이픈 제거 후 정수형 변환 처리
+		// 🌟 2. 최종 저장하기 버튼 클릭 유효성 검사
 		function submitUpdateForm() {
 		    const form = document.getElementById("updateForm");
 		    const currentStatus = document.getElementById("statusSelect").value;
@@ -238,13 +244,14 @@
 		    const retireInput = document.getElementById("retireDateInput");
 		    const leaveInputStart = document.getElementById("viewLeaveStartDate");
 		    const leaveInputEnd = document.getElementById("viewLeaveEndDate");
-		    const phoneInput = document.getElementById("phoneInput"); // 🌟 연락처 매핑
+		    const phoneInput = document.getElementById("phoneInput");
+		    const name = document.getElementById("name");
+		    const address = document.getElementById("address");
 		    
 		    retireInput.disabled = false;
 		    leaveInputStart.disabled = false;
 		    leaveInputEnd.disabled = false;
 		
-		    // --- 🌟 [추가] 연락처 정확히 13자리 형식 예외 필터 검증 ---
 		    if(phoneInput && phoneInput.value.length > 0 && phoneInput.value.length !== 13) {
 		        alert("연락처는 하이픈(-)을 포함하여 정확히 13자리여야 합니다.");
 		        phoneInput.focus();
@@ -284,21 +291,58 @@
 			    realStartInput.value = "";
 			    realEndInput.value = "";
 		    }
+		    
+		    // 🌟 이름 최종 패턴 확인 (영문, 한글, 공백만 허용)
+		    if (!/^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s]+$/.test(name.value)) {
+	            alert("이름은 영문과 한글만 입력 가능합니다.");
+	            name.focus();
+	            return;
+	        }
+		    
+		    // 🌟 주소 최종 패턴 확인 (영문, 숫자, 한글, 공백 허용 / 특수문자 차단)
+		    if (!/^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣\s]+$/.test(address.value)) {
+	            alert("주소는 한글, 영문, 숫자, 공백만 입력 가능합니다. (특수문자 제외)");
+	            address.focus();
+	            return;
+	        }
 		
 		    if(form.checkValidity()) {
+                // 저장 전 최종 패키징 단계 XSS 클린업 처리
+                document.querySelectorAll("input[type='text'], input[type='email']")
+                    .forEach(function(el) {
+                        el.value = removeXss(el.value);
+                    });
 			    form.submit();
 		    } else {
 			    form.reportValidity(); 
 		    }
 		} 
 
-		// 안전하게 외부로 분리된 DOM 로드 이벤트 구역
+		// 🌟 3. 이벤트 리스너 바인딩 구역
 		document.addEventListener("DOMContentLoaded", function() {
 		    const deptSelect = document.getElementById("deptSelect");
 		    const roleSelect = document.getElementById("role");
-		    const phoneInput = document.getElementById("phoneInput"); // 🌟 연락처 타겟 추가
+		    const phoneInput = document.getElementById("phoneInput");
+            const nameInput = document.getElementById("name");
+            const addressInput = document.getElementById("address");
+            const nameMsg = document.getElementById("nameMsg");
+            const addressMsg = document.getElementById("addressMsg");
 		
-		    // 1. 부서 변경 시 권한 코드 동적 제어
+            // 이름 실시간 유효성 연동 (최대 30자)
+            if (nameInput && nameMsg) {
+                nameInput.addEventListener("input", function() {
+                    handleLengthLimit(this, nameMsg, 30, "name");
+                });
+            }
+
+            // 주소 실시간 유효성 연동 (최대 200자)
+            if (addressInput && addressMsg) {
+                addressInput.addEventListener("input", function() {
+                    handleLengthLimit(this, addressMsg, 200, "address");
+                });
+            }
+
+		    // 부서 변경 시 권한 코드 동적 제어
 		    if(deptSelect && roleSelect) {
 		        deptSelect.addEventListener("change", function() {
 		            if (this.value === "D01") { 
@@ -310,11 +354,10 @@
 		        });
 		    }
 
-		    // 2. 🌟 연락처 실시간 자동 하이픈 및 정규식 치환 포맷터
+		    // 연락처 실시간 자동 하이픈 포맷터
 		    if(phoneInput) {
 		        phoneInput.addEventListener("input", function() {
-		            let val = this.value.replace(/[^0-9]/g, ''); // 숫자 제외한 문자 필터링
-		            
+		            let val = this.value.replace(/[^0-9]/g, '');
 		            if (val.length < 4) {
 		                this.value = val;
 		            } else if (val.length < 8) {
@@ -325,6 +368,18 @@
 		        });
 		    }
 		});
+
+        // 🌟 4. XSS 문자 치환 백업 필터
+        function removeXss(value) {
+            return value
+                .replace(/</g, "")
+                .replace(/>/g, "")
+                .replace(/"/g, "")
+                .replace(/'/g, "")
+                .replace(/&/g, "")
+                .replace(/\(/g, "")
+                .replace(/\)/g, "");
+        }
 	</script>
 </body>
 </html>

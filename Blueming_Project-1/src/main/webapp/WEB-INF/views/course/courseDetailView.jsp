@@ -96,45 +96,54 @@
                     </div>
                 </div>
 
+                <c:choose>
+                    <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                        <!-- 통계 영역 -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h2 class="mb-0">강의 통계</h2>
+                            </div>
 
-                <!-- 통계 영역 -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h2 class="mb-0">강의 통계</h2>
-                    </div>
+                            <div class="card-body">
 
-                    <div class="card-body">
+                                <!-- 총 이수율 -->
+                                <div class="mb-5">
+                                    <br>
+                                    <h5>총 이수율</h5>
 
-                        <!-- 총 이수율 -->
-                        <div class="mb-5">
-                            <br>
-                            <h5>총 이수율</h5>
-
-                            <div style="position: relative; height: 30px;">
-                                <div class="progress" style="height: 30px; margin-bottom: 0;">
-                                    <div id="totalProgressBar"
-                                        class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
-                                        role="progressbar" style="width: 0%;">
+                                    <div style="position: relative; height: 30px;">
+                                        <div class="progress" style="height: 30px; margin-bottom: 0;">
+                                            <div id="totalProgressBar"
+                                                class="progress-bar progress-bar-striped bg-success progress-bar-animated rounded-pill"
+                                                role="progressbar" style="width: 0%;">
+                                            </div>
+                                        </div>
+                                        <span id="totalProgress" class="text-big"
+                                            style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: bold; white-space: nowrap; pointer-events: none;">0%</span>
                                     </div>
                                 </div>
-                                <span id="totalProgress" class="text-big"
-                                      style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: bold; white-space: nowrap; pointer-events: none;"
-                                      >0%</span>
+
+                                <!-- 챕터별 그래프 -->
+                                <div>
+                                    <h5>챕터별 이수율</h5>
+
+                                    <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
+                                        class="d-flex justify-content-center align-items-center">
+                                        <canvas id="courseChart"></canvas>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
-
-                        <!-- 챕터별 그래프 -->
-                        <div>
-                            <h5>챕터별 이수율</h5>
-
-                            <div style="height:400px; border:1px solid #ddd; border-radius:10px;"
-                                class="d-flex justify-content-center align-items-center">
-                                <canvas id="courseChart"></canvas>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+                    </c:when>
+                    <c:otherwise>
+                        <style>
+                            .d-flex {
+                                display: none;
+                            }
+                        </style>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="card mt-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
@@ -167,8 +176,17 @@
                             <thead>
                                 <tr>
                                     <th width="10%">챕터</th>
-                                    <th width="40%">제목</th>
-                                    <th width="50%">모든 수강생 이수율</th>
+                                    <th width="50%">제목</th>
+                                    <c:choose>
+                                        <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                                            <th width="40%">모든 수강생 이수율</th>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <th width="40%">게시 날짜</th>
+                                        </c:otherwise>
+                                    </c:choose>
+
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -177,20 +195,25 @@
                                         <td style="display:none;">${ch.chapterId}</td>
                                         <td>${ch.chapterOrder}</td>
                                         <td>${ch.chapterTitle}</td>
-                                        <td>
-                                            <div style="position: relative; height: 20px;">
-                                                <div class="progress" style="height: 20px; margin-bottom: 0;">
-                                                    <div class="progress-bar progress-bar-striped bg-info progress-bar-animated rounded-pill chapter-progress-bar"
-                                                        role="progressbar"
-                                                        style="width: 0%;"
-                                                        data-rate="${ch.avgProgress}">
+                                        <c:choose>
+                                            <c:when test="${ sessionScope.loginUser.role eq 'S' }">
+                                                <td>
+                                                    <div style="position: relative; height: 20px;">
+                                                        <div class="progress" style="height: 20px; margin-bottom: 0;">
+                                                            <div class="progress-bar progress-bar-striped bg-info progress-bar-animated rounded-pill chapter-progress-bar"
+                                                                role="progressbar" style="width: 0%;"
+                                                                data-rate="${ch.avgProgress}">
+                                                            </div>
+                                                        </div>
+                                                        <span class="text-small chapter-progress-text"
+                                                            style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; pointer-events: none;">0.00%</span>
                                                     </div>
-                                                </div>
-                                                <span class="text-small chapter-progress-text"
-                                                      style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; white-space: nowrap; pointer-events: none;"
-                                                      >0.00%</span>
-                                            </div>
-                                        </td>
+                                                </td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td>${ch.createDate}</td>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </tr>
                                 </c:forEach>
                             </tbody>
@@ -245,7 +268,7 @@
                 });
 
                 function initChapterProgressBars() {
-                    $(".chapter-progress-bar").each(function() {
+                    $(".chapter-progress-bar").each(function () {
                         const rawRate = parseFloat($(this).data("rate"));
                         const rate = Number.isFinite(rawRate) ? Math.max(0, Math.min(100, rawRate)) : 0;
                         $(this).css("width", rate.toFixed(2) + "%");
@@ -285,7 +308,7 @@
                     bar.style.width = totalProgress + "%";
                     label.textContent = totalProgress + "%";
 
-                    requestAnimationFrame(function() {
+                    requestAnimationFrame(function () {
                         const barPx = bar.offsetWidth;
                         const textPx = label.offsetWidth;
                         const PADDING = 8;

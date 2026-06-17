@@ -27,7 +27,7 @@
 										<div class="header-bar">
 
 											<div class="welcome-text">
-												<h1>안녕하세요, 관리자님!</h1>
+												<h1>안녕하세요, ${loginUser.name}님!</h1>
 												<p>강의 및 공지사항을 관리할 수 있습니다.</p>
 											</div>
 
@@ -37,7 +37,7 @@
 											</div>
 
 											<div class="user-profile">
-												<span class="role">관리자 ${profile.name}</span>
+												<span class="role">${loginUser.name}</span>
 
 												<div class="nav-links">
 													<a href="${pageContext.request.contextPath}/member/myPage">

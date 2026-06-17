@@ -116,8 +116,8 @@
 								<td>${ n.noticeId }</td>
 								<td>${ n.noticeTitle }</td>
 								<td>    <c:choose>
-							        <c:when test="${n.memberId == 1}">
-							            시스템 관리자
+							        <c:when test="${n.memberId == 2}">
+							            인사팀
 							        </c:when>
 							        <c:otherwise>
 							            ${n.memberId}

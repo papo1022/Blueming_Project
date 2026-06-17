@@ -38,8 +38,8 @@
     .welcome-text p { font-size: 13px; color: #6B7280; margin-top: 4px; }
     
     /* 검색창 영역 */
-    .search-container { position: relative; width: 320px; }
-    .search-container input { width: 100%; padding: 10px 40px 10px 20px; border: 1px solid #E5E7EB; border-radius: 25px; font-size: 13px; background-color: #F9FAFB; outline: none; }
+    .search-container { position: relative; width: 320px; height: 60px; padding-top : 10px;}
+    .search-container input { position: absolute; width: 100%; padding: 10px 40px 10px 20px; border: 1px solid #E5E7EB; border-radius: 25px; font-size: 13px; background-color: #F9FAFB; outline: none;  box-sizing: border-box; }
     .search-container i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #9CA3AF; cursor: pointer; }
 
     .user-profile { display: flex; align-items: center; gap: 15px; }

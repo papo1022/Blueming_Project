@@ -33,8 +33,8 @@
 
                 <span>
                     <c:choose>
-                        <c:when test="${requestScope.n.memberId == 1}">
-                            관리자
+                        <c:when test="${requestScope.n.memberId == 2}">
+                            인사팀
                         </c:when>
                         <c:otherwise>
                             ${requestScope.n.memberId}

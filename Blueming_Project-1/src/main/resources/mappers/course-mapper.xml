@@ -116,7 +116,7 @@
 							'W',
 							#{startDate},
 							#{endDate},
-							0,
+							(#{endDate} - #{startDate})*24,
 							SYSDATE,
 							NULL)
 			
@@ -516,7 +516,8 @@
 			</choose>,
 			START_DATE = #{startDate},
 			END_DATE = #{endDate},
-			UPDATED_DATE = SYSDATE
+			UPDATED_DATE = SYSDATE,
+			TOTAL_HOURS = (#{endDate} - #{startDate})*24
 		WHERE MEMBER_ID = #{memberId}
 		AND COURSE_ID = #{courseId}
 	</update>

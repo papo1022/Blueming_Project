@@ -13,7 +13,8 @@
 /* --- 전체 레이아웃---  */
 
 .main-wrapper {
-    margin-left: 260px; /* nav-area 너비와 동일한 크기임 */
+    margin-left: 260px;
+    /* nav-area 너비와 동일한 크기임 */
     display: flex;
     min-height: 100vh;
 }
@@ -35,11 +36,11 @@
 }
 
 .greeting-text p {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 .greeting-text #greeting {
-	font-weight: bold;
+    font-weight: bold;
     font-size: 20px;
 }
 
@@ -48,7 +49,7 @@
     align-items: center;
     width: 350px;
     height: 60px;
-    border: 1px solid #c4c5c6; 
+    border: 1px solid #c4c5c6;
     border-radius: 50px;
     padding-left: 20px;
     padding-right: 20px;
@@ -64,8 +65,8 @@
 }
 
 #search-btn {
-	border: none;
-	background: transparent;
+    border: none;
+    background: transparent;
 }
 
 /* 강의 목록 타이틀 */
@@ -123,7 +124,7 @@
 
 /* 도넛 SVG 안에서 사용하는 클래스 */
 .donut-bg {
-	fill: none;
+    fill: none;
     stroke: transparent;
     stroke-width: 5;
 }
@@ -146,26 +147,74 @@
 }
 
 /* 테마 색상 */
-.theme-red    { background-color: #FDD6D3; }
-.theme-yellow { background-color: #FFF4D8; }
-.theme-green  { background-color: #E6FFD8; }
-.theme-gray   { background-color: #EDEDED; }
+.theme-red {
+    background-color: #FDD6D3;
+}
+
+.theme-yellow {
+    background-color: #FFF4D8;
+}
+
+.theme-green {
+    background-color: #E6FFD8;
+}
+
+.theme-gray {
+    background-color: #EDEDED;
+}
 
 /* 도넛, 아이콘, D-day 텍스트 색상도 테마별로 달라짐 */
-.theme-red    .donut-fill { stroke: #E16B60; }
-.theme-yellow .donut-fill { stroke: #FFC635; }
-.theme-green  .donut-fill { stroke: #91F854; }
-.theme-gray   .donut-fill { stroke: #c4c4c5; }
+.theme-red .donut-fill {
+    stroke: #E16B60;
+}
 
-.theme-red    .card-dday { color: #E16B60; }
-.theme-yellow .card-dday { color: #FFC635; }
-.theme-green  .card-dday { color: #91F854; }
-.theme-gray   .card-dday { color: #c4c4c5; }
+.theme-yellow .donut-fill {
+    stroke: #FFC635;
+}
 
-.theme-red    .card-icon { background-color: #E16B60; color: #FFFFFF; }
-.theme-yellow .card-icon { background-color: #FFC635; color: #FFFFFF; }
-.theme-green  .card-icon { background-color: #91F854; color: #FFFFFF; }
-.theme-gray   .card-icon { background-color: #c4c4c5; color: #FFFFFF; }
+.theme-green .donut-fill {
+    stroke: #91F854;
+}
+
+.theme-gray .donut-fill {
+    stroke: #c4c4c5;
+}
+
+.theme-red .card-dday {
+    color: #E16B60;
+}
+
+.theme-yellow .card-dday {
+    color: #FFC635;
+}
+
+.theme-green .card-dday {
+    color: #91F854;
+}
+
+.theme-gray .card-dday {
+    color: #c4c4c5;
+}
+
+.theme-red .card-icon {
+    background-color: #E16B60;
+    color: #FFFFFF;
+}
+
+.theme-yellow .card-icon {
+    background-color: #FFC635;
+    color: #FFFFFF;
+}
+
+.theme-green .card-icon {
+    background-color: #91F854;
+    color: #FFFFFF;
+}
+
+.theme-gray .card-icon {
+    background-color: #c4c4c5;
+    color: #FFFFFF;
+}
 
 
 /* --- 오른쪽 컬럼 --- */
@@ -177,10 +226,10 @@
 }
 
 .right-col-title {
-	padding-bottom: 20px;
-	font-weight: bold;
-	font-size: 20px;
-	padding-top: 15px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    padding-top: 15px;
 }
 
 /* 마이페이지 / 로그아웃 */
@@ -197,7 +246,8 @@
 }
 
 .profile-links a:hover {
-    color: #333333; /* 마우스 오버시 진해짐 */
+    color: #333333;
+    /* 마우스 오버시 진해짐 */
     text-decoration: underline;
 }
 
@@ -206,7 +256,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-	padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 .profile-avatar {
@@ -216,16 +266,16 @@
 }
 
 .profile-name {
-	font-size: 20px;
-	font-weight: bold;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /* 달력 */
 .calendar-card {
-	padding: 20px;
-	border-radius: 20px;
-	background-color: #ededed;
-	margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: #ededed;
+    margin-bottom: 20px;
 }
 
 .calendar-header {
@@ -236,8 +286,8 @@
 }
 
 .calendar-month {
-	font-size: 20px;
-	font-weight: bold;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /* 요일 헤더 7칸 */
@@ -262,8 +312,8 @@
 }
 
 .calendar-dates .today {
-	background-color: #E16B60;
-	border-radius: 100px;
+    background-color: #E16B60;
+    border-radius: 100px;
 }
 
 /* 오늘 날짜 */
@@ -301,10 +351,10 @@
 
 /* 과제 */
 .assignment-section-title {
-	font-size: 20px;
-	font-weight: bold;
-	padding-top: 20px;
-	padding-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 /* 과제 항목: 제목 + 버튼 가로 배치 */
@@ -339,4 +389,18 @@
     font-size: 12px;
     cursor: pointer;
     justify-content: center;
+}
+.nav-links {
+    font-size: 13px;
+    color: #6B7280;
+    display: flex;
+    gap: 8px;
+}
+.nav-links a {
+    color: #6B7280;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
 }
