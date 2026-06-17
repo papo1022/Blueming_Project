@@ -74,8 +74,8 @@
 		
 		</div>
 
-		<!-- 관리자만 보이는 글작성 버튼으로 배치 -->
-		<c:if test="${ (not empty sessionScope.loginUser) and (sessionScope.loginUser.loginId eq 'admin') }">
+		<!-- 인사팀만 보이는 글작성 버튼으로 배치 -->
+		<c:if test="${ (not empty sessionScope.loginUser) and (sessionScope.loginUser.departmentId eq 'D01') }">
 			<div class="write-btn-area">
 				<a href="/blueming/notice/enrollForm" class="btn btn-secondary btn-sm">
 					글작성

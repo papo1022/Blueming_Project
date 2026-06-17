@@ -93,7 +93,14 @@
         </where>
         <choose>
             <when test='"deadline".equals(targetType)'>
-                ORDER BY A.DUE_DATE ASC, C.COURSE_TITLE ASC, A.ASSIGNMENT_ID ASC
+                ORDER BY 
+                    CASE 
+                        WHEN A.DUE_DATE &lt; TRUNC(SYSDATE) THEN 1
+                        ELSE 0
+                    END ASC,
+                    A.DUE_DATE ASC,
+                    C.COURSE_TITLE ASC,
+                    A.ASSIGNMENT_ID ASC
             </when>
             <otherwise>
                 ORDER BY C.COURSE_TITLE ASC, A.DUE_DATE ASC, A.ASSIGNMENT_ID ASC

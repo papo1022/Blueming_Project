@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.blueming.common.model.vo.PageInfo;
 import com.kh.blueming.common.template.Pageination;
 import com.kh.blueming.common.template.XssDefencePolicy;
+import com.kh.blueming.member.model.vo.Member;
 import com.kh.blueming.notice.model.service.NoticeService;
 import com.kh.blueming.notice.model.vo.Notice;
 
@@ -28,6 +29,10 @@ public class NoticeController {
 	
 	@Autowired
 	private NoticeService noticeService;
+
+	private boolean isHrTeam(Member loginUser) {
+		return loginUser != null && "D01".equals(loginUser.getDepartmentId());
+	}
 	
 	@GetMapping("list")
 	public ModelAndView selectNoticeList(@RequestParam(value="cpage", defaultValue="1") int currentPage, ModelAndView mv) {
@@ -238,15 +243,24 @@ public class NoticeController {
 	}
 	*/
 	@GetMapping("enrollForm")
-	public String enrollForm() {
+	public String enrollForm(Model model, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (!isHrTeam(loginUser)) {
+			model.addAttribute("errorMsg", "인사팀만 공지사항을 작성할 수 있습니다.");
+			return "common/errorPage";
+		}
 		
-		// 공지사항 작성 페이지만 보여주고 끝
 		return "notice/noticeEnrollForm";
 		// > /WEB-INF/views/notice/noticeEnrollForm.jsp
 	}
-	
+
 	@PostMapping("insert")
 	public String insertNotice(Notice n, Model model, HttpSession session) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		if (!isHrTeam(loginUser)) {
+			model.addAttribute("errorMsg", "인사팀만 공지사항을 작성할 수 있습니다.");
+			return "common/errorPage";
+		}
 		
 		//System.out.println(n);
 		// > 글 제목이나 내용 등에 html 태그 형식이 들어가면
